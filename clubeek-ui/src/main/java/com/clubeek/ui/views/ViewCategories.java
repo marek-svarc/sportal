@@ -1,0 +1,153 @@
+package com.clubeek.ui.views;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.clubeek.db.RepCategory;
+import com.clubeek.model.Category;
+import com.clubeek.model.User.Role;
+import com.clubeek.ui.ModalDialog;
+import com.clubeek.ui.Security;
+import com.clubeek.ui.Tools;
+import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.frames.FrameCategory;
+import com.vaadin.annotations.Theme;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.VerticalLayout;
+
+@SuppressWarnings("serial")
+@Theme("baseTheme")
+public class ViewCategories extends VerticalLayout implements View {
+
+	/* PUBLIC */
+
+	public ViewCategories(Navigation navigation) {
+
+		this.setCaption(Messages.getString("category")); //$NON-NLS-1$
+
+		this.navigation = navigation;
+
+		// vytvoreni tabulky a ovladacich tlacitek
+		table = new TableWithButtons(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (event.getButton() == table.buttonAdd)
+					addCategory();
+				else if (event.getButton() == table.buttonEdit)
+					editSelectedCategory();
+				else if (event.getButton() == table.buttonDelete)
+					deleteSelectedCategory();
+				else if (event.getButton() == table.buttonMoveUp)
+					exchangeCategories(true);
+				else if (event.getButton() == table.buttonMoveDown)
+					exchangeCategories(false);
+			}
+		}, true);
+		table.addToOwner(this);
+
+		// vytvoreni sloupcu tabulky
+		table.table.addContainerProperty(Messages.getString("caption"), String.class, null); //$NON-NLS-1$
+	}
+
+	// interface View
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+		
+		Security.authorize(Role.CLUB_MANAGER);
+		
+		try {
+			categories = RepCategory.selectAll(null);
+
+			int defaultRow = table.getSelectedRow();
+			table.table.removeAllItems();
+
+			Category category;
+			for (int i = 0; i < categories.size(); ++i) {
+				category = categories.get(i);
+				table.table
+						.addItem(
+								new Object[] { Tools.Strings.getCheckString(category.getActive())
+										+ "  " + category.getDescription() }, new Integer(i)); //$NON-NLS-1$
+			}
+			table.updateSelection(defaultRow);
+
+		} catch (SQLException e) {
+			Tools.msgBoxSQLException(e);
+		}
+	}
+
+	// operations
+
+	/** Spusti modalni dialog pro pridani nove ktegorie */
+	public void addCategory() {
+		ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("categoryProperties"), new FrameCategory(), new Category(), //$NON-NLS-1$
+				RepCategory.getInstance(), this.navigation);
+	}
+
+	/** Spusti modalni dialog pro zmenu vlastnosti vybrane ktegorie */
+	public void editSelectedCategory() {
+		if (table.getSelectedRow() >= 0) {
+			Category category = categories.get(table.getSelectedRow());
+			ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
+					RepCategory.getInstance(), this.navigation);
+		}
+	}
+
+	/** Zobrazi dotaz uzivateli a pripadne odstrani vybranou ktegorii */
+	public void deleteSelectedCategory() {
+		try {
+			// vymazani prvku z databaze
+			if ((table.getSelectedRow() >= 0) && (table.getSelectedRow() < categories.size()))
+				RepCategory.delete(categories.get(table.getSelectedRow()).getId());
+			updateApp();
+		} catch (SQLException e) {
+			Tools.msgBoxSQLException(e);
+		}
+	}
+
+	/**
+	 * Posune vybranou radku nahoru nebo dolu
+	 * 
+	 * @param moveUp
+	 *            smer posunu
+	 */
+	public void exchangeCategories(boolean moveUp) {
+		int idA = table.getSelectedRow();
+		int idB = table.getMoveIndex(moveUp);
+		if ((idA >= 0) && (idB >= 0)) {
+			try {
+				RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
+				table.table.setValue(idB);
+				updateApp();
+			} catch (SQLException e) {
+				Tools.msgBoxSQLException(e);
+			}
+		}
+	}
+
+	/* PRIVATE */
+
+	/** Aktualizaje tabulky i navigacni menu aplikace */
+	private void updateApp() {
+		// aktualizace tabulky
+		enter(null);
+		// aktualizace navigacniho menu
+		if (navigation != null)
+			navigation.updateNavigationMenu();
+	}
+
+	/** Komponenty tabulky */
+	private TableWithButtons table;
+
+	/** Seznam aktualne zobrazenych kategorii */
+	private List<Category> categories = null;
+
+	/** Navigace v aplikaci */
+	private Navigation navigation;
+}

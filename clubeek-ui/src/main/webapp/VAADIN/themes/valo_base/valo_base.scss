@@ -1,0 +1,468 @@
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+$v-font-size: 14px;
+$v-font-weight: 300;
+$v-font-family: Arial, Helvetica, sans-serif;
+
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+
+// Defines colors for indicating status (focus, success, failure)
+$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+$v-friendly-color: #2c9720;
+$v-error-indicator-color: #ed473b;
+
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+
+@import "../valo/valo.scss";
+
+@mixin valo_base {
+  @include valo;
+
+	$v-focus-color-light: lighten($v-focus-color, 45%); 
+	
+	$m-color-blue: rgb(188, 211, 222);  
+	
+	$clrGreen: rgb(29, 224, 110);  
+	$clrDarkBlue: rgb(0, 43, 130);  
+	$clrNews: rgb(149, 84, 255);
+	$clrText: rgb(241, 76, 75);  
+	$clrGrayBorder: rgb(186, 191, 192);  
+	$clrTextGray: rgb(70, 79, 82);  
+	$clrTextRed: rgb(241, 76, 26);  
+	$clrPanelNormal: rgb(232, 229, 255);
+	$clrPanelPriority: rgb(255, 230, 230);
+	$clrPanelFocus: rgb(242, 242, 255);
+	$outerRadius: 12px;
+	$outerPadding: 12px;
+	$innerRadius: 6px;
+	$innerPadding: 6px;
+	$buttonRadius: 4px;
+
+	/* Zrevidovane komponenty */
+
+	/* MENU */
+	
+	.v-menubar {
+		margin-top: 8px;
+		margin-bottom: 8px;
+	}
+
+	/* TABLE */
+	
+	// table buttons
+	
+	.v-button-table {
+		margin: 8px 0px 8px 8px;
+	}
+
+	.v-slot-horzSeparator {
+		margin-left: 16px;
+	}
+
+	/* LAYOUT */
+	
+	// active layout designed as link
+	
+	.m-selectable:HOVER{
+		cursor: pointer;
+		background-color: $v-focus-color;
+		color: white;
+	}
+
+/*	
+	.layout-selectable:HOVER .selectable-caption{
+		text-decoration: underline;
+	}
+	*/
+
+	/* LABELS */
+	
+	.label-underline{
+		border-bottom-style: solid;
+		border-bottom-width: thin;
+	}
+	
+	.label-h1{
+		margin: 2px 0px 2px 0px;
+		padding: 0px 0px 2px 0px;
+		font-size: large;
+		font-weight: bold;
+		color: $clrTextRed;
+	}
+	
+	.label-h2{
+		margin: 2px 0px 2px 0px;
+		padding: 0px 0px 2px 0px;
+		font-size: medium;
+		color: $clrTextRed;
+	}
+
+	.label-h3{
+		margin: 2px 0px 2px 0px;
+		padding: 0px 0px 2px 0px;
+		font-size: medium;
+		font-weight: bold;
+		/*color: $clrTextGray;*/
+	}
+
+	.label-h4{
+		margin: 2px 0px 0px 0px;
+		padding: 0px;
+		font-size: medium;
+		font-weight: normal;
+	}
+
+	.label-h5{
+		margin: 2px 0px 0px 0px;
+		padding: 0px;
+		font-size: small;
+		font-weight: normal;
+	}
+	
+	.label-h6{
+		margin: 0px;
+		padding: 0px;
+		font-size: x-small;
+/*		font-weight: lighter; */
+	}
+
+
+
+/* PUVODNI */	
+	/* ZAKLADNI PRVKY */
+	
+	br .half {
+		font-size: 5px;
+	}
+
+	/* VZHLED SKUPIN KOMPONENT  */
+
+	.v-layout .topborder {
+		margin-top: 6px;
+		border-top-color: $clrGrayBorder;
+		border-top-style: solid;
+		border-top-width: thin;
+	}
+	
+	.v-layout .rightborder {
+		margin-top: 6px;
+		border-right-color: $clrGrayBorder;
+		border-right-style: solid;
+		border-right-width: thin;
+	}
+
+	.v-layout .rowfirst{
+		margin-top: 8px;
+	}
+
+	.v-layout .row{
+		margin-top: 4px;
+		margin-bottom: 4px;
+	}
+	
+	.v-layout .rowlast{
+		margin-bottom: 8px;
+	}
+
+	.v-layout .horzgap, .v-panel .horzgap {
+		padding-right: 8px;
+	}
+
+	// oblast na nastence pro zobrazeni jednoho clanku 
+	
+	.layout-board	{
+		margin-bottom: 6px;
+		padding: 6px 8px 6px 8px;
+		background-color: $clrPanelNormal;
+		border-radius: 6px;
+	}
+
+	// standardni oblast pro zobrazeni jednoho clanku 
+	
+	.layout-list {
+		margin: 0px;
+		padding: 2px 4px 2px 4px;
+		border-bottom-color: $clrGrayBorder;
+		border-bottom-style: solid;
+		border-bottom-width: thin;
+	}
+	
+	// oblast se zvysenou dulezitosti
+	
+	.v-layout .priority {
+		background-color: $clrPanelPriority;
+	}
+
+	
+	// standardn� formatovani oblasti, ktera obsahuje jine komponenty
+	
+	.layout-container{
+		padding: 6px;
+	}
+	
+	/* NADPISY v-panel */
+	
+	.v-panel-caption-medium {
+		font-size: medium;
+		color: $clrTextGray;
+	    margin: 0px;
+		padding: 0px 0px 4px 4px;
+	}
+	
+	.v-panel-caption-small {
+		font-size: small;
+		color: $clrTextGray;
+	    margin: 0px;
+		padding: 0px 0px 2px 2px;
+	}
+	
+	/* NADPISY v-label */
+	
+	
+	.label-rightAlign{
+		text-align: right;
+	}
+	
+	.label-error{
+		color: $clrTextRed;
+		background-color: $clrPanelPriority;
+		padding: 2px 2px 2px 4px;
+		margin: 0px 0px 6px 0px;
+	}
+	
+	.v-label-topborder {
+		border-top-color: $clrGrayBorder;
+		border-top-style: solid;
+		border-top-width: thin;
+	}
+
+	.v-label-btmborder {
+		border-bottom-color: $clrGrayBorder;
+		border-bottom-style: solid;
+		border-bottom-width: thin;
+	}
+
+	/* KALENDAR AKCI */
+	
+	.stylecalendar .event-training{
+		background-color: $m-color-blue;
+	}
+	
+	.stylecalendar .event-game{
+		background-color: $clrGreen;
+	}
+	
+	
+	/* TABULKA */
+	
+	.v-table {
+		border-color: $clrGrayBorder;
+		border-width: thin;
+		border-top-style: solid;
+	}	
+	
+    .v-table .v-table-row-disabled {
+    	text-decoration: line-through;
+    }
+	
+	/* MODALNI DIALOG */
+
+	.v-window-modal {
+		
+		.v-formlayout-firstrow {
+			.v-formlayout-captioncell, .v-formlayout-contentcell, .v-formlayout-errorcell {
+				padding-top: 12px;
+			}
+		}
+
+		.v-formlayout-row {
+			.v-formlayout-captioncell, .v-formlayout-contentcell, .v-formlayout-errorcell {
+				padding-top: 4px;
+			}
+		}
+	
+		.v-formlayout-lastrow {
+			.v-formlayout-captioncell, .v-formlayout-contentcell, .v-formlayout-errorcell {
+				padding-bottom: 12px;
+			}
+		}
+	
+		.mainlayout {
+			padding: 12px 12px 8px 12px; 
+		}
+
+		.v-slot-btnlayout .btnLayout {
+			padding-left: -4px;
+			padding-bottom: -4px;
+		}
+		
+		.btnlayout .v-button-wrap {
+			margin-right: 6px;
+			padding-top: 2px;
+			padding-bottom: 3px;
+		}
+
+		.v-nativebutton {
+			margin: 0px;
+			padding: 4px;
+		}
+	
+		.v-nativebutton img {
+	    	display: block;
+	    	margin: auto;
+			padding: 0px;
+		}
+	}
+
+	/* PANEL PRO ZOBRAZENI PODROBNOSTI */
+	
+	.v-panel-detail {
+		margin: 4px;
+		padding: 0px;
+	}
+	
+	.v-panel-caption-detail {
+		font-size: small;
+		color: $clrTextGray;
+	    margin: 0px;
+		padding: 0px;
+	}
+	
+	.v-panel-content-detail {
+		margin: 0px;
+		padding: 4px 0px 0px 0px;
+	}
+
+	/* HORIZONTALNI OPTIONAL BLOCK */
+	
+	.v-select-optiongroup-horizontal .v-select-option {
+    	display: inline-block;
+	}
+
+	.v-select-optiongroup-horizontal {
+    	white-space: nowrap;
+	}
+
+	.v-select-optiongroup-horizontal .v-select-option.v-radiobutton {
+    	padding-right: 10px;
+	}
+	
+	/* EDITACNI TABULKA POMOCI GRIDLAYOUT */
+	
+	.v-label-table, .v-textfield-table, .v-select-table{
+		margin: 0px 2px 4px 2px;
+		height: 20px;
+		padding: 0px;
+	}
+		
+	/* GLOBALNI STYLY PRO CELOU APLIKACI */
+		
+	// komponenty umistene v jedne rade
+	
+	.rowLow, .v-label-rowLow, .v-textfield-rowLow, .v-select-rowLow {
+		margin: 0px 4px 0px 4px;
+	}
+
+	.rowLowFirst, .v-label-rowLowFirst, .v-textfield-rowLowFirst, .v-select-rowLowFirst {
+		margin: 0px 4px 0px 0px;
+	}
+	
+	.rowLowLast, .v-label-rowLowLast, .v-textfield-rowLowLast, .v-select-rowLowLast {
+		margin: 0px 0px 0px 4px;
+	}
+	
+	.inline, .v-label-inline, .v-textfield-inline, .v-select-inline {
+		margin: 7px 7px 7px 0px;
+	}
+
+	.inline-first, .v-label-inline-first, .v-textfield-inline-first, .v-select-inline-first {
+		margin: 7px 0px 7px 0px;
+	}
+	
+	/* Custom selectors - dialogs */
+	
+	.v-panel-caption-main {
+		padding: 0px;
+		padding-top: 2px;
+		padding-bottom: 8px;
+	}
+	
+	// 
+	.v-horizontal img, .v-vertical img {
+		margin: 0px;
+		padding: 0px;
+	}
+	
+	/* ZOBRAZOVANI SEZNAMU CLENU "teamMembersList" */
+	
+	.v-label-teamMembersList {
+		margin-left: 4px;
+		font-size: medium;
+		//color: $clrTextGray;
+	}
+	
+	.v-csslayout-teamMembersList {
+		margin: 4px;
+	}
+
+	/* HLAVNI STRANKA APLIKACE */
+		
+	.page-title{
+		color: $clrTextGray;
+		vertical-align: middle;
+		line-height: 50px;
+		font-size: 46px;
+	}
+
+	.page-comment{
+		color: $clrTextGray;
+		vertical-align: middle;
+		line-height: 30px;
+		font-size: 18px;
+	}
+	
+	.page-layout-header-title{
+		margin-left: 12px;
+	}
+	
+	.page-layout-header{
+		margin-bottom: 10px;
+	}
+	
+	.ss-main-page{
+		background-color: $m-color-blue;
+	}
+	
+	.ss-main-layout{
+		background-color: white;
+		margin-top: $outerPadding;
+		border-color: $clrGrayBorder;
+		border-style: solid;
+		border-width: thin;
+		border-radius: $outerRadius;
+		padding: $outerPadding;  
+	}
+	
+	.ss-main-title{
+		color: $clrTextGray;
+		padding-top: 12px;
+		height: 52px;
+		font-size: 40px;
+		font-weight: bold;
+	}
+	
+}
