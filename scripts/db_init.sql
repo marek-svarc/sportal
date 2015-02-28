@@ -97,7 +97,7 @@ CREATE TABLE team_training
     club_team_id	INT UNSIGNED		NOT NULL,
 
     FOREIGN KEY ( club_team_id ) REFERENCES club_team ( id ) 
-        ON DELETE CASCADE,
+        ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -118,7 +118,7 @@ CREATE TABLE team_match
         ON DELETE SET NULL,
 
     FOREIGN KEY ( club_team_id ) REFERENCES club_team ( id ) 
-        ON DELETE CASCADE,
+        ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -150,13 +150,13 @@ CREATE TABLE applicant_for_action
     club_member_id	INT UNSIGNED		NOT NULL,
     action_id		INT UNSIGNED		NOT NULL,
 
-    FOREIGN KEY ( club_member_id_fk ) REFERENCES club_member( id ) 
+    FOREIGN KEY ( club_member_id ) REFERENCES club_member( id ) 
 	ON DELETE CASCADE,
 
     FOREIGN KEY ( action_id ) REFERENCES action ( id ) 
 	ON DELETE CASCADE,
 
-    CONSTRAINT ( applicant_for_action_pk ) PRIMARY KEY ( club_member_id, action_id ) 
+    CONSTRAINT applicant_for_action_pk PRIMARY KEY ( club_member_id, action_id ) 
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -166,13 +166,13 @@ CREATE TABLE applicant_for_team_training
     club_member_id	INT UNSIGNED		NOT NULL,
     team_training_id	INT UNSIGNED		NOT NULL,
 
-    FOREIGN KEY ( club_member_id_fk ) REFERENCES club_member( id ) 
+    FOREIGN KEY ( club_member_id ) REFERENCES club_member( id ) 
 	ON DELETE CASCADE,
 
     FOREIGN KEY ( team_training_id ) REFERENCES team_training ( id ) 
 	ON DELETE CASCADE,
 
-    CONSTRAINT ( applicant_for_action_pk ) PRIMARY KEY ( club_member_id, team_training_id ) 
+    CONSTRAINT applicant_for_action_pk PRIMARY KEY ( club_member_id, team_training_id ) 
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -183,13 +183,13 @@ CREATE TABLE applicant_for_team_match
     club_member_id	INT UNSIGNED		NOT NULL,
     team_match_id	INT UNSIGNED		NOT NULL,
 
-    FOREIGN KEY ( club_member_id_fk ) REFERENCES club_member( id ) 
+    FOREIGN KEY ( club_member_id ) REFERENCES club_member( id ) 
 	ON DELETE CASCADE,
 
     FOREIGN KEY ( team_match_id ) REFERENCES team_match ( id ) 
 	ON DELETE CASCADE,
 
-    CONSTRAINT ( applicant_for_action_pk ) PRIMARY KEY ( club_member_id, team_match_id ) 
+    CONSTRAINT applicant_for_action_pk PRIMARY KEY ( club_member_id, team_match_id ) 
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -261,7 +261,7 @@ CREATE TABLE participant_of_match
         ON DELETE CASCADE,
 
     FOREIGN KEY ( team_match_id ) REFERENCES team_match ( id ) 
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
 
     CONSTRAINT participant_of_match_pk PRIMARY KEY (club_member_id, team_match_id)
 
