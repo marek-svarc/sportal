@@ -1,0 +1,1 @@
+INSERT INTO club_settings (id, title, comment) VALUES(1, "Testovací superklub", "Komentáø testovacího klubu, který vyhraje superpohár.");

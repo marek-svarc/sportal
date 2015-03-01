@@ -7,4 +7,6 @@
     
 
     <inherits name="org.vaadin.risto.stylecalendar.widgetset.StyleCalendarWidgetset" />
+
+    <inherits name="org.vaadin.peter.buttongroup.ButtonGroupWidgetset" />
 </module>

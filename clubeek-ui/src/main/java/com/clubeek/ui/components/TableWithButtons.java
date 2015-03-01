@@ -14,7 +14,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.themes.Runo;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -67,8 +66,10 @@ public class TableWithButtons {
 
 		// tabulka
 		table = new Table();
-		table.addStyleName(Runo.TABLE_SMALL);
-		table.addStyleName(Runo.TABLE_BORDERLESS);
+		table.addStyleName(ValoTheme.TABLE_SMALL);
+		table.addStyleName(ValoTheme.TABLE_BORDERLESS);
+                table.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
+                table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		table.setSizeFull();
 		table.setSelectable(true);
 		table.setNullSelectionAllowed(false);
@@ -171,6 +172,14 @@ public class TableWithButtons {
 			return -1;
 		}
 	}
+        
+        public void setEditButtonVisible(boolean visible) {
+            buttonEdit.setVisible(visible);
+        }
+        
+        public void setDeleteButtonVisible(boolean visible) {
+            buttonDelete.setVisible(visible);
+        }
 
 	/* PRIVATE */
 
