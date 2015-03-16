@@ -25,11 +25,6 @@
             <groupId>org.vaadin.addons</groupId>
             <artifactId>stylecalendar</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>buttongroup</artifactId>
-            <version>2.3</version>
-        </dependency>
     </dependencies>
 
     <build>

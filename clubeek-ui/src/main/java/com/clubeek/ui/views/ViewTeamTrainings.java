@@ -23,110 +23,104 @@ import com.vaadin.ui.Table.CellStyleGenerator;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class ViewTeamTrainings extends VerticalLayout implements View {
+public final class ViewTeamTrainings extends VerticalLayout implements View {
 
-	public ViewTeamTrainings() {
+    public enum Columns {
 
-		this.setCaption(Messages.getString("trainings")); //$NON-NLS-1$
+        DATE_TIME, PLACE
+    }
 
-		// vytvoreni tabulky a ovladacich tlacitek
-		table = new TableWithButtons(new ClickListener() {
+    public ViewTeamTrainings() {
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (event.getButton() == table.buttonAdd)
-					insertTraining();
-				else if (event.getButton() == table.buttonEdit)
-					editTraining();
-				else if (event.getButton() == table.buttonDelete)
-					deleteTraining();
-			}
-		}, false);
-		table.addToOwner(this);
+        this.setCaption(Messages.getString("trainings")); //$NON-NLS-1$
 
-		// vytvoreni sloupcu tabulky
-		table.table.addContainerProperty(Messages.getString("dateTime"), String.class, null); //$NON-NLS-1$
-		table.table.addContainerProperty(Messages.getString("place"), String.class, null); //$NON-NLS-1$
+        TableWithButtons.UserColumnInfo[] columns = {
+            new TableWithButtons.UserColumnInfo(ViewTeamTrainings.Columns.DATE_TIME, String.class, Messages.getString("dateTime")),
+            new TableWithButtons.UserColumnInfo(ViewTeamTrainings.Columns.PLACE, String.class, Messages.getString("place"))};
 
-		// vlastni stylovani radek tabulky
-		table.table.setCellStyleGenerator(new CellStyleGenerator() {
+        // vytvoreni tabulky a ovladacich tlacitek
+        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table.addToOwner(this);
 
-			@Override
-			public String getStyle(Table source, Object itemId, Object propertyId) {
-				TeamTraining trainig = trainings.get((int) itemId);
-				if (trainig.isGone())
-					return "disabled"; //$NON-NLS-1$
-				else
-					return null;
-			}
-		});
-	}
+        // custom style
+//        table.table.setCellStyleGenerator(new CellStyleGenerator() {
+//
+//            @Override
+//            public String getStyle(Table source, Object itemId, Object propertyId) {
+//                TeamTraining trainig = trainings.get((int) itemId);
+//                if (trainig.isGone()) {
+//                    return "disabled"; //$NON-NLS-1$
+//                } else {
+//                    return null;
+//                }
+//            }
+//        });
+    }
 
-	@Override
-	public void enter(ViewChangeEvent event) {
-		
-		Security.authorize(Role.SPORT_MANAGER);
+    @Override
+    public void enter(ViewChangeEvent event) {
 
-		if (event != null)
-			teamId = Tools.Strings.analyzeParameters(event);
+        Security.authorize(Role.SPORT_MANAGER);
 
-		int defaultRow = table.getSelectedRow();
-		table.table.removeAllItems();
+        if (event != null) {
+            teamId = Tools.Strings.analyzeParameters(event);
+        }
 
-		if (teamId > 0) {
-			// nacteni seznamu treninku z databaze
-			trainings = null;
-			try {
-				trainings = RepTeamTraining.selectByClubTeamId(teamId, null);
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
+        table.removeAllRows();
 
-			// inicializace tbulky
-			if (trainings != null) {
-				TeamTraining training;
-				for (int i = 0; i < trainings.size(); ++i) {
-					training = trainings.get(i);
-					table.table.addItem(
-							new Object[] {
-									Tools.DateTime.eventToString(training, Tools.DateTime.DateStyle.DAY_AND_TIME,
-											Tools.DateTime.DateStyle.DAY_AND_TIME), training.getPlace() }, i);
-				}
-			}
-			table.updateSelection(defaultRow);
-		}
-	}
+        if (teamId > 0) {
+            // nacteni seznamu treninku z databaze
+            trainings = null;
+            try {
+                trainings = RepTeamTraining.selectByClubTeamId(teamId, null);
+            } catch (SQLException e) {
+                Tools.msgBoxSQLException(e);
+            }
 
-	public void insertTraining() {
-		TeamTraining data = new TeamTraining();
-		data.setClubTeamId(teamId);
+            // inicializace tbulky
+            if (trainings != null) {
+                TeamTraining training;
+                for (int i = 0; i < trainings.size(); ++i) {
+                    training = trainings.get(i);
+                    table.addRow(new Object[]{Tools.DateTime.eventToString(training, Tools.DateTime.DateStyle.DAY_AND_TIME,
+                        Tools.DateTime.DateStyle.DAY_AND_TIME), training.getPlace()}, i);
+                }
+            }
+        }
+    }
 
-		ModalDialog.show(this, Mode.ADD_MULTI, Messages.getString("training"), new FrameTeamTraining(), data, RepTeamTraining.getInstance(), null); //$NON-NLS-1$
-	}
+    public void insertTraining() {
+        TeamTraining data = new TeamTraining();
+        data.setClubTeamId(teamId);
 
-	public void editTraining() {
-		if (table.getSelectedRow() >= 0) {
-			TeamTraining training = trainings.get(table.getSelectedRow());
-			if (training.isGone())
-				Notification.show(Messages.getString("canNotModifyTreining"), Type.HUMANIZED_MESSAGE); //$NON-NLS-1$
-			else
-				ModalDialog.show(this, Mode.EDIT, Messages.getString("training"), new FrameTeamTraining(), training, RepTeamTraining.getInstance(), null); //$NON-NLS-1$
-		}
-	}
+        ModalDialog.show(this, Mode.ADD_MULTI, Messages.getString("training"), new FrameTeamTraining(),
+                data, RepTeamTraining.getInstance(), null); //$NON-NLS-1$
+    }
 
-	public void deleteTraining() {
-		table.deleteSelectedRow(trainings, RepTeamTraining.getInstance(), this, null);
-	}
+    public void editTraining() {
+        if (table.getSelectedRow() >= 0) {
+            TeamTraining training = trainings.get(table.getSelectedRow());
+            if (training.isGone()) {
+                Notification.show(Messages.getString("canNotModifyTreining"), Type.HUMANIZED_MESSAGE); //$NON-NLS-1$
+            } else {
+                ModalDialog.show(this, Mode.EDIT, Messages.getString("training"), new FrameTeamTraining(),
+                        training, RepTeamTraining.getInstance(), null); //$NON-NLS-1$
+            }
+        }
+    }
 
-	/* PRIVATE */
+    public void deleteTraining() {
+        table.deleteSelectedRow(trainings, RepTeamTraining.getInstance(), this, null);
+    }
 
-	/** Identifikator tymu pro ktery jsou treninky zobrazeny */
-	private int teamId = -1;
+    /* PRIVATE */
+    /** Identifikator tymu pro ktery jsou treninky zobrazeny */
+    private int teamId = -1;
 
-	/** Tabulka zobrazujici seznam klubu */
-	private TableWithButtons table;
+    /** Tabulka zobrazujici seznam klubu */
+    private final TableWithButtons table;
 
-	/** Seznam treninku nactenych z databaze */
-	private List<TeamTraining> trainings;
+    /** Seznam treninku nactenych z databaze */
+    private List<TeamTraining> trainings;
 
 }

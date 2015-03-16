@@ -16,8 +16,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
@@ -25,87 +23,74 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("baseTheme")
 public class ViewClubRivals extends VerticalLayout implements View {
 
-	public ViewClubRivals() {
+    public enum Columns {
 
-		this.setCaption(Messages.getString("ViewClubRivals.0")); //$NON-NLS-1$
+        NAME, ADDRESS, WEB, GPS;
+    }
 
-		// vytvoreni tabulky a ovladacich tlacitek
-		table = new TableWithButtons(new ClickListener() {
+    public ViewClubRivals() {
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (event.getButton() == table.buttonAdd)
-					insertClub();
-				else if (event.getButton() == table.buttonEdit)
-					editClub();
-				else if (event.getButton() == table.buttonDelete)
-					deleteClub();
-			}
-		}, false);
-		table.addToOwner(this);
+        this.setCaption(Messages.getString("ViewClubRivals.0")); //$NON-NLS-1$
 
-		// vytvoreni sloupcu tabulky
-		table.table.addContainerProperty(Messages.getString("name"), String.class, null); //$NON-NLS-1$
-		table.table.addContainerProperty(Messages.getString("address"), String.class, null); //$NON-NLS-1$
-		table.table.addContainerProperty(Messages.getString("web"), Link.class, null); //$NON-NLS-1$
-		table.table.addContainerProperty(Messages.getString("gps"), String.class, null); //$NON-NLS-1$
-	}
+        TableWithButtons.UserColumnInfo[] columns = {
+            new TableWithButtons.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
+            new TableWithButtons.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address")),
+            new TableWithButtons.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web")),
+            new TableWithButtons.UserColumnInfo(Columns.GPS, String.class, Messages.getString("gps"))
+        };
 
-	@Override
-	public void enter(ViewChangeEvent event) {
-		
-		Security.authorize(Role.SPORT_MANAGER);
-		
-		try {
-			clubs = RepClubRival.selectAll(null);
+        // vytvoreni tabulky a ovladacich tlacitek
+        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table.addToOwner(this);
+    }
 
-			ClubRival club;
+    @Override
+    public void enter(ViewChangeEvent event) {
 
-			int defaultRow = table.getSelectedRow();
-			table.table.removeAllItems();
+        Security.authorize(Role.SPORT_MANAGER);
 
-			for (int i = 0; i < clubs.size(); ++i) {
-				club = clubs.get(i);
-				
-				// sestaveni adresy klubu do jednoho retezce
-				String address = Tools.Strings.concatenateText(
-						new String[] { club.getStreet(), club.getCity(), club.getCode() }, ", "); //$NON-NLS-1$
-				
-				// objekt odkazu na webove stranky klubu
-				Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
-				webLink.setTargetName("_blank"); //$NON-NLS-1$
-				
-				// pridani radky tabulky
-				table.table.addItem(new Object[] { club.getName(), address, webLink, club.getGPS() },
-						new Integer(i));
-			}
-			table.updateSelection(defaultRow);
+        try {
+            clubs = RepClubRival.selectAll(null);
 
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
-	}
+            table.removeAllRows();
+            for (int i = 0; i < clubs.size(); ++i) {
+                ClubRival club = clubs.get(i);
 
-	public void insertClub() {
-		ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"), new FrameClubRival(), new ClubRival(), RepClubRival.getInstance(), null); //$NON-NLS-1$
-	}
+                // sestaveni adresy klubu do jednoho retezce
+                String address = Tools.Strings.concatenateText(
+                        new String[]{club.getStreet(), club.getCity(), club.getCode()}, ", "); //$NON-NLS-1$
 
-	public void editClub() {
-		if (table.getSelectedRow() >= 0) {
-			ClubRival club = clubs.get(table.getSelectedRow());
-			ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"), new FrameClubRival(), club, RepClubRival.getInstance(), null); //$NON-NLS-1$
-		}
-	}
+                // objekt odkazu na webove stranky klubu
+                Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
+                webLink.setTargetName("_blank"); //$NON-NLS-1$
 
-	public void deleteClub() {
-		table.deleteSelectedRow(clubs, RepClubRival.getInstance(), this, null);
-	}
+                // pridani radky tabulky
+                table.addRow(new Object[]{club.getName(), address, webLink, club.getGPS()}, i);
+            }
+        } catch (SQLException e) {
+            Tools.msgBoxSQLException(e);
+        }
+    }
 
-	/* PRIVATE */
+    public void insertClub() {
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"), new FrameClubRival(), new ClubRival(), RepClubRival.getInstance(), null); //$NON-NLS-1$
+    }
 
-	/** Tabulka zobrazujici seznam klubu */
-	private TableWithButtons table;
+    public void editClub() {
+        if (table.getSelectedRow() >= 0) {
+            ClubRival club = clubs.get(table.getSelectedRow());
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"), new FrameClubRival(), club, RepClubRival.getInstance(), null); //$NON-NLS-1$
+        }
+    }
 
-	/** Seznam klubu nacteni z databaze */
-	private List<ClubRival> clubs;
+    public void deleteClub() {
+        table.deleteSelectedRow(clubs, RepClubRival.getInstance(), this, null);
+    }
+
+    /* PRIVATE */
+    /** Tabulka zobrazujici seznam klubu */
+    private TableWithButtons table;
+
+    /** Seznam klubu nacteni z databaze */
+    private List<ClubRival> clubs;
 }
