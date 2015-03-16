@@ -22,95 +22,87 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 public class ViewTeamMatches extends VerticalLayout implements View {
 
-	public ViewTeamMatches() {
+    public enum Columns {
 
-		this.setCaption(Messages.getString("matches")); //$NON-NLS-1$
+        MATCH, DATE_TIME, RESULT;
+    }
 
-		// vytvoreni tabulky a ovladacich tlacitek
-		table = new TableWithButtons(new ClickListener() {
+    public ViewTeamMatches() {
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (event.getButton() == table.buttonAdd)
-					insertMatch();
-				else if (event.getButton() == table.buttonEdit)
-					editMatch();
-				else if (event.getButton() == table.buttonDelete)
-					deleteMatch();
-			}
-		}, false);
-		table.addToOwner(this);
+        this.setCaption(Messages.getString("matches")); //$NON-NLS-1$
 
-		// vytvoreni sloupcu tabulky
-		table.table.addContainerProperty(Messages.getString("match"), String.class, null); //$NON-NLS-1$
-		table.table.addContainerProperty(Messages.getString("dateTime"), String.class, null); //$NON-NLS-1$
-		table.table.addContainerProperty(Messages.getString("result"), String.class, null); //$NON-NLS-1$
-	}
+        // columns definition
+        TableWithButtons.UserColumnInfo[] columns = {
+            new TableWithButtons.UserColumnInfo(Columns.MATCH, String.class, Messages.getString("match")),
+            new TableWithButtons.UserColumnInfo(Columns.DATE_TIME, String.class, Messages.getString("dateTime")),
+            new TableWithButtons.UserColumnInfo(Columns.RESULT, String.class, Messages.getString("result"))
+        };
 
-	@Override
-	public void enter(ViewChangeEvent event) {
-		
-		Security.authorize(Role.SPORT_MANAGER);
+        // vytvoreni tabulky a ovladacich tlacitek
+        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table.addToOwner(this);
+    }
 
-		if (event != null)
-			teamId = Tools.Strings.analyzeParameters(event);
+    @Override
+    public void enter(ViewChangeEvent event) {
 
-		int defaultRow = table.getSelectedRow();
-		table.table.removeAllItems();
+        Security.authorize(Role.SPORT_MANAGER);
 
-		if (teamId > 0) {
-			// nacteni seznamu treninku z databaze
-			games = null;
-			try {
-				games = RepTeamMatch.selectByTeamId(teamId, null);
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
+        if (event != null) {
+            teamId = Tools.Strings.analyzeParameters(event);
+        }
 
-			// inicializace tbulky
-			if (games != null) {
-				TeamMatch game;
-				for (int i = 0; i < games.size(); ++i) {
-					game = games.get(i);
-					table.table.addItem(
-							new Object[] { Tools.Strings.getStrGameTeams(game),
-									Tools.DateTime.dateToString(game.getStart(), DateStyle.DAY_AND_TIME), game.getScoreAsStr() },
-							i);
-				}
-			}
-			table.updateSelection(defaultRow);
-		}
-	}
+        table.removeAllRows();
 
-	public void insertMatch() {
-		TeamMatch data = new TeamMatch();
-		data.setClubTeamId(teamId);
+        if (teamId > 0) {
+            // nacteni seznamu treninku z databaze
+            games = null;
+            try {
+                games = RepTeamMatch.selectByTeamId(teamId, null);
+            } catch (SQLException e) {
+                Tools.msgBoxSQLException(e);
+            }
 
-		ModalDialog.show(this, Mode.ADD_MULTI,
-				Messages.getString("match"), new FrameTeamMatch(), data, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
-	}
+            // inicializace tbulky
+            if (games != null) {
+                TeamMatch game;
+                for (int i = 0; i < games.size(); ++i) {
+                    game = games.get(i);
+                    table.addRow(new Object[]{Tools.Strings.getStrGameTeams(game),
+                        Tools.DateTime.dateToString(game.getStart(), DateStyle.DAY_AND_TIME), game.getScoreAsStr()}, i);
+                }
+            }
+        }
+    }
 
-	public void editMatch() {
-		if (table.getSelectedRow() >= 0) {
-			TeamMatch game = games.get(table.getSelectedRow());
-			ModalDialog.show(this, Mode.EDIT,
-					Messages.getString("match"), new FrameTeamMatch(), game, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
-		}
-	}
+    public void insertMatch() {
+        TeamMatch data = new TeamMatch();
+        data.setClubTeamId(teamId);
 
-	public void deleteMatch() {
-		table.deleteSelectedRow(games, RepTeamMatch.getInstance(), this, null);
-	}
+        ModalDialog.show(this, Mode.ADD_MULTI,
+                Messages.getString("match"), new FrameTeamMatch(), data, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
+    }
 
-	/* PRIVATE */
+    public void editMatch() {
+        if (table.getSelectedRow() >= 0) {
+            TeamMatch game = games.get(table.getSelectedRow());
+            ModalDialog.show(this, Mode.EDIT,
+                    Messages.getString("match"), new FrameTeamMatch(), game, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
+        }
+    }
 
-	/** Identifikator tymu pro ktery jsou zapasy zobrazeny */
-	private int teamId = -1;
+    public void deleteMatch() {
+        table.deleteSelectedRow(games, RepTeamMatch.getInstance(), this, null);
+    }
 
-	/** Tabulka zobrazujici seznam zapasu */
-	private TableWithButtons table;
+    /* PRIVATE */
+    /** Identifikator tymu pro ktery jsou zapasy zobrazeny */
+    private int teamId = -1;
 
-	/** Seznam vsech zapasu pro jeden tym */
-	private List<TeamMatch> games = null;
+    /** Tabulka zobrazujici seznam zapasu */
+    private TableWithButtons table;
+
+    /** Seznam vsech zapasu pro jeden tym */
+    private List<TeamMatch> games = null;
 
 }

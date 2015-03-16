@@ -12385,7 +12385,27 @@ div.v-layout.v-horizontal.v-widget {
 	margin-bottom: 8px;
 }
 
+.valo_base .m-caution .v-icon {
+	color: #ed473b;
+}
+
+.valo_base .m-important .v-icon {
+	color: #1156a8;
+}
+
+.valo_base .m-helpful .v-icon {
+	color: #585858;
+}
+
+.valo_base .v-button-table-row {
+	padding: 0px 6px 0px 6px;
+}
+
 .valo_base .v-button-table {
+	margin: 8px 0px 8px 8px;
+}
+
+.valo_base .m-table-control {
 	margin: 8px 0px 8px 8px;
 }
 

@@ -23,131 +23,110 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("baseTheme")
 public class ViewCategories extends VerticalLayout implements View {
 
-	/* PUBLIC */
+    /* PUBLIC */
+    public enum Columns {
 
-	public ViewCategories(Navigation navigation) {
+        CAPTION;
+    }
 
-		this.setCaption(Messages.getString("category")); //$NON-NLS-1$
+    public ViewCategories(Navigation navigation) {
 
-		this.navigation = navigation;
+        this.setCaption(Messages.getString("category"));
+        this.navigation = navigation;
 
-		// vytvoreni tabulky a ovladacich tlacitek
-		table = new TableWithButtons(new ClickListener() {
+        TableWithButtons.UserColumnInfo[] columns = {
+            new TableWithButtons.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption"))
+        };
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (event.getButton() == table.buttonAdd)
-					addCategory();
-				else if (event.getButton() == table.buttonEdit)
-					editSelectedCategory();
-				else if (event.getButton() == table.buttonDelete)
-					deleteSelectedCategory();
-				else if (event.getButton() == table.buttonMoveUp)
-					exchangeCategories(true);
-				else if (event.getButton() == table.buttonMoveDown)
-					exchangeCategories(false);
-			}
-		}, true);
-		table.addToOwner(this);
+        table = new TableWithButtons(TableWithButtons.CtrlColumn.getMaximalSet(), columns, null);
+        table.addToOwner(this);
+    }
 
-		// vytvoreni sloupcu tabulky
-		table.table.addContainerProperty(Messages.getString("caption"), String.class, null); //$NON-NLS-1$
-	}
+    // interface View
+    @Override
+    public void enter(ViewChangeEvent event) {
 
-	// interface View
+        Security.authorize(Role.CLUB_MANAGER);
 
-	@Override
-	public void enter(ViewChangeEvent event) {
-		
-		Security.authorize(Role.CLUB_MANAGER);
-		
-		try {
-			categories = RepCategory.selectAll(null);
+        try {
+            categories = RepCategory.selectAll(null);
 
-			int defaultRow = table.getSelectedRow();
-			table.table.removeAllItems();
+            table.removeAllRows();
+            for (int i = 0; i < categories.size(); ++i) {
+                Category category = categories.get(i);
+                table.addRow(new Object[]{Tools.Strings.getCheckString(category.getActive())
+                    + "  " + category.getDescription()}, new Integer(i));
+            }
+        } catch (SQLException e) {
+            Tools.msgBoxSQLException(e);
+        }
+    }
 
-			Category category;
-			for (int i = 0; i < categories.size(); ++i) {
-				category = categories.get(i);
-				table.table
-						.addItem(
-								new Object[] { Tools.Strings.getCheckString(category.getActive())
-										+ "  " + category.getDescription() }, new Integer(i)); //$NON-NLS-1$
-			}
-			table.updateSelection(defaultRow);
+    // operations
+    /** Spusti modalni dialog pro pridani nove ktegorie */
+    public void addCategory() {
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("categoryProperties"), new FrameCategory(), new Category(), //$NON-NLS-1$
+                RepCategory.getInstance(), this.navigation);
+    }
 
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
-	}
+    /** Spusti modalni dialog pro zmenu vlastnosti vybrane ktegorie */
+    public void editSelectedCategory() {
+        if (table.getSelectedRow() >= 0) {
+            Category category = categories.get(table.getSelectedRow());
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
+                    RepCategory.getInstance(), this.navigation);
+        }
+    }
 
-	// operations
+    /** Zobrazi dotaz uzivateli a pripadne odstrani vybranou ktegorii */
+    public void deleteSelectedCategory() {
+        try {
+            // vymazani prvku z databaze
+            if ((table.getSelectedRow() >= 0) && (table.getSelectedRow() < categories.size())) {
+                RepCategory.delete(categories.get(table.getSelectedRow()).getId());
+            }
+            updateApp();
+        } catch (SQLException e) {
+            Tools.msgBoxSQLException(e);
+        }
+    }
 
-	/** Spusti modalni dialog pro pridani nove ktegorie */
-	public void addCategory() {
-		ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("categoryProperties"), new FrameCategory(), new Category(), //$NON-NLS-1$
-				RepCategory.getInstance(), this.navigation);
-	}
+    /**
+     * Posune vybranou radku nahoru nebo dolu
+     *
+     * @param moveUp smer posunu
+     */
+    public void exchangeCategories(boolean moveUp) {
+        int idA = table.getSelectedRow();
+        int idB = table.getMoveIndex(moveUp);
+        if ((idA >= 0) && (idB >= 0)) {
+            try {
+                RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
+                //table.table.setValue(idB);
+                updateApp();
+            } catch (SQLException e) {
+                Tools.msgBoxSQLException(e);
+            }
+        }
+    }
 
-	/** Spusti modalni dialog pro zmenu vlastnosti vybrane ktegorie */
-	public void editSelectedCategory() {
-		if (table.getSelectedRow() >= 0) {
-			Category category = categories.get(table.getSelectedRow());
-			ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
-					RepCategory.getInstance(), this.navigation);
-		}
-	}
+    /* PRIVATE */
+    /** Aktualizaje tabulky i navigacni menu aplikace */
+    private void updateApp() {
+        // aktualizace tabulky
+        enter(null);
+        // aktualizace navigacniho menu
+        if (navigation != null) {
+            navigation.updateNavigationMenu();
+        }
+    }
 
-	/** Zobrazi dotaz uzivateli a pripadne odstrani vybranou ktegorii */
-	public void deleteSelectedCategory() {
-		try {
-			// vymazani prvku z databaze
-			if ((table.getSelectedRow() >= 0) && (table.getSelectedRow() < categories.size()))
-				RepCategory.delete(categories.get(table.getSelectedRow()).getId());
-			updateApp();
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
-	}
+    /** Komponenty tabulky */
+    private final TableWithButtons table;
 
-	/**
-	 * Posune vybranou radku nahoru nebo dolu
-	 * 
-	 * @param moveUp
-	 *            smer posunu
-	 */
-	public void exchangeCategories(boolean moveUp) {
-		int idA = table.getSelectedRow();
-		int idB = table.getMoveIndex(moveUp);
-		if ((idA >= 0) && (idB >= 0)) {
-			try {
-				RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
-				table.table.setValue(idB);
-				updateApp();
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
-		}
-	}
+    /** Seznam aktualne zobrazenych kategorii */
+    private List<Category> categories = null;
 
-	/* PRIVATE */
-
-	/** Aktualizaje tabulky i navigacni menu aplikace */
-	private void updateApp() {
-		// aktualizace tabulky
-		enter(null);
-		// aktualizace navigacniho menu
-		if (navigation != null)
-			navigation.updateNavigationMenu();
-	}
-
-	/** Komponenty tabulky */
-	private TableWithButtons table;
-
-	/** Seznam aktualne zobrazenych kategorii */
-	private List<Category> categories = null;
-
-	/** Navigace v aplikaci */
-	private Navigation navigation;
+    /** Navigace v aplikaci */
+    private final Navigation navigation;
 }
