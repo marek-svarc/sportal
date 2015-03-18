@@ -13,9 +13,8 @@ import com.clubeek.model.TeamMember;
 import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameSelectMembers;
-import com.clubeek.ui.frames.FrameTeamFunctions;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
@@ -27,7 +26,7 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class ViewTeamMembers extends VerticalLayout implements View {
+public class ViewTeamMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     public enum Columns {
 
@@ -36,21 +35,18 @@ public class ViewTeamMembers extends VerticalLayout implements View {
 
     public ViewTeamMembers() {
 
-        this.setCaption(Messages.getString("assignmentToTeams")); //$NON-NLS-1$
+        this.setCaption(Messages.getString("assignmentToTeams"));
 
         // columns definition
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
-            new TableWithButtons.UserColumnInfo(Columns.SURNAME, String.class, Messages.getString("caption")),
-            new TableWithButtons.UserColumnInfo(Columns.DATE_OF_BIRTH, String.class, Messages.getString("dateOfBirth")),
-            new TableWithButtons.UserColumnInfo(Columns.POSITION_IN_TEAM, String.class, Messages.getString("positionInTeam")),
-//            new TableWithButtons.UserColumnInfo(Columns.SELECT_TEAM_MEMBERS, String.class, Messages.getString("selectTeamMembers")),
-//            new TableWithButtons.UserColumnInfo(Columns.EDIT_TEAM_FUNCTION, String.class, Messages.getString("editTeamFunction"))
-        };
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
+            new ActionTable.UserColumnInfo(Columns.SURNAME, String.class, Messages.getString("caption")),
+            new ActionTable.UserColumnInfo(Columns.DATE_OF_BIRTH, String.class, Messages.getString("dateOfBirth")),
+            new ActionTable.UserColumnInfo(Columns.POSITION_IN_TEAM, String.class, Messages.getString("positionInTeam")),};
 
         // tabulka clenu tymu
-        tbTeamMembers = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
-        tbTeamMembers.addToOwner(this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table.addToOwner(this);
 
         // Seznam pro vyber editovaneho tymu
         nsTeams = new NativeSelect(null);
@@ -62,14 +58,14 @@ public class ViewTeamMembers extends VerticalLayout implements View {
                 updateTeamMembersTable();
             }
         });
-        tbTeamMembers.addTableControl(nsTeams, 0);
+        table.addTableControl(nsTeams, 0);
 
         Label laTeams = new Label(" - ");
-        tbTeamMembers.addTableControl(laTeams, 1);
+        table.addTableControl(laTeams, 1);
 
     }
 
-    /** Implementace rozhrani View */
+    // interface View
     @Override
     public void enter(ViewChangeEvent event) {
         List<ClubTeam> teams = null;
@@ -95,36 +91,40 @@ public class ViewTeamMembers extends VerticalLayout implements View {
         nsTeams.setValue(selectedTeam);
     }
 
-    /** Vraci aktualne vybrany tym */
+    // interface ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                selectTeamMembers();
+                break;
+            case SINGLE_DELETE:
+                deleteTeamMember((int) data);
+                break;
+        }
+        return true;
+    }
+
+    // properties
     public ClubTeam getSelectedTeam() {
         return (ClubTeam) nsTeams.getValue();
     }
 
-    /** Vraci aktualne vybranneho clena tymu */
-    public TeamMember getSelectedTeamMember() {
-        if (tbTeamMembers.getSelectedRow() >= 0) {
-            return dataTeamMembers.get(tbTeamMembers.getSelectedRow());
-        } else {
-            return null;
-        }
-    }
-
     /* PRIVATE */
-    /** Aktualizuje radky v tabulce clena aktualne vybraneho tymu. */
     private void updateTeamMembersTable() {
-        tbTeamMembers.removeAllRows();
+        table.removeAllRows();
 
         try {
             ClubTeam selectedTeam = getSelectedTeam();
             if (selectedTeam != null) {
                 // read team members from database
-                dataTeamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
+                teamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
 
                 // fill table
-                for (int i = 0; i < dataTeamMembers.size(); ++i) {
-                    TeamMember teamMember = dataTeamMembers.get(i);
+                for (int i = 0; i < teamMembers.size(); ++i) {
+                    TeamMember teamMember = teamMembers.get(i);
                     ClubMember clubMember = teamMember.getClubMember();
-                    tbTeamMembers.addRow(new Object[]{clubMember.getName(), clubMember.getSurname(),
+                    table.addRow(new Object[]{clubMember.getName(), clubMember.getSurname(),
                         clubMember.getBirthdateAsString(), teamMember.getFunctionsAsList().toString()}, new Integer(i));
                 }
             }
@@ -142,19 +142,19 @@ public class ViewTeamMembers extends VerticalLayout implements View {
 
             try {
                 // seznam clenu klubu asociovanych se zobrazenymi cleny tymu
-                final List<ClubMember> clubMembers = new ArrayList<>(dataTeamMembers.size());
-                for (TeamMember teamMember : dataTeamMembers) {
+                final List<ClubMember> clubMembers = new ArrayList<>(teamMembers.size());
+                for (TeamMember teamMember : teamMembers) {
                     clubMembers.add(teamMember.getClubMember());
                 }
 
                 // vytvoreni dialogu
-                ModalDialog<List<ClubMember>> dlg = new ModalDialog<List<ClubMember>>(Mode.EDIT, Messages.getString("selectTeamMembers"), //$NON-NLS-1$
+                ModalDialog<List<ClubMember>> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("selectTeamMembers"), //$NON-NLS-1$
                         new FrameSelectMembers(), clubMembers, new ClickListener() {
 
                             @Override
                             public void buttonClick(ClickEvent event) {
                                 try {
-                                    RepTeamMember.update(dataTeamMembers,
+                                    RepTeamMember.update(teamMembers,
                                             RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
                                 } catch (SQLException e) {
                                     Tools.msgBoxSQLException(e);
@@ -171,35 +171,24 @@ public class ViewTeamMembers extends VerticalLayout implements View {
         }
     }
 
-    /** Spusti modalni okno pro vyber funkci v tymu */
-    private void selectTeamFunctions() {
-        final TeamMember selectedTeamMember = getSelectedTeamMember();
-
-        if (selectedTeamMember != null) {
-            ModalDialog.show(this, Mode.EDIT, Messages.getString("editTeamFunction"), new FrameTeamFunctions(), selectedTeamMember, //$NON-NLS-1$
-                    RepTeamMember.getInstance(), null);
-        }
+    private void deleteTeamMember(int id) {
+        table.deleteRow(teamMembers.get(id).getId(), RepTeamMember.getInstance(), this, null);
     }
 
-    private void deleteTeamMember() {
-        try {
-            // vymazani prvku z databaze
-            if ((tbTeamMembers.getSelectedRow() >= 0) && (tbTeamMembers.getSelectedRow() < dataTeamMembers.size())) {
-                RepTeamMember.delete(dataTeamMembers.get(tbTeamMembers.getSelectedRow()).getId());
-            }
-            // aktualizace stranky
-            enter(null);
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
-        }
-    }
+//    private void selectTeamFunctions() {
+//        final TeamMember selectedTeamMember = getSelectedTeamMember();
+//
+//        if (selectedTeamMember != null) {
+//            ModalDialog.show(this, Mode.EDIT, Messages.getString("editTeamFunction"), new FrameTeamFunctions(), selectedTeamMember, //$NON-NLS-1$
+//                    RepTeamMember.getInstance(), null);
+//        }
+//    }
+    /** Teams selection component */
+    private final NativeSelect nsTeams;
 
-    /** Seznam pro vyber tymu */
-    private NativeSelect nsTeams;
+    /** Table component */
+    private final ActionTable table;
 
-    /** Tabulka clenu asociovanych s tymem */
-    private TableWithButtons tbTeamMembers;
-
-    /** Seznam clenu tymu zobrazenych v tabulce */
-    private List<TeamMember> dataTeamMembers;
+    /** List of team members loaded from the database */
+    private List<TeamMember> teamMembers;
 }

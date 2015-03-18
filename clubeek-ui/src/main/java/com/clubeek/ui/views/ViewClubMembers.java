@@ -13,7 +13,7 @@ import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubMember;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -22,7 +22,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public final class ViewClubMembers extends VerticalLayout implements View {
+public final class ViewClubMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     public enum Columns {
 
@@ -32,17 +32,34 @@ public final class ViewClubMembers extends VerticalLayout implements View {
     public ViewClubMembers() {
         this.setCaption(Messages.getString("members"));
 
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
-            new TableWithButtons.UserColumnInfo(Columns.SURNAME, String.class, Messages.getString("surname")),
-            new TableWithButtons.UserColumnInfo(Columns.REG_NO, String.class, Messages.getString("regNo")),
-            new TableWithButtons.UserColumnInfo(Columns.DATE_OF_BIRTH, String.class, Messages.getString("dateOfBirth")),
-            new TableWithButtons.UserColumnInfo(Columns.PERSONAL_NO, String.class, Messages.getString("personalNo")),
-            new TableWithButtons.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address"))
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
+            new ActionTable.UserColumnInfo(Columns.SURNAME, String.class, Messages.getString("surname")),
+            new ActionTable.UserColumnInfo(Columns.REG_NO, String.class, Messages.getString("regNo")),
+            new ActionTable.UserColumnInfo(Columns.DATE_OF_BIRTH, String.class, Messages.getString("dateOfBirth")),
+            new ActionTable.UserColumnInfo(Columns.PERSONAL_NO, String.class, Messages.getString("personalNo")),
+            new ActionTable.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address"))
         };
 
-        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
         table.addToOwner(this);
+    }
+
+    // ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                addMember();
+                break;
+            case SINGLE_EDIT:
+                editMember((int) data);
+                break;
+            case SINGLE_DELETE:
+                deleteMember((int) data);
+                break;
+        }
+        return true;
     }
 
     // interface View
@@ -62,33 +79,27 @@ public final class ViewClubMembers extends VerticalLayout implements View {
                         new String[]{member.getStreet(), member.getCity(), member.getCode()}, ", "); //$NON-NLS-1$
 
                 table.addRow(new Object[]{member.getName(), member.getSurname(), member.getIdRegistration(),
-                    member.getBirthdateAsString(), member.getIdPersonal(), address}, new Integer(i));
+                    member.getBirthdateAsString(), member.getIdPersonal(), address}, i);
             }
         } catch (SQLException e) {
             Tools.msgBoxSQLException(e);
         }
     }
 
-    /* PRIVATE */
-    /** Spusti modalni dialog pro pridani noveho clena klubu */
+    // operations
     public void addMember() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newMember"), new FrameClubMember(), new ClubMember(), //$NON-NLS-1$
                 RepClubMember.getInstance(), null);
     }
 
-    /**
-     * Spusti modalni dialog pro zmenu vlastnosti vybraneho clena klubu
-     *
-     * @throws SQLException
-     */
-    public void editSelectedMember() throws SQLException {
-        if (table.getSelectedRow() >= 0) {
-            // data asociovana s vybranym radkem
-            final ClubMember data = members.get(table.getSelectedRow());
+    public void editMember(int id) {
+        // data asociovana s vybranym radkem
+        final ClubMember data = members.get(id);
+        try {
             // kopie kontaktu
             final ArrayList<Contact> oldContacts = new ArrayList<>(data.getContacts());
             // vytvoreni dialogu
-            ModalDialog<ClubMember> dlg = new ModalDialog<ClubMember>(Mode.EDIT, Messages.getString("clubMemberProperties"), //$NON-NLS-1$
+            ModalDialog<ClubMember> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("clubMemberProperties"), //$NON-NLS-1$
                     new FrameClubMember(), data, new ClickListener() {
 
                         @Override
@@ -107,28 +118,20 @@ public final class ViewClubMembers extends VerticalLayout implements View {
                     });
             // zobrazeni dialogu
             getUI().addWindow(dlg);
-        }
-    }
-
-    /** Zobrazi dotaz uzivateli a pripadne odstrani vybranou ktegorii */
-    public void deleteSelectedMember() {
-        try {
-            // vymazani prvku z databaze
-            if ((table.getSelectedRow() >= 0) && (table.getSelectedRow() < members.size())) {
-                RepClubMember.delete(members.get(table.getSelectedRow()).getId());
-            }
-            // aktualizace stranky
-            enter(null);
         } catch (SQLException e) {
             Tools.msgBoxSQLException(e);
         }
     }
 
-    /* PRIVATE */
-    /** Komponenty tabulky */
-    private TableWithButtons table;
+    public void deleteMember(int id) {
+        table.deleteRow(members.get(id).getId(), RepClubMember.getInstance(), this, null);
+    }
 
-    /** Seznam aktualne zobrazenych kategorii */
+    /* PRIVATE */
+    /** table component */
+    private final ActionTable table;
+
+    /** List of all club members */
     private List<ClubMember> members = null;
 
 }

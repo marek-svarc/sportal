@@ -10,9 +10,8 @@ import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubRival;
-import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
@@ -20,8 +19,7 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-@Theme("baseTheme")
-public class ViewClubRivals extends VerticalLayout implements View {
+public class ViewClubRivals extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     public enum Columns {
 
@@ -32,18 +30,19 @@ public class ViewClubRivals extends VerticalLayout implements View {
 
         this.setCaption(Messages.getString("ViewClubRivals.0")); //$NON-NLS-1$
 
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
-            new TableWithButtons.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address")),
-            new TableWithButtons.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web")),
-            new TableWithButtons.UserColumnInfo(Columns.GPS, String.class, Messages.getString("gps"))
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
+            new ActionTable.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address")),
+            new ActionTable.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web")),
+            new ActionTable.UserColumnInfo(Columns.GPS, String.class, Messages.getString("gps"))
         };
 
         // vytvoreni tabulky a ovladacich tlacitek
-        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
         table.addToOwner(this);
     }
 
+    // interface View
     @Override
     public void enter(ViewChangeEvent event) {
 
@@ -72,25 +71,42 @@ public class ViewClubRivals extends VerticalLayout implements View {
         }
     }
 
-    public void insertClub() {
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"), new FrameClubRival(), new ClubRival(), RepClubRival.getInstance(), null); //$NON-NLS-1$
-    }
-
-    public void editClub() {
-        if (table.getSelectedRow() >= 0) {
-            ClubRival club = clubs.get(table.getSelectedRow());
-            ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"), new FrameClubRival(), club, RepClubRival.getInstance(), null); //$NON-NLS-1$
+    // interface ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                addClub();
+                break;
+            case SINGLE_EDIT:
+                editClub((int) data);
+                break;
+            case SINGLE_DELETE:
+                deleteClub((int) data);
+                break;
         }
+        return true;
     }
 
-    public void deleteClub() {
-        table.deleteSelectedRow(clubs, RepClubRival.getInstance(), this, null);
+    public void addClub() {
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"),
+                new FrameClubRival(), new ClubRival(), RepClubRival.getInstance(), null);
+    }
+
+    public void editClub(int id) {
+        ClubRival club = clubs.get(id);
+        ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"),
+                new FrameClubRival(), club, RepClubRival.getInstance(), null);
+    }
+
+    public void deleteClub(int id) {
+        table.deleteRow(clubs.get(id).getId(), RepClubRival.getInstance(), this, null);
     }
 
     /* PRIVATE */
-    /** Tabulka zobrazujici seznam klubu */
-    private TableWithButtons table;
+    /** Table component */
+    private final ActionTable table;
 
-    /** Seznam klubu nacteni z databaze */
+    /** List of clubs loaded from the database */
     private List<ClubRival> clubs;
 }

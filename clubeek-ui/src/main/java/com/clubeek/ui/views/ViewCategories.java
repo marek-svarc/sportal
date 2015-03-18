@@ -10,18 +10,14 @@ import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameCategory;
-import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-@Theme("baseTheme")
-public class ViewCategories extends VerticalLayout implements View {
+public class ViewCategories extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     /* PUBLIC */
     public enum Columns {
@@ -34,11 +30,11 @@ public class ViewCategories extends VerticalLayout implements View {
         this.setCaption(Messages.getString("category"));
         this.navigation = navigation;
 
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption"))
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption"))
         };
 
-        table = new TableWithButtons(TableWithButtons.CtrlColumn.getMaximalSet(), columns, null);
+        table = new ActionTable(ActionTable.Action.getMaximalSet(), columns, this);
         table.addToOwner(this);
     }
 
@@ -55,40 +51,44 @@ public class ViewCategories extends VerticalLayout implements View {
             for (int i = 0; i < categories.size(); ++i) {
                 Category category = categories.get(i);
                 table.addRow(new Object[]{Tools.Strings.getCheckString(category.getActive())
-                    + "  " + category.getDescription()}, new Integer(i));
+                    + "  " + category.getDescription()}, i);
             }
         } catch (SQLException e) {
             Tools.msgBoxSQLException(e);
         }
     }
 
+    // interface ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                addCategory();
+                break;
+            case SINGLE_EDIT:
+                editCategory((int) data);
+                break;
+            case SINGLE_DELETE:
+                deleteCategory((int) data);
+                break;
+        }
+        return true;
+    }
+
     // operations
-    /** Spusti modalni dialog pro pridani nove ktegorie */
     public void addCategory() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("categoryProperties"), new FrameCategory(), new Category(), //$NON-NLS-1$
                 RepCategory.getInstance(), this.navigation);
     }
 
-    /** Spusti modalni dialog pro zmenu vlastnosti vybrane ktegorie */
-    public void editSelectedCategory() {
-        if (table.getSelectedRow() >= 0) {
-            Category category = categories.get(table.getSelectedRow());
-            ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
-                    RepCategory.getInstance(), this.navigation);
-        }
+    public void editCategory(int id) {
+        Category category = categories.get(id);
+        ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
+                RepCategory.getInstance(), this.navigation);
     }
 
-    /** Zobrazi dotaz uzivateli a pripadne odstrani vybranou ktegorii */
-    public void deleteSelectedCategory() {
-        try {
-            // vymazani prvku z databaze
-            if ((table.getSelectedRow() >= 0) && (table.getSelectedRow() < categories.size())) {
-                RepCategory.delete(categories.get(table.getSelectedRow()).getId());
-            }
-            updateApp();
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
-        }
+    public void deleteCategory(int id) {
+        table.deleteRow(categories.get(id).getId(), RepCategory.getInstance(), this, navigation);
     }
 
     /**
@@ -97,17 +97,17 @@ public class ViewCategories extends VerticalLayout implements View {
      * @param moveUp smer posunu
      */
     public void exchangeCategories(boolean moveUp) {
-        int idA = table.getSelectedRow();
-        int idB = table.getMoveIndex(moveUp);
-        if ((idA >= 0) && (idB >= 0)) {
-            try {
-                RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
-                //table.table.setValue(idB);
-                updateApp();
-            } catch (SQLException e) {
-                Tools.msgBoxSQLException(e);
-            }
-        }
+//        int idA = table.getSelectedRow();
+//        int idB = table.getMoveIndex(moveUp);
+//        if ((idA >= 0) && (idB >= 0)) {
+//            try {
+//                RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
+//                //table.table.setValue(idB);
+//                updateApp();
+//            } catch (SQLException e) {
+//                Tools.msgBoxSQLException(e);
+//            }
+//        }
     }
 
     /* PRIVATE */
@@ -122,7 +122,7 @@ public class ViewCategories extends VerticalLayout implements View {
     }
 
     /** Komponenty tabulky */
-    private final TableWithButtons table;
+    private final ActionTable table;
 
     /** Seznam aktualne zobrazenych kategorii */
     private List<Category> categories = null;

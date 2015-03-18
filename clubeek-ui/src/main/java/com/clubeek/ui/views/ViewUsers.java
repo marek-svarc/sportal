@@ -11,14 +11,14 @@ import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameUser;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class ViewUsers extends VerticalLayout implements View {
+public class ViewUsers extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     public enum Columns {
 
@@ -28,33 +28,17 @@ public class ViewUsers extends VerticalLayout implements View {
     public ViewUsers() {
         this.setCaption(Messages.getString("userManagement")); //$NON-NLS-1$
 
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.USER_NAME, String.class, Messages.getString("userName")),
-            new TableWithButtons.UserColumnInfo(Columns.AUTHORIZATION, String.class, Messages.getString("authorization")),
-            new TableWithButtons.UserColumnInfo(Columns.TEAM_MEMBER, String.class, Messages.getString("teamMember"))
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.USER_NAME, String.class, Messages.getString("userName")),
+            new ActionTable.UserColumnInfo(Columns.AUTHORIZATION, String.class, Messages.getString("authorization")),
+            new ActionTable.UserColumnInfo(Columns.TEAM_MEMBER, String.class, Messages.getString("teamMember"))
         };
 
-        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
         table.addToOwner(this);
     }
 
-    public void insertUser() {
-        User data = new User();
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newUser"), new FrameUser(), data, RepUser.getInstance(), null); //$NON-NLS-1$
-    }
-
-    public void editUser() {
-        if (table.getSelectedRow() >= 0) {
-            User user = users.get(table.getSelectedRow());
-            ModalDialog.show(this, Mode.EDIT, String.format("%s '%s'", Messages.getString("userProperties"), user.getName()), new FrameUser(), //$NON-NLS-1$ //$NON-NLS-2$
-                    user, RepUser.getInstance(), null);
-        }
-    }
-
-    public void deleteUser() {
-        table.deleteSelectedRow(users, RepUser.getInstance(), this, null);
-    }
-
+    // interface View
     @Override
     public void enter(ViewChangeEvent event) {
 
@@ -85,8 +69,45 @@ public class ViewUsers extends VerticalLayout implements View {
         }
     }
 
-    /* PRIVATE */
-    private final TableWithButtons table;
+    // interface ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                addUser();
+                break;
+            case SINGLE_EDIT:
+                editUser((int) data);
+                break;
+            case SINGLE_DELETE:
+                deleteUser((int) data);
+                break;
+        }
+        return true;
+    }
 
+    public void addUser() {
+        User data = new User();
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newUser"), new FrameUser(),
+                data, RepUser.getInstance(), null);
+    }
+
+    public void editUser(int id) {
+        if (id >= 0) {
+            User user = users.get(id);
+            ModalDialog.show(this, Mode.EDIT, String.format("%s '%s'", Messages.getString("userProperties"),
+                    user.getName()), new FrameUser(), user, RepUser.getInstance(), null);
+        }
+    }
+
+    public void deleteUser(int id) {
+        table.deleteRow(users.get(id).getId(), RepUser.getInstance(), this, null);
+    }
+
+    /* PRIVATE */
+    /** Table component */
+    private final ActionTable table;
+
+    /** List of users loaded from the database */
     private List<User> users = null;
 }
