@@ -20,27 +20,55 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
- * Trida zapouzdrujici skupinu komponent tvoricich tabulku a ovladaci tlacitka
- * (Pridat, Upravit, Smazat)
+ * Component that contains of table with buttons for single action and buttons
+ * for group actions on selected items.
  *
  * @author Marek Svarc
- *
  */
-public final class TableWithButtons {
+public final class ActionTable {
 
     /* PUBLIC */
-    public static enum CtrlColumn {
+    /** All actions provided by the table */
+    public static enum Action {
 
-        CBX_SELECTION, BTN_EDIT, BTN_DELETE, BTN_SORT;
+        SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE, SINGLE_MOVE_UP, SINGLE_MOVE_DOWN, SELECTED_EDIT, SELECTED_DELETE;
 
-        public static SimpleEnumSet<CtrlColumn> getStandardSet() {
-            return new SimpleEnumSet<>(CBX_SELECTION, BTN_EDIT, BTN_DELETE);
+        public static SimpleEnumSet<Action> getStandardSet(boolean useSelection) {
+            if (useSelection) {
+                return new SimpleEnumSet<>(SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE, SELECTED_EDIT, SELECTED_DELETE);
+            } else {
+                return new SimpleEnumSet<>(SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE);
+            }
         }
 
-        public static SimpleEnumSet<CtrlColumn> getMaximalSet() {
-            return new SimpleEnumSet<>(CtrlColumn.values());
+        public static SimpleEnumSet<Action> getStandardSet() {
+            return getStandardSet(false);
         }
 
+        public static SimpleEnumSet<Action> getMaximalSet(boolean useSelection) {
+            SimpleEnumSet<Action> flags = new SimpleEnumSet<>(Action.values());
+            if (!useSelection) {
+                flags.removeValues(SELECTED_EDIT, SELECTED_DELETE);
+            }
+            return flags;
+        }
+
+        public static SimpleEnumSet<Action> getMaximalSet() {
+            return getMaximalSet(false);
+        }
+    }
+
+    /** Enables to perform operation depending on the selected action. */
+    public interface OnActionListener {
+
+        /**
+         * Perform user action.
+         *
+         * @param action Identifier of the action.
+         * @param data Data needed for operation.
+         * @return Returns true if actions is performed .
+         */
+        boolean doAction(Action action, Object data);
     }
 
     /** Class that provides informations about one column in the table. */
@@ -62,17 +90,24 @@ public final class TableWithButtons {
         }
     }
 
-    public TableWithButtons(SimpleEnumSet<CtrlColumn> ctrlColumns, UserColumnInfo[] userColumns, Button.ClickListener listener) {
+    public ActionTable(SimpleEnumSet<Action> ctrlColumns, UserColumnInfo[] userColumns, OnActionListener actionListener) {
 
-        this.ctrlColumns = ctrlColumns;
+        this.userActions = ctrlColumns;
         this.userColumns = userColumns;
+        this.onActionListener = actionListener;
 
         // layout to place buttons
         controlsLayout = new HorizontalLayout();
         controlsLayout.setSizeUndefined();
 
         // buttons
-        buttonAdd = new Button(Messages.getString("add")); //, listener); //$NON-NLS-1$
+        Button buttonAdd = new Button(Messages.getString("add"), new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                callOnActionListener(Action.SINGLE_ADD, null);
+            }
+        });
         setButtonStyle(buttonAdd, ValoTheme.BUTTON_FRIENDLY); //$NON-NLS-1$
         controlsLayout.addComponent(buttonAdd);
 
@@ -86,19 +121,18 @@ public final class TableWithButtons {
         table.setSelectable(false);
         table.setMultiSelect(false);
         table.setNullSelectionAllowed(true);
-        table.setSortEnabled(!ctrlColumns.contains(CtrlColumn.BTN_SORT));
+        table.setSortEnabled(!isSelectionColumn());
         table.setValue(null);
 
         // create controls column
-        if (isChbSelection()) {
-            table.addContainerProperty("chbSelection", CheckBox.class, null, "", null, null);
+        if (isSelectionColumn()) {
+            table.addContainerProperty("selectionClm", CheckBox.class, null, "", null, null);
         }
-        if (isBtnStandardLayout()) {
-            table.addContainerProperty("btnStandard", HorizontalLayout.class, null, "", null, null);
+        if (isEditColumn()) {
+            table.addContainerProperty("editClm", HorizontalLayout.class, null, "", null, null);
         }
-        if (isBtnSortLayout()) {
-            table.addContainerProperty("btnSort", HorizontalLayout.class, null, "", null, null);
-            table.setColumnWidth("btnSort", -1);
+        if (isSortColumn()) {
+            table.addContainerProperty("sortClm", HorizontalLayout.class, null, "", null, null);
         }
 
         // crate user columns
@@ -131,37 +165,71 @@ public final class TableWithButtons {
         controlsLayout.addComponent(component, index);
     }
 
+    /**
+     * Set cell style generator for Table.
+     *
+     * @param generator New cell style generator or null to remove generator.
+     */
+    public void setCellStyleGenerator(Table.CellStyleGenerator generator) {
+        table.setCellStyleGenerator(generator);
+    }
+
+    /** Removes all rows from the table. */
     public void removeAllRows() {
         this.table.removeAllItems();
     }
 
-    public void addRow(Object[] userCells, Object itemId) {
+    public void addRow(Object[] userCells, final Object data) {
 
         Object[] cells = new Object[userCells.length + getCtrlColumnsCount()];
 
         int column = 0;
 
-        if (isChbSelection()) {
+        if (isSelectionColumn()) {
             cells[column] = new CheckBox();
             ++column;
         }
 
-        if (isBtnStandardLayout()) {
+        if (isEditColumn()) {
             HorizontalLayout layout = new HorizontalLayout();
-            if (ctrlColumns.contains(CtrlColumn.BTN_EDIT)) {
-                layout.addComponent(createButton(FontAwesome.PENCIL, null, "m-important"));
+            if (userActions.contains(Action.SINGLE_EDIT)) {
+                layout.addComponent(createInRowButton(FontAwesome.PENCIL, null, "m-important", new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        callOnActionListener(Action.SINGLE_EDIT, data);
+                    }
+                }));
             }
-            if (ctrlColumns.contains(CtrlColumn.BTN_DELETE)) {
-                layout.addComponent(createButton(FontAwesome.MINUS_CIRCLE, null, "m-caution"));
+            if (userActions.contains(Action.SINGLE_DELETE)) {
+                layout.addComponent(createInRowButton(FontAwesome.MINUS_CIRCLE, null, "m-caution", new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        callOnActionListener(Action.SINGLE_DELETE, data);
+                    }
+                }));
             }
             cells[column] = layout;
             ++column;
         }
 
-        if (isBtnSortLayout()) {
+        if (isSortColumn()) {
             HorizontalLayout layout = new HorizontalLayout();
-            layout.addComponent(createButton(null, "\u25B2", "m-helpful"));
-            layout.addComponent(createButton(null, "\u25BC", "m-helpful"));
+            layout.addComponent(createInRowButton(null, "\u25B2", "m-helpful", new Button.ClickListener() {
+
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    callOnActionListener(Action.SINGLE_MOVE_UP, data);
+                }
+            }));
+            layout.addComponent(createInRowButton(null, "\u25BC", "m-helpful", new Button.ClickListener() {
+
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    callOnActionListener(Action.SINGLE_MOVE_DOWN, data);
+                }
+            }));
             cells[column] = layout;
             ++column;
         }
@@ -171,7 +239,7 @@ public final class TableWithButtons {
             ++column;
         }
 
-        table.addItem(cells, itemId);
+        table.addItem(cells, data);
     }
 
     public void addToOwner(AbstractOrderedLayout owner) {
@@ -194,77 +262,32 @@ public final class TableWithButtons {
 //        }
     }
 
-    /** Vraci index vybrane radky */
-    public int getSelectedRow() {
-        Object value = table.getValue();
-        return value != null ? (int) value : -1;
-    }
-
-    /** Odstrani vybranou radku */
-    public <T extends Unique> void deleteSelectedRow(final Repository<T> dataAdmin, final Component parent,
+    /**
+     * Delete one row from the table.
+     *
+     * @param <T>
+     * @param id Unique id of deleted object
+     * @param dataAdmin
+     * @param parent
+     * @param navigation
+     */
+    public <T extends Unique> void deleteRow(int id, final Repository<T> dataAdmin, final Component parent,
             final Navigation navigation) {
-        int id = (int) table.getValue();
         if (id > 0) {
-            // odstraneni z databaze
+            // delete from the database
             try {
                 dataAdmin.deleteRow(id);
             } catch (SQLException e) {
                 Tools.msgBoxSQLException(e);
             }
-            // aktualizace aplikace
+            // update view
             if (parent instanceof View) {
                 ((View) parent).enter(null);
             }
-            // aktualizace navigace v aplikaci
+            // aupdate navigation menu
             if (navigation != null) {
                 navigation.updateNavigationMenu();
             }
-        }
-    }
-
-    /** Odstrani vybranou radku */
-    public <T extends Unique> void deleteSelectedRow(List<T> data, final Repository<T> dataAdmin, final Component parent,
-            final Navigation navigation) {
-        try {
-            // vymazani prvku z databaze
-            if ((this.getSelectedRow() >= 0) && (this.getSelectedRow() < table.size())) {
-                // odstraneni z databaze
-                dataAdmin.deleteRow(data.get(this.getSelectedRow()).getId());
-                // aktualizace aplikace
-                if (parent instanceof View) {
-                    ((View) parent).enter(null);
-                }
-                // aktualizace navigace v aplikaci
-                if (navigation != null) {
-                    navigation.updateNavigationMenu();
-                }
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
-        }
-    }
-
-    /**
-     * Testuje zda je roxIndex platne cislo radky tabulky
-     *
-     * @param rowIndex testovane cislo radky tabulky
-     */
-    public boolean checkRowIndex(int rowIndex) {
-        return (rowIndex >= 0) && (rowIndex < table.size());
-    }
-
-    /**
-     * Dopocte novy index pro funkce MoveUp a MoveDown
-     *
-     * @param moveUp rozlisi dopocet MoveUp a MoveDown
-     */
-    public int getMoveIndex(boolean moveUp) {
-        int selectedRow = getSelectedRow();
-        if (checkRowIndex(selectedRow)) {
-            int moveTo = moveUp ? selectedRow - 1 : selectedRow + 1;
-            return checkRowIndex(moveTo) ? moveTo : -1;
-        } else {
-            return -1;
         }
     }
 
@@ -275,33 +298,42 @@ public final class TableWithButtons {
      */
     public int getCtrlColumnsCount() {
         int count = 0;
-        if (isChbSelection()) {
+        if (isSelectionColumn()) {
             ++count;
         }
-        if (isBtnStandardLayout()) {
+        if (isEditColumn()) {
             ++count;
         }
-        if (isBtnSortLayout()) {
+        if (isSortColumn()) {
             ++count;
         }
         return count;
     }
 
     /* PRIVATE */
-    private boolean isChbSelection() {
-        return ctrlColumns.contains(CtrlColumn.CBX_SELECTION);
+    private boolean callOnActionListener(Action action, Object data) {
+        if (onActionListener != null) {
+            return onActionListener.doAction(action, data);
+        } else {
+            return false;
+        }
     }
 
-    private boolean isBtnStandardLayout() {
-        return ctrlColumns.containsSome(CtrlColumn.BTN_EDIT, CtrlColumn.BTN_DELETE);
+    private boolean isSelectionColumn() {
+        return userActions.containsSome(Action.SELECTED_EDIT, Action.SELECTED_DELETE);
     }
 
-    private boolean isBtnSortLayout() {
-        return ctrlColumns.contains(CtrlColumn.BTN_SORT);
+    private boolean isEditColumn() {
+        return userActions.containsSome(Action.SINGLE_EDIT, Action.SINGLE_EDIT);
     }
 
-    private Button createButton(FontAwesome font, String caption, String iconStyle) {
+    private boolean isSortColumn() {
+        return userActions.containsSome(Action.SINGLE_MOVE_UP, Action.SINGLE_MOVE_DOWN);
+    }
+
+    private Button createInRowButton(FontAwesome font, String caption, String iconStyle, Button.ClickListener listener) {
         Button btn = new Button(caption, font);
+        btn.addClickListener(listener);
         btn.addStyleName(ValoTheme.BUTTON_TINY);
         btn.addStyleName(ValoTheme.BUTTON_QUIET);
         btn.addStyleName("table-row");
@@ -324,16 +356,16 @@ public final class TableWithButtons {
     /** Layout for buttons. */
     private final HorizontalLayout controlsLayout;
 
-    /** Buttons to add new row. */
-    private final Button buttonAdd;
-
     /** Table */
     private final Table table;
 
-    // Table columns definition
-    /** Definition of system columns with functional controls. */
-    private final SimpleEnumSet<CtrlColumn> ctrlColumns;
+    // Customizing
+    /** Set of required actions. */
+    private final SimpleEnumSet<Action> userActions;
 
-    /** Definition of the user columns. */
+    /** Set of the required columns. */
     private final UserColumnInfo[] userColumns;
+
+    /** Calling when action is performed. */
+    private final OnActionListener onActionListener;
 }

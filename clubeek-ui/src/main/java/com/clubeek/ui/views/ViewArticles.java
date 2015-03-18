@@ -15,24 +15,101 @@ import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.Tools.DateTime.DateStyle;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameArticle;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class ViewArticles extends VerticalLayout implements View {
+public class ViewArticles extends VerticalLayout implements View, ActionTable.OnActionListener {
 
-    /* PRIVATE */
-    /** Rozhrani pro navigaci webem a aktualizaci webu */
-    private Navigation navigation;
+    /* PUBLIC */
+    public enum Columns {
 
-    /** Komponenty tabulky */
-    private TableWithButtons table;
+        CAPTION, LOCATION, LAST_UPDATE, EXPIRATION_DATE;
+    }
 
+    public ViewArticles(Navigation navigation) {
+        this.navigation = navigation;
+        this.setSizeFull();
+
+        // view caption
+        this.setCaption(Messages.getString("articles"));
+
+        // columns definition
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
+            new ActionTable.UserColumnInfo(Columns.LOCATION, String.class, Messages.getString("ViewArticles.8")),
+            new ActionTable.UserColumnInfo(Columns.LAST_UPDATE, String.class, Messages.getString("lastUpdate")),
+            new ActionTable.UserColumnInfo(Columns.EXPIRATION_DATE, String.class, Messages.getString("expirationDate")),};
+
+        // create and place table
+        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table.addToOwner(this);
+    }
+
+    // interface View
+    @Override
+    public void enter(ViewChangeEvent event) {
+
+        Security.authorize(Role.EDITOR);
+
+        try {
+            List<Article> articles = RepArticle.selectAll(null);
+
+            table.removeAllRows();
+            for (int i = 0; i < articles.size(); ++i) {
+                Article article = articles.get(i);
+                table.addRow(new Object[]{article.getCaption(), GetArticleLocationAsString(article),
+                    Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.DAY_AND_TIME),
+                    getExpirationInfoAsString(article)}, article.getId());
+            }
+        } catch (SQLException e) {
+            Tools.msgBoxSQLException(e);
+        }
+    }
+
+    // interface ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                addArticle();
+                break;
+            case SINGLE_EDIT:
+                editArticle((int) data);
+                break;
+            case SINGLE_DELETE:
+                deleteArticle((int) data);
+                break;
+        }
+        return true;
+    }
+
+    // operations
+    public void addArticle() {
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewArticles.9"), new FrameArticle(),
+                new Article(), RepArticle.getInstance(), navigation);
+    }
+
+    public void editArticle(int id) {
+        try {
+            Article article = RepArticle.selectById(id, null);
+            if (article != null) {
+                ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
+                        article, RepArticle.getInstance(), navigation);
+            }
+        } catch (SQLException e) {
+            Tools.msgBoxSQLException(e);
+        }
+    }
+
+    public void deleteArticle(int id) {
+        table.deleteRow(id, RepArticle.getInstance(), this, navigation);
+    }
+    
+    // Auxiliary
     /** Generuje textovy popis umisteni clanku na strankach */
     public static String GetArticleLocationAsString(Article article) {
         String locationStr = article.getLocation().toString();
@@ -78,77 +155,11 @@ public class ViewArticles extends VerticalLayout implements View {
         return expirationStr;
     }
 
-    /* PUBLIC */
-    public enum Columns {
+    /* PRIVATE */
+    /** Rozhrani pro navigaci webem a aktualizaci webu */
+    private final Navigation navigation;
 
-        CAPTION, LOCATION, LAST_UPDATE, EXPIRATION_DATE
-    }
-
-    public ViewArticles(Navigation navigation) {
-        this.navigation = navigation;
-        this.setSizeFull();
-
-        // view caption
-        this.setCaption(Messages.getString("articles")); //$NON-NLS-1$
-
-        // columns definition
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
-            new TableWithButtons.UserColumnInfo(Columns.LOCATION, String.class, Messages.getString("ViewArticles.8")),
-            new TableWithButtons.UserColumnInfo(Columns.LAST_UPDATE, String.class, Messages.getString("lastUpdate")),
-            new TableWithButtons.UserColumnInfo(Columns.EXPIRATION_DATE, String.class, Messages.getString("expirationDate")),};
-
-        // create and place table
-        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
-        table.addToOwner(this);
-    }
-
-    // operations
-    /** Spusti modalni dialog pro pridani noveho clanku */
-    public void addArticle() {
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewArticles.9"), new FrameArticle(), new Article(), RepArticle.getInstance(), //$NON-NLS-1$
-                navigation);
-    }
-
-    /** Spusti modalni dialog pro zmenu clanku */
-    public void editSelectedArticle() {
-//        if (table.getValue() != null) {
-//            try {
-//                Article article = RepArticle.selectById((int) table.table.getValue(), null);
-//                if (article != null) {
-//                    ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(), article, RepArticle.getInstance(), //$NON-NLS-1$
-//                            navigation);
-//                }
-//            } catch (SQLException e) {
-//                Tools.msgBoxSQLException(e);
-//            }
-//        }
-    }
-
-    /** Zobrazi dotaz uzivateli a pripadne odstrani vybrany clanek */
-    public void deleteSelectedArticle() {
-        table.deleteSelectedRow(RepArticle.getInstance(), this, navigation);
-    }
-
-    // interface View
-    @Override
-    public void enter(ViewChangeEvent event) {
-
-        Security.authorize(Role.EDITOR);
-
-        try {
-            List<Article> articles = RepArticle.selectAll(null);
-
-            table.removeAllRows();
-            for (int i = 0; i < articles.size(); ++i) {
-                Article article = articles.get(i);
-                table.addRow(new Object[]{article.getCaption(), GetArticleLocationAsString(article),
-                    Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.DAY_AND_TIME),
-                    getExpirationInfoAsString(article)}, article.getId());
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
-        }
-    }
+    /** Komponenty tabulky */
+    private final ActionTable table;
 
 }

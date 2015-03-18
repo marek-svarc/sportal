@@ -11,16 +11,14 @@ import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.Tools.DateTime.DateStyle;
-import com.clubeek.ui.components.TableWithButtons;
+import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeamMatch;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
-public class ViewTeamMatches extends VerticalLayout implements View {
+public class ViewTeamMatches extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     public enum Columns {
 
@@ -32,14 +30,14 @@ public class ViewTeamMatches extends VerticalLayout implements View {
         this.setCaption(Messages.getString("matches")); //$NON-NLS-1$
 
         // columns definition
-        TableWithButtons.UserColumnInfo[] columns = {
-            new TableWithButtons.UserColumnInfo(Columns.MATCH, String.class, Messages.getString("match")),
-            new TableWithButtons.UserColumnInfo(Columns.DATE_TIME, String.class, Messages.getString("dateTime")),
-            new TableWithButtons.UserColumnInfo(Columns.RESULT, String.class, Messages.getString("result"))
+        ActionTable.UserColumnInfo[] columns = {
+            new ActionTable.UserColumnInfo(Columns.MATCH, String.class, Messages.getString("match")),
+            new ActionTable.UserColumnInfo(Columns.DATE_TIME, String.class, Messages.getString("dateTime")),
+            new ActionTable.UserColumnInfo(Columns.RESULT, String.class, Messages.getString("result"))
         };
 
         // vytvoreni tabulky a ovladacich tlacitek
-        table = new TableWithButtons(TableWithButtons.CtrlColumn.getStandardSet(), columns, null);
+        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
         table.addToOwner(this);
     }
 
@@ -75,7 +73,25 @@ public class ViewTeamMatches extends VerticalLayout implements View {
         }
     }
 
-    public void insertMatch() {
+    // interface ActionTable.OnActionListener
+    @Override
+    public boolean doAction(ActionTable.Action action, Object data) {
+        switch (action) {
+            case SINGLE_ADD:
+                addMatch();
+                break;
+            case SINGLE_EDIT:
+                editMatch((int) data);
+                break;
+            case SINGLE_DELETE:
+                deleteMatch((int) data);
+                break;
+        }
+        return true;
+    }
+
+    // operations
+    public void addMatch() {
         TeamMatch data = new TeamMatch();
         data.setClubTeamId(teamId);
 
@@ -83,24 +99,24 @@ public class ViewTeamMatches extends VerticalLayout implements View {
                 Messages.getString("match"), new FrameTeamMatch(), data, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
     }
 
-    public void editMatch() {
-        if (table.getSelectedRow() >= 0) {
-            TeamMatch game = games.get(table.getSelectedRow());
-            ModalDialog.show(this, Mode.EDIT,
-                    Messages.getString("match"), new FrameTeamMatch(), game, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
+    public void editMatch(int id) {
+        if (id >= 0) {
+            TeamMatch game = games.get(id);
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("match"), new FrameTeamMatch(),
+                    game, RepTeamMatch.getInstance(), null);
         }
     }
 
-    public void deleteMatch() {
-        table.deleteSelectedRow(games, RepTeamMatch.getInstance(), this, null);
+    public void deleteMatch(int id) {
+        table.deleteRow(games.get(id).getId(), RepTeamMatch.getInstance(), this, null);
     }
 
     /* PRIVATE */
     /** Identifikator tymu pro ktery jsou zapasy zobrazeny */
     private int teamId = -1;
 
-    /** Tabulka zobrazujici seznam zapasu */
-    private TableWithButtons table;
+    /** Table component */
+    private final ActionTable table;
 
     /** Seznam vsech zapasu pro jeden tym */
     private List<TeamMatch> games = null;

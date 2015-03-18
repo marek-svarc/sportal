@@ -66,6 +66,15 @@ public final class SimpleEnumSet<E extends Enum<?>> implements Serializable {
         flags |= convertArrayToBitSet(values);
     }
 
+    /**
+     * Remove array of enumn values from the set.
+     *
+     * @param values Array of enum values that will be removed to the set.
+     */
+    public void removeValues(E... values) {
+        flags &= (~convertArrayToBitSet(values));
+    }
+
     public boolean isEmpty() {
         return flags == 0;
     }
