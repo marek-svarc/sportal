@@ -14,6 +14,7 @@ import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameCategory;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
@@ -50,15 +51,14 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
             table.removeAllRows();
             for (int i = 0; i < categories.size(); ++i) {
                 Category category = categories.get(i);
-                table.addRow(new Object[]{Tools.Strings.getCheckString(category.getActive())
-                    + "  " + category.getDescription()}, i);
+                table.addRow(new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(category.getActive()), category.getDescription())}, i);
             }
         } catch (SQLException e) {
             Tools.msgBoxSQLException(e);
         }
     }
 
-    // interface ActionTable.OnActionListener
+// interface ActionTable.OnActionListener
     @Override
     public boolean doAction(ActionTable.Action action, Object data) {
         switch (action) {
@@ -70,6 +70,12 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
                 break;
             case SINGLE_DELETE:
                 deleteCategory((int) data);
+                break;
+            case SINGLE_MOVE_UP:
+                exchangeCategories((int) data, true);
+                break;
+            case SINGLE_MOVE_DOWN:
+                exchangeCategories((int) data, false);
                 break;
         }
         return true;
@@ -91,36 +97,11 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
         table.deleteRow(categories.get(id).getId(), RepCategory.getInstance(), this, navigation);
     }
 
-    /**
-     * Posune vybranou radku nahoru nebo dolu
-     *
-     * @param moveUp smer posunu
-     */
-    public void exchangeCategories(boolean moveUp) {
-//        int idA = table.getSelectedRow();
-//        int idB = table.getMoveIndex(moveUp);
-//        if ((idA >= 0) && (idB >= 0)) {
-//            try {
-//                RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
-//                //table.table.setValue(idB);
-//                updateApp();
-//            } catch (SQLException e) {
-//                Tools.msgBoxSQLException(e);
-//            }
-//        }
+    public void exchangeCategories(int id, boolean moveUp) {
+        table.exchangeRows(categories, id, moveUp, RepCategory.getInstance(), this, navigation);
     }
 
     /* PRIVATE */
-    /** Aktualizaje tabulky i navigacni menu aplikace */
-    private void updateApp() {
-        // aktualizace tabulky
-        enter(null);
-        // aktualizace navigacniho menu
-        if (navigation != null) {
-            navigation.updateNavigationMenu();
-        }
-    }
-
     /** Komponenty tabulky */
     private final ActionTable table;
 

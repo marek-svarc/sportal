@@ -115,7 +115,6 @@ public final class ActionTable {
         table = new Table();
         table.addStyleName(ValoTheme.TABLE_SMALL);
         table.addStyleName(ValoTheme.TABLE_BORDERLESS);
-        table.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
         table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
         table.setSizeFull();
         table.setSelectable(false);
@@ -129,10 +128,10 @@ public final class ActionTable {
             table.addContainerProperty("selectionClm", CheckBox.class, null, "", null, null);
         }
         if (isEditColumn()) {
-            table.addContainerProperty("editClm", HorizontalLayout.class, null, "", null, null);
+            table.addContainerProperty("editClm", HorizontalLayout.class, null, "Úpravy", null, null);
         }
         if (isSortColumn()) {
-            table.addContainerProperty("sortClm", HorizontalLayout.class, null, "", null, null);
+            table.addContainerProperty("sortClm", HorizontalLayout.class, null, "Pořadí", null, null);
         }
 
         // crate user columns
@@ -280,15 +279,22 @@ public final class ActionTable {
             } catch (SQLException e) {
                 Tools.msgBoxSQLException(e);
             }
-            // update view
-            if (parent instanceof View) {
-                ((View) parent).enter(null);
-            }
-            // aupdate navigation menu
-            if (navigation != null) {
-                navigation.updateNavigationMenu();
+            updateApplication(parent, navigation);
+        }
+    }
+
+    public <T extends Unique> void exchangeRows(List<T> data, int id, boolean moveUp,
+            final Repository<T> dataAdmin, final Component parent, final Navigation navigation) {
+        int idNext = id + (moveUp ? -1 : 1);
+        if ((id >= 0) && (id < data.size()) && (idNext >= 0) && (idNext < data.size())) {
+            try {
+                dataAdmin.exchangeRows(data.get(id).getId(), data.get(idNext).getId());
+                updateApplication(parent, navigation);
+            } catch (SQLException e) {
+                Tools.msgBoxSQLException(e);
             }
         }
+
     }
 
     /**
@@ -311,6 +317,17 @@ public final class ActionTable {
     }
 
     /* PRIVATE */
+    private void updateApplication(final Component parent, final Navigation navigation){
+            // update view
+            if (parent instanceof View) {
+                ((View) parent).enter(null);
+            }
+            // aupdate navigation menu
+            if (navigation != null) {
+                navigation.updateNavigationMenu();
+            }
+    }
+    
     private boolean callOnActionListener(Action action, Object data) {
         if (onActionListener != null) {
             return onActionListener.doAction(action, data);
