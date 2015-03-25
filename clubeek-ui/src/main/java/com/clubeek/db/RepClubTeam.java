@@ -9,238 +9,231 @@ import com.clubeek.model.ClubTeam;
 
 public class RepClubTeam implements Repository<ClubTeam> {
 
-	/* PUBLIC */
+    /* PUBLIC */
+    /** Nazev tabulky */
+    public static final String tableName = "club_team";
 
-	/** Nazev tabulky */
-	public static final String tableName = "club_team";
+    /** Identifikatory sloupcu tabulky */
+    public enum TableColumn {
 
-	/** Identifikatory sloupcu tabulky */
-	public enum TableColumn {
-		ID("id"), NAME("name"), ACTIVE("active"), SORTING("sorting"), CATEGORY_ID("category_id");
+        ID("id"),
+        NAME("name"),
+        ACTIVE("active"),
+        SORTING("sorting"),
+        CATEGORY_ID("category_id");
 
-		private TableColumn(String dbColumnName) {
-			this.name = dbColumnName;
-		}
+        private TableColumn(String dbColumnName) {
+            this.name = dbColumnName;
+        }
 
-		@Override
-		public String toString() {
-			return name;
-		}
+        @Override
+        public String toString() {
+            return name;
+        }
 
-		public final String name;
-	}
+        public final String name;
+    }
 
-	public static RepClubTeam getInstance() {
-		return teamDb;
-	}
+    public static RepClubTeam getInstance() {
+        return teamDb;
+    }
 
-	// SQL Insert
+    // SQL Insert
+    /**
+     * Vlozi a inicializuje radek v tabulce "team"
+     *
+     * @param team data pro jeden tym, ktera budou vlozena do databaze
+     * @throws SQLException
+     */
+    public static void insert(ClubTeam team) throws SQLException {
+        insert(team.getName(), team.getActive(), team.getCategoryId());
+    }
 
-	/**
-	 * Vlozi a inicializuje radek v tabulce "team"
-	 * 
-	 * @param team
-	 *            data pro jeden tym, ktera budou vlozena do databaze
-	 * @throws SQLException
-	 */
-	public static void insert(ClubTeam team) throws SQLException {
-		insert(team.getName(), team.getActive(), team.getCategoryId());
-	}
+    /**
+     * Vlozi a inicializuje radek v tabulce "team"
+     *
+     * @param name Nazev tymu
+     * @param active priznak zda je tym zobrazovan
+     * @param categoryId kategorie do ktere je tym zarazen
+     * @throws SQLException
+     */
+    public static void insert(String name, Boolean active, int categoryId) throws SQLException {
+        // sestaveni sql prikazu
+        String sql = String.format("INSERT INTO %s (%s, %s, %s) VALUES ( ? , ? , ?)", tableName, TableColumn.NAME.name,
+                TableColumn.ACTIVE.name, TableColumn.CATEGORY_ID.name);
+        // provedeni transakce
+        int id = Admin.update(sql, new ColumnData[]{new ColumnData(name), new ColumnData(active),
+            new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE)}, true);
+        // zatridedni dle prirazeneho id
+        update(id, id);
+    }
 
-	/**
-	 * Vlozi a inicializuje radek v tabulce "team"
-	 * 
-	 * @param name
-	 *            Nazev tymu
-	 * @param active
-	 *            priznak zda je tym zobrazovan
-	 * @param categoryId
-	 *            kategorie do ktere je tym zarazen
-	 * @throws SQLException
-	 */
-	public static void insert(String name, Boolean active, int categoryId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s) VALUES ( ? , ? , ?)", tableName, TableColumn.NAME.name,
-				TableColumn.ACTIVE.name, TableColumn.CATEGORY_ID.name);
-		// provedeni transakce
-		int id = Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(active),
-				new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE) }, true);
-		// zatridedni dle prirazeneho id
-		update(id, id);
-	}
+    // SQL Update
+    /**
+     * Modifikuje radek tabulky "team" dle prametru id
+     *
+     * @param team data pro jeden tym, ktera budou vlozena do databaze
+     * @throws SQLException
+     */
+    public static void update(ClubTeam team) throws SQLException {
+        update(team.getId(), team.getName(), team.getActive(), team.getCategoryId());
+    }
 
-	// SQL Update
+    /**
+     * Modifikuje radek tabulky "team" dle prametru id
+     *
+     * @param name Nazev tymu
+     * @param active priznak zda je tym zobrazovan
+     * @param categoryId kategorie do ktere je tym zarazen
+     * @throws SQLException
+     */
+    public static void update(int id, String name, Boolean active, int categoryId) throws SQLException {
+        // sestaveni sql prikazu
+        String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName, TableColumn.NAME.name,
+                TableColumn.ACTIVE.name, TableColumn.CATEGORY_ID.name, TableColumn.ID.name, id);
+        // provedeni transakce
+        Admin.update(sql, new ColumnData[]{new ColumnData(name), new ColumnData(active),
+            new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE)});
+    }
 
-	/**
-	 * Modifikuje radek tabulky "team" dle prametru id
-	 * 
-	 * @param team
-	 *            data pro jeden tym, ktera budou vlozena do databaze
-	 * @throws SQLException
-	 */
-	public static void update(ClubTeam team) throws SQLException {
-		update(team.getId(), team.getName(), team.getActive(), team.getCategoryId());
-	}
+    /**
+     * Modifikuje hodnotu definujici defaultni razeni tabulky "Team"
+     *
+     * @param id index modifikovane radky tabulky
+     * @param sorting hodnota definujci razeni
+     * @throws SQLException
+     */
+    public static void update(int id, int sorting) throws SQLException {
+        // sestaveni sql prikazu
+        String sql = String.format("UPDATE %s SET %s = ? WHERE %s = %d", tableName, TableColumn.SORTING.name,
+                TableColumn.ID.name, id);
+        // provedeni transakce
+        Admin.update(sql, new ColumnData[]{new ColumnData(sorting)});
+    }
 
-	/**
-	 * Modifikuje radek tabulky "team" dle prametru id
-	 * 
-	 * @param name
-	 *            Nazev tymu
-	 * @param active
-	 *            priznak zda je tym zobrazovan
-	 * @param categoryId
-	 *            kategorie do ktere je tym zarazen
-	 * @throws SQLException
-	 */
-	public static void update(int id, String name, Boolean active, int categoryId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName, TableColumn.NAME.name,
-				TableColumn.ACTIVE.name, TableColumn.CATEGORY_ID.name, TableColumn.ID.name, id);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(active),
-				new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE) });
-	}
+    /**
+     * Prohodi hodnotu ve sloupci "sortId" ve dvou radkach tabulky "Team"
+     *
+     * @param idA index radky tabulky
+     * @param idB index radky tabulky
+     * @throws SQLException
+     */
+    public static void exchange(int idA, int idB) throws SQLException {
+        ClubTeam teamA = selectById(idA, null);
+        ClubTeam teamB = selectById(idB, null);
+        if ((teamA != null) && (teamB != null)) {
+            update(idA, teamB.getSorting());
+            update(idB, teamA.getSorting());
+        }
+    }
 
-	/**
-	 * Modifikuje hodnotu definujici defaultni razeni tabulky "Team"
-	 * 
-	 * @param id
-	 *            index modifikovane radky tabulky
-	 * @param sorting
-	 *            hodnota definujci razeni
-	 * @throws SQLException
-	 */
-	public static void update(int id, int sorting) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("UPDATE %s SET %s = ? WHERE %s = %d", tableName, TableColumn.SORTING.name,
-				TableColumn.ID.name, id);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(sorting) });
-	}
+    // SQL delete
+    public static void delete(int id) throws SQLException {
+        Admin.delete(tableName, TableColumn.ID.name, id);
+    }
 
-	/**
-	 * Prohodi hodnotu ve sloupci "sortId" ve dvou radkach tabulky "Team"
-	 * 
-	 * @param idA
-	 *            index radky tabulky
-	 * @param idB
-	 *            index radky tabulky
-	 * @throws SQLException
-	 */
-	public static void exchange(int idA, int idB) throws SQLException {
-		ClubTeam teamA = selectById(idA, null);
-		ClubTeam teamB = selectById(idB, null);
-		if ((teamA != null) && (teamB != null)) {
-			update(idA, teamB.getSorting());
-			update(idB, teamA.getSorting());
-		}
-	}
+    // SQL Select
+    /**
+     * Vraci vsechny radky a vsechny sloupce tabulky "team"
+     *
+     * @return seznam vsech radek tabulky
+     * @throws SQLException
+     */
+    public static List<ClubTeam> select(boolean onlyActive, TableColumn[] columns) throws SQLException {
+        columns = getColumns(columns);
+        if (onlyActive) {
+            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s = 1 ORDER BY %s ASC",
+                    Admin.createSelectParams(columns), tableName, TableColumn.ACTIVE, TableColumn.SORTING), columns,
+                    getInstance());
+        } else {
+            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s ORDER BY %s ASC",
+                    Admin.createSelectParams(columns), tableName, TableColumn.SORTING), columns, getInstance());
+        }
+    }
 
-	// SQL delete
+    /**
+     * Vraci seznam tymu, ktere patri do stejne kategorie
+     *
+     * @return seznam vsech radek tabulky
+     * @throws SQLException
+     */
+    public static List<ClubTeam> select(int category, boolean onlyActive, TableColumn[] columns) throws SQLException {
+        columns = getColumns(columns);
 
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
-	}
+        String categoryCheck = TableColumn.CATEGORY_ID + (category <= 0 ? " IS NULL" : " = " + Integer.toString(category));
 
-	// SQL Select
+        if (onlyActive) {
+            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s AND %s = 1 ORDER BY %s ASC",
+                    Admin.createSelectParams(columns), tableName, categoryCheck, TableColumn.ACTIVE, TableColumn.SORTING),
+                    columns, getInstance());
+        } else {
+            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s ORDER BY %s ASC",
+                    Admin.createSelectParams(columns), tableName, categoryCheck, TableColumn.SORTING), columns, getInstance());
+        }
+    }
 
-	/**
-	 * Vraci vsechny radky a vsechny sloupce tabulky "team"
-	 * 
-	 * @return seznam vsech radek tabulky
-	 * @throws SQLException
-	 */
-	public static List<ClubTeam> select(boolean onlyActive, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		if (onlyActive)
-			return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s = 1 ORDER BY %s ASC",
-					Admin.createSelectParams(columns), tableName, TableColumn.ACTIVE, TableColumn.SORTING), columns,
-					getInstance());
-		else
-			return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s ORDER BY %s ASC",
-					Admin.createSelectParams(columns), tableName, TableColumn.SORTING), columns, getInstance());
-	}
+    /**
+     * Vraci tym dle unikatniho identifikatoru
+     *
+     * @return tym
+     * @throws SQLException
+     */
+    public static ClubTeam selectById(int id, TableColumn[] columns) throws SQLException {
+        columns = getColumns(columns);
+        List<ClubTeam> teamList = Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s = %s",
+                Admin.createSelectParams(columns), tableName, TableColumn.ID.name, Integer.toString(id)), columns, getInstance());
+        return (teamList != null) && (teamList.size() == 1) ? teamList.get(0) : null;
+    }
 
-	/**
-	 * Vraci seznam tymu, ktere patri do stejne kategorie
-	 * 
-	 * @return seznam vsech radek tabulky
-	 * @throws SQLException
-	 */
-	public static List<ClubTeam> select(int category, boolean onlyActive, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
+    // Rozhrani Globals.SqlExtension<Team, TeamDb.TableColumn>
+    @Override
+    public void insertRow(ClubTeam value) throws SQLException {
+        RepClubTeam.insert(value);
+    }
 
-		String categoryCheck = TableColumn.CATEGORY_ID + (category <= 0 ? " IS NULL" : " = " + Integer.toString(category));
+    @Override
+    public void updateRow(ClubTeam value) throws SQLException {
+        RepClubTeam.update(value);
+    }
 
-		if (onlyActive)
-			return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s AND %s = 1 ORDER BY %s ASC",
-					Admin.createSelectParams(columns), tableName, categoryCheck, TableColumn.ACTIVE, TableColumn.SORTING),
-					columns, getInstance());
-		else
-			return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s ORDER BY %s ASC",
-					Admin.createSelectParams(columns), tableName, categoryCheck, TableColumn.SORTING), columns, getInstance());
-	}
+    @Override
+    public void deleteRow(int id) throws SQLException {
+        RepClubTeam.delete(id);
+    }
 
-	/**
-	 * Vraci tym dle unikatniho identifikatoru
-	 * 
-	 * @return tym
-	 * @throws SQLException
-	 */
-	public static ClubTeam selectById(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<ClubTeam> teamList = Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s = %s",
-				Admin.createSelectParams(columns), tableName, TableColumn.ID.name, Integer.toString(id)), columns, getInstance());
-		return (teamList != null) && (teamList.size() == 1) ? teamList.get(0) : null;
-	}
+    @Override
+    public void exchangeRows(int idA, int idB) throws SQLException {
+        RepClubTeam.exchange(idA, idB);
+    }
 
-	// Rozhrani Globals.SqlExtension<Team, TeamDb.TableColumn>
+    @Override
+    public void readValue(ResultSet result, int resultsColumnId, ClubTeam data, Object dataColumnId) throws SQLException {
+        switch ((RepClubTeam.TableColumn) dataColumnId) {
+            case ID:
+                data.setId(result.getInt(TableColumn.ID.name));
+                break;
+            case NAME:
+                data.setName(result.getString(TableColumn.NAME.name));
+                break;
+            case ACTIVE:
+                data.setActive(result.getInt(TableColumn.ACTIVE.name) != 0);
+                break;
+            case SORTING:
+                data.setSorting(result.getInt(TableColumn.SORTING.name));
+                break;
+            case CATEGORY_ID:
+                data.setCategoryId(result.getInt(TableColumn.CATEGORY_ID.name));
+                break;
+        }
+    }
 
-	@Override
-	public void insertRow(ClubTeam value) throws SQLException {
-		insert(value);
-	}
+    /* PRIVATE */
+    private static RepClubTeam.TableColumn[] getColumns(RepClubTeam.TableColumn[] columns) {
+        return columns != null ? columns : TableColumn.values();
+    }
 
-	@Override
-	public void updateRow(ClubTeam value) throws SQLException {
-		update(value);
-	}
+    public RepClubTeam() {
+    }
 
-	@Override
-	public void deleteRow(int id) throws SQLException {
-		delete(id);
-	}
-
-	@Override
-	public void readValue(ResultSet result, int resultsColumnId, ClubTeam data, Object dataColumnId) throws SQLException {
-		switch ((RepClubTeam.TableColumn) dataColumnId) {
-		case ID:
-			data.setId(result.getInt(TableColumn.ID.name));
-			break;
-		case NAME:
-			data.setName(result.getString(TableColumn.NAME.name));
-			break;
-		case ACTIVE:
-			data.setActive(result.getInt(TableColumn.ACTIVE.name) == 0 ? false : true);
-			break;
-		case SORTING:
-			data.setSorting(result.getInt(TableColumn.SORTING.name));
-			break;
-		case CATEGORY_ID:
-			data.setCategoryId(result.getInt(TableColumn.CATEGORY_ID.name));
-			break;
-		}
-	}
-
-	/* PRIVATE */
-
-	private static RepClubTeam.TableColumn[] getColumns(RepClubTeam.TableColumn[] columns) {
-		return columns != null ? columns : TableColumn.values();
-	}
-
-	public RepClubTeam() {
-	}
-
-	private static RepClubTeam teamDb = new RepClubTeam();
+    private final static RepClubTeam teamDb = new RepClubTeam();
 }

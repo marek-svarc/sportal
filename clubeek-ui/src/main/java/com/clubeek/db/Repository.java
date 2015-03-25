@@ -1,51 +1,58 @@
 package com.clubeek.db;
 
+import com.clubeek.model.Unique;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Rozhrani definujici operace nad jednou tabulkou databaze
- * 
- * @param <T>
- *            Trida zapouzdrujici data z databaze
+ * Interface providing standard operations on the database table.
+ *
+ * @param <T> Data class used for data exchange with database.
  */
-public interface Repository<T> {
+public interface Repository<T extends Unique> {
 
-	/**
-	 * Modifikuje radek tabulky
-	 * 
-	 * @throws SQLException
-	 */
-	void updateRow(T value) throws SQLException;
+    /**
+     * Modifies one row in the database table.
+     *
+     * @param value Data to be writen into database.
+     * @throws SQLException
+     */
+    void updateRow(T value) throws SQLException;
 
-	/**
-	 * Vlozi a inicializuje radek v tabulce
-	 * 
-	 * @throws SQLException
-	 */
-	void insertRow(T value) throws SQLException;
+    /**
+     * Insert one row to the database table.
+     *
+     * @param value Data to be inserted into database.
+     * @throws SQLException
+     */
+    void insertRow(T value) throws SQLException;
 
-	/**
-	 * Odmaze radek z tabulky
-	 * 
-	 * @param id
-	 *            index radky ktera ma byt vymazana s tabulky
-	 * @throws SQLException
-	 */
-	void deleteRow(int id) throws SQLException;
+    /**
+     * Delete one row from the database table.
+     *
+     * @param id Index of row which to be deleted from the database.
+     * @throws SQLException
+     */
+    void deleteRow(int id) throws SQLException;
 
-	/**
-	 * Vysledek SQL prikazu SELECT zap�e do dat
-	 * 
-	 * @param result
-	 *            Vysledek SQL prikazu
-	 * @param resultsColumnId
-	 *            index sloupce tabulky, ze ktereho se mel nacist Vysledek
-	 * @param data
-	 *            data do kterych se zapisuje Vysledek SELECTu
-	 * @param dataColumnId
-	 *            identifiktor datoveho pole, kam se zapise vysledek
-	 * @throws SQLException
-	 */
-	void readValue(ResultSet result, int resultsColumnId, T data, Object dataColumnId) throws SQLException;
+    /**
+     * Exchange two records in the table
+     *
+     * @param idA first index of the row to be exchanged
+     * @param idB second index of the row to be exchanged
+     * @throws SQLException
+     */
+    void exchangeRows(int idA, int idB) throws SQLException;
+
+    /**
+     * Reads data from one column and writes them into data object.
+     *
+     * @param result Result of the SQL select command.
+     * @param resultsColumnId Id of the table column.
+     * @param data Instance of data object.
+     * @param dataColumnId Id of object item where are writen data from the
+     * database.
+     * @throws SQLException
+     */
+    void readValue(ResultSet result, int resultsColumnId, T data, Object dataColumnId) throws SQLException;
 }

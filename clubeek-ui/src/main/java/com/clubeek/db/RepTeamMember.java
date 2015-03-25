@@ -13,233 +13,227 @@ import com.clubeek.model.TeamMember;
 /**
  * Trida poskytujici pristup do databazove tabulky "team_member", ktera obsahuje
  * cleny klubu rozdelene do tymu
- * 
+ *
  * @author Marek Svarc
- * 
+ *
  */
 public class RepTeamMember implements Repository<TeamMember> {
 
-	/** Nazev tabulky */
-	public static final String tableName = "team_member";
+    /** Nazev tabulky */
+    public static final String tableName = "team_member";
 
-	/** Identifikatory sloupcu tabulky */
-	public static enum TableColumn {
-		ID("id"), FUNCTIONS("functions"), CLUB_MEMBER_ID("club_member_id"), CLUB_TEAM_ID("club_team_id");
+    /** Identifikatory sloupcu tabulky */
+    public static enum TableColumn {
 
-		private TableColumn(String dbColumnName) {
-			this.name = dbColumnName;
-		}
+        ID("id"),
+        FUNCTIONS("functions"),
+        CLUB_MEMBER_ID("club_member_id"),
+        CLUB_TEAM_ID("club_team_id");
 
-		@Override
-		public String toString() {
-			return name;
-		}
+        private TableColumn(String dbColumnName) {
+            this.name = dbColumnName;
+        }
 
-		public final String name;
-	}
+        @Override
+        public String toString() {
+            return name;
+        }
 
-	public static RepTeamMember getInstance() {
-		return teamMemberDb;
-	}
+        public final String name;
+    }
 
-	// SQL Insert
+    public static RepTeamMember getInstance() {
+        return teamMemberDb;
+    }
 
-	/**
-	 * Vlozi a inicializuje radek v tabulce "team_member"
-	 * 
-	 * @param teamMember
-	 *            data jednoho clena tymu, ktera budou vlozena do databaze
-	 * @throws SQLException
-	 */
-	public static void insert(TeamMember teamMember) throws SQLException {
-		insert(teamMember.getFunctions(), teamMember.getClubMemberId(), teamMember.getClubTeamId());
-	}
+    // SQL Insert
+    /**
+     * Vlozi a inicializuje radek v tabulce "team_member"
+     *
+     * @param teamMember data jednoho clena tymu, ktera budou vlozena do
+     * databaze
+     * @throws SQLException
+     */
+    public static void insert(TeamMember teamMember) throws SQLException {
+        insert(teamMember.getFunctions(), teamMember.getClubMemberId(), teamMember.getClubTeamId());
+    }
 
-	/**
-	 * Vlozi a inicializuje radek v tabulce "team_member"
-	 * 
-	 * @param functions
-	 *            bitovy priznak asociovanych funkci v tymu
-	 * @param clubMemberId
-	 *            identifikator asociovaneho clena klubu
-	 * @param clubTeamId
-	 *            identifikator asociovaneho tymu
-	 * @throws SQLException
-	 */
-	public static void insert(int functions, int clubMemberId, int clubTeamId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s) VALUES ( ?, ?, ?)", tableName, TableColumn.FUNCTIONS.name,
-				TableColumn.CLUB_MEMBER_ID.name, TableColumn.CLUB_TEAM_ID.name);
-		// provedeni transakce
-		Admin.update(sql,
-				new ColumnData[] { new ColumnData(functions), new ColumnData(clubMemberId), new ColumnData(clubTeamId) });
-	}
+    /**
+     * Vlozi a inicializuje radek v tabulce "team_member"
+     *
+     * @param functions bitovy priznak asociovanych funkci v tymu
+     * @param clubMemberId identifikator asociovaneho clena klubu
+     * @param clubTeamId identifikator asociovaneho tymu
+     * @throws SQLException
+     */
+    public static void insert(int functions, int clubMemberId, int clubTeamId) throws SQLException {
+        // sestaveni sql prikazu
+        String sql = String.format("INSERT INTO %s (%s, %s, %s) VALUES ( ?, ?, ?)", tableName, TableColumn.FUNCTIONS.name,
+                TableColumn.CLUB_MEMBER_ID.name, TableColumn.CLUB_TEAM_ID.name);
+        // provedeni transakce
+        Admin.update(sql,
+                new ColumnData[]{new ColumnData(functions), new ColumnData(clubMemberId), new ColumnData(clubTeamId)});
+    }
 
-	// SQL Update
+    // SQL Update
+    /**
+     * Modifikuje radek tabulky "team_member"
+     *
+     * @param teamMember data jednoho clena tymu, ktera budou vlozena do
+     * databaze
+     * @throws SQLException
+     */
+    public static void update(TeamMember teamMember) throws SQLException {
+        update(teamMember.getId(), teamMember.getFunctions(), teamMember.getClubMemberId(), teamMember.getClubTeamId());
+    }
 
-	/**
-	 * Modifikuje radek tabulky "team_member"
-	 * 
-	 * @param teamMember
-	 *            data jednoho clena tymu, ktera budou vlozena do databaze
-	 * @throws SQLException
-	 */
-	public static void update(TeamMember teamMember) throws SQLException {
-		update(teamMember.getId(), teamMember.getFunctions(), teamMember.getClubMemberId(), teamMember.getClubTeamId());
-	}
+    /**
+     * Modifikuje radek tabulky "team_member"
+     *
+     * @param id unikatni identifikator radky tabulky
+     * @param functions bytovy priznak asociovanych funkci v tymu
+     * @param clubMemberId identifikator asociovaneho clena klubu
+     * @param clubTeamId identifikator asociovaneho tymu
+     * @throws SQLException
+     */
+    public static void update(int id, int functions, int clubMemberId, int clubTeamId) throws SQLException {
+        // sestaveni sql prikazu
+        String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName, TableColumn.FUNCTIONS.name,
+                TableColumn.CLUB_MEMBER_ID.name, TableColumn.CLUB_TEAM_ID.name, TableColumn.ID.name, Integer.toString(id));
+        // provedeni transakce
+        Admin.update(sql,
+                new ColumnData[]{new ColumnData(functions), new ColumnData(clubMemberId), new ColumnData(clubTeamId)});
+    }
 
-	/**
-	 * Modifikuje radek tabulky "team_member"
-	 * 
-	 * @param id
-	 *            unikatni identifikator radky tabulky
-	 * @param functions
-	 *            bytovy priznak asociovanych funkci v tymu
-	 * @param clubMemberId
-	 *            identifikator asociovaneho clena klubu
-	 * @param clubTeamId
-	 *            identifikator asociovaneho tymu
-	 * @throws SQLException
-	 */
-	public static void update(int id, int functions, int clubMemberId, int clubTeamId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName, TableColumn.FUNCTIONS.name,
-				TableColumn.CLUB_MEMBER_ID.name, TableColumn.CLUB_TEAM_ID.name, TableColumn.ID.name, Integer.toString(id));
-		// provedeni transakce
-		Admin.update(sql,
-				new ColumnData[] { new ColumnData(functions), new ColumnData(clubMemberId), new ColumnData(clubTeamId) });
-	}
+    /**
+     * Vicenasobna uprava clenu tymu (dle rozdilu v seznamu se volaji metody
+     * insert, update a delete)
+     *
+     * @param oldTeamMembers puvodni seznam clenu
+     * @param newTeamMembers novy seznam clenu
+     * @throws SQLException
+     */
+    public static void update(List<TeamMember> oldTeamMembers, List<TeamMember> newTeamMembers) throws SQLException {
+        Admin.synchronize(oldTeamMembers, newTeamMembers, getInstance());
+    }
 
-	/**
-	 * Vicenasobna uprava clenu tymu (dle rozdilu v seznamu se volaji metody
-	 * insert, update a delete)
-	 * 
-	 * @param oldTeamMembers
-	 *            puvodni seznam clenu
-	 * @param newTeamMembers
-	 *            novy seznam clenu
-	 * @throws SQLException
-	 */
-	public static void update(List<TeamMember> oldTeamMembers, List<TeamMember> newTeamMembers) throws SQLException {
-		Admin.synchronize(oldTeamMembers, newTeamMembers, getInstance());
-	}
+    // SQL delete
+    public static void delete(int id) throws SQLException {
+        Admin.delete(tableName, TableColumn.ID.name, id);
+    }
 
-	// SQL delete
+    // SQL Select
+    /**
+     * Vraci seznam clenu jednoho tymu asociovanych se clenem klubu
+     *
+     * @return seznam clenu tymu
+     * @throws SQLException
+     */
+    public static List<TeamMember> selectByTeamId(int clubTeamId, TableColumn[] columns) throws SQLException {
+        columns = getColumns(columns);
+        return Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE %s = %d", Admin.createSelectParams(columns),
+                tableName, TableColumn.CLUB_TEAM_ID, clubTeamId), columns, getInstance());
+    }
 
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
-	}
+    /**
+     * Vraci seznam tymu, do kterych patri jeden clen klubu
+     *
+     * @param clubMemberId unikatni identifikator clena klubu
+     * @param columns definice sloupcu tabulky, ktere se maji nacist z databaze
+     * @return seznam clenu
+     * @throws SQLException
+     */
+    public static List<TeamMember> selectByClubMemberId(int clubMemberId, TableColumn[] columns) throws SQLException {
+        columns = getColumns(columns);
+        return Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE %s = %d", Admin.createSelectParams(columns),
+                tableName, TableColumn.CLUB_MEMBER_ID, clubMemberId), columns, getInstance());
+    }
 
-	// SQL Select
+    /**
+     * Vraci seznam clenu dle seznamu clenu klubu. Pokud je clen klubu i clenem
+     * tymu nactou se data clena tymu z databaze. Pokud clen klubu neni clenem
+     * tymu, vytori se nova instance clena tymu.
+     *
+     * @return seznam clenu tymu
+     * @throws SQLException
+     */
+    public static List<TeamMember> selectOrCreateByClubMembers(int clubTeamId, List<ClubMember> clubMembers, TableColumn[] columns)
+            throws SQLException {
+        List<TeamMember> teamMembers = new ArrayList<TeamMember>();
+        if (clubMembers.size() > 0) {
+            // vyber clenu tymu, kterym odpovida nejaky zaznam v seznamu clenu
+            // klubu
+            columns = getColumns(columns);
+            teamMembers.addAll(Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s IN (%s))",
+                    Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID, clubTeamId,
+                    TableColumn.CLUB_MEMBER_ID.name, ModelTools.listToString(clubMembers)), columns, getInstance()));
+            // vytvoreni novych clenu tymu
+            int index, clubMemberId;
+            for (int i = 0; i < clubMembers.size(); ++i) {
+                clubMemberId = clubMembers.get(i).getId();
 
-	/**
-	 * Vraci seznam clenu jednoho tymu asociovanych se clenem klubu
-	 * 
-	 * @return seznam clenu tymu
-	 * @throws SQLException
-	 */
-	public static List<TeamMember> selectByTeamId(int clubTeamId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE %s = %d", Admin.createSelectParams(columns),
-				tableName, TableColumn.CLUB_TEAM_ID, clubTeamId), columns, getInstance());
-	}
+                index = -1;
+                for (int j = 0; j < teamMembers.size(); ++j) {
+                    if (teamMembers.get(j).getClubMemberId() == clubMemberId) {
+                        index = j;
+                        break;
+                    }
+                }
 
-	/**
-	 * Vraci seznam tymu, do kterych patri jeden clen klubu
-	 * 
-	 * @param clubMemberId
-	 *            unikatni identifikator clena klubu
-	 * @param columns
-	 *            definice sloupcu tabulky, ktere se maji nacist z databaze
-	 * @return seznam clenu
-	 * @throws SQLException
-	 */
-	public static List<TeamMember> selectByClubMemberId(int clubMemberId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE %s = %d", Admin.createSelectParams(columns),
-				tableName, TableColumn.CLUB_MEMBER_ID, clubMemberId), columns, getInstance());
-	}
+                if (index < 0) {
+                    teamMembers.add(new TeamMember(clubTeamId, clubMemberId));
+                }
+            }
+        }
+        return teamMembers;
+    }
 
-	/**
-	 * Vraci seznam clenu dle seznamu clenu klubu. Pokud je clen klubu i clenem
-	 * tymu nactou se data clena tymu z databaze. Pokud clen klubu neni clenem
-	 * tymu, vytori se nova instance clena tymu.
-	 * 
-	 * @return seznam clenu tymu
-	 * @throws SQLException
-	 */
-	public static List<TeamMember> selectOrCreateByClubMembers(int clubTeamId, List<ClubMember> clubMembers, TableColumn[] columns)
-			throws SQLException {
-		List<TeamMember> teamMembers = new ArrayList<TeamMember>();
-		if (clubMembers.size() > 0) {
-			// vyber clenu tymu, kterym odpovida nejaky zaznam v seznamu clenu
-			// klubu
-			columns = getColumns(columns);
-			teamMembers.addAll(Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s IN (%s))",
-					Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID, clubTeamId,
-					TableColumn.CLUB_MEMBER_ID.name, ModelTools.listToString(clubMembers)), columns, getInstance()));
-			// vytvoreni novych clenu tymu
-			int index, clubMemberId;
-			for (int i = 0; i < clubMembers.size(); ++i) {
-				clubMemberId = clubMembers.get(i).getId();
+    // Implementace Rozhrani Globals.SqlExtension
+    @Override
+    public void insertRow(TeamMember value) throws SQLException {
+        insert(value);
+    }
 
-				index = -1;
-				for (int j = 0; j < teamMembers.size(); ++j)
-					if (teamMembers.get(j).getClubMemberId() == clubMemberId) {
-						index = j;
-						break;
-					}
+    @Override
+    public void updateRow(TeamMember value) throws SQLException {
+        update(value);
+    }
 
-				if (index < 0)
-					teamMembers.add(new TeamMember(clubTeamId, clubMemberId));
-			}
-		}
-		return teamMembers;
-	}
+    @Override
+    public void deleteRow(int id) throws SQLException {
+        delete(id);
+    }
 
-	// Implementace Rozhrani Globals.SqlExtension
+    @Override
+    public void exchangeRows(int idA, int idB) throws SQLException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 
-	@Override
-	public void insertRow(TeamMember value) throws SQLException {
-		insert(value);
-	}
+    @Override
+    public void readValue(ResultSet result, int resultsColumnId, TeamMember data, Object dataColumnId) throws SQLException {
+        switch ((RepTeamMember.TableColumn) dataColumnId) {
+            case ID:
+                data.setId(result.getInt(resultsColumnId));
+                break;
+            case FUNCTIONS:
+                data.setFunctions(result.getInt(resultsColumnId));
+                break;
+            case CLUB_MEMBER_ID:
+                data.setClubMemberId(result.getInt(resultsColumnId));
+                break;
+            case CLUB_TEAM_ID:
+                data.setClubTeamId(result.getInt(resultsColumnId));
+                break;
+        }
+    }
 
-	@Override
-	public void updateRow(TeamMember value) throws SQLException {
-		update(value);
-	}
+    /* PRIVATE */
+    private static RepTeamMember.TableColumn[] getColumns(RepTeamMember.TableColumn[] columns) {
+        return columns != null ? columns : TableColumn.values();
+    }
 
-	@Override
-	public void deleteRow(int id) throws SQLException {
-		delete(id);
-	}
+    public RepTeamMember() {
+    }
 
-	@Override
-	public void readValue(ResultSet result, int resultsColumnId, TeamMember data, Object dataColumnId) throws SQLException {
-		switch ((RepTeamMember.TableColumn) dataColumnId) {
-		case ID:
-			data.setId(result.getInt(resultsColumnId));
-			break;
-		case FUNCTIONS:
-			data.setFunctions(result.getInt(resultsColumnId));
-			break;
-		case CLUB_MEMBER_ID:
-			data.setClubMemberId(result.getInt(resultsColumnId));
-			break;
-		case CLUB_TEAM_ID:
-			data.setClubTeamId(result.getInt(resultsColumnId));
-			break;
-		}
-	}
-
-	/* PRIVATE */
-
-	private static RepTeamMember.TableColumn[] getColumns(RepTeamMember.TableColumn[] columns) {
-		return columns != null ? columns : TableColumn.values();
-	}
-
-	public RepTeamMember() {
-	}
-
-	private static RepTeamMember teamMemberDb = new RepTeamMember();
+    private final static RepTeamMember teamMemberDb = new RepTeamMember();
 }

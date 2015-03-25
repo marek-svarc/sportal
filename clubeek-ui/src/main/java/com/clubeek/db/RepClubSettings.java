@@ -8,83 +8,91 @@ import com.clubeek.model.ClubSettings;
 
 public class RepClubSettings implements Repository<ClubSettings> {
 
-	/** Nazev tabulky */
-	public static final String tableName = "club_settings";
+    /** Nazev tabulky */
+    public static final String tableName = "club_settings";
 
-	/** Identifikatory sloupcu tabulky */
-	public enum TableColumn {
-		ID("id"), TITLE("title"), COMMENT("comment"), LOGO("logo");
+    /** Identifikatory sloupcu tabulky */
+    public static enum TableColumn {
 
-		private TableColumn(String dbColumnName) {
-			this.name = dbColumnName;
-		}
+        ID("id"), 
+        TITLE("title"), 
+        COMMENT("comment"), 
+        LOGO("logo");
 
-		@Override
-		public String toString() {
-			return name;
-		}
+        private TableColumn(String dbColumnName) {
+            this.name = dbColumnName;
+        }
 
-		public final String name;
-	}
+        @Override
+        public String toString() {
+            return name;
+        }
 
-	public static RepClubSettings getInstance() {
-		return clubDb;
-	}
-	
-	/**
-	 * Vraci nastaveni klubu z tabulky "club_settings"
-	 * 
-	 * @return data nastaveni klubu
-	 * @throws SQLException
-	 */
-	public static ClubSettings select(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<ClubSettings> clubSettingsList = Admin.query(ClubSettings.class, String.format("SELECT %s FROM %s WHERE %s = %d",
-				Admin.createSelectParams(columns), tableName, TableColumn.ID.name, 1), columns, getInstance());
-		return (clubSettingsList != null) && (clubSettingsList.size() == 1) ? clubSettingsList.get(0) : null;
-	}
+        public final String name;
+    }
+
+    public static RepClubSettings getInstance() {
+        return clubDb;
+    }
+
+    /**
+     * Vraci nastaveni klubu z tabulky "club_settings"
+     *
+     * @return data nastaveni klubu
+     * @throws SQLException
+     */
+    public static ClubSettings select(int id, TableColumn[] columns) throws SQLException {
+        columns = getColumns(columns);
+        List<ClubSettings> clubSettingsList = Admin.query(ClubSettings.class, String.format("SELECT %s FROM %s WHERE %s = %d",
+                Admin.createSelectParams(columns), tableName, TableColumn.ID.name, 1), columns, getInstance());
+        return (clubSettingsList != null) && (clubSettingsList.size() == 1) ? clubSettingsList.get(0) : null;
+    }
 
     @Override
-	public void updateRow(ClubSettings value) throws SQLException {
-		// TODO Auto-generated method stub
-	}
+    public void updateRow(ClubSettings value) throws SQLException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 
-	@Override
-	public void insertRow(ClubSettings value) throws SQLException {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void insertRow(ClubSettings value) throws SQLException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 
-	@Override
-	public void deleteRow(int id) throws SQLException {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void readValue(ResultSet result, int resultsColumnId, ClubSettings data, Object dataColumnId) throws SQLException {
-		switch ((RepClubSettings.TableColumn) dataColumnId) {
-		case ID:
-			data.setId(result.getInt(resultsColumnId));
-			break;
-		case TITLE:
-			data.setTitle(result.getString(resultsColumnId));
-			break;
-		case COMMENT:
-			data.setComment(result.getString(resultsColumnId));
-			break;
-		case LOGO:
-			data.setLogo(result.getBytes(resultsColumnId));
-			break;
-		}
-	}
+    @Override
+    public void deleteRow(int id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 
-	/* PRIVATE */
-	
-	private RepClubSettings() {
-	}
+    @Override
+    public void exchangeRows(int idA, int idB) throws SQLException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 
-	private static RepClubSettings.TableColumn[] getColumns(RepClubSettings.TableColumn[] columns) {
-		return columns != null ? columns : TableColumn.values();
-	}
+    @Override
+    public void readValue(ResultSet result, int resultsColumnId, ClubSettings data, Object dataColumnId) throws SQLException {
+        switch ((RepClubSettings.TableColumn) dataColumnId) {
+            case ID:
+                data.setId(result.getInt(resultsColumnId));
+                break;
+            case TITLE:
+                data.setTitle(result.getString(resultsColumnId));
+                break;
+            case COMMENT:
+                data.setComment(result.getString(resultsColumnId));
+                break;
+            case LOGO:
+                data.setLogo(result.getBytes(resultsColumnId));
+                break;
+        }
+    }
 
-	private static RepClubSettings clubDb = new RepClubSettings();
+    /* PRIVATE */
+    private RepClubSettings() {
+    }
+
+    private static RepClubSettings.TableColumn[] getColumns(RepClubSettings.TableColumn[] columns) {
+        return columns != null ? columns : TableColumn.values();
+    }
+
+    private final static RepClubSettings clubDb = new RepClubSettings();
 }
