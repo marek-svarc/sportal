@@ -34,7 +34,7 @@ $v-error-indicator-color: #ed473b;
 
     $v-focus-color-light: lighten($v-focus-color, 45%); 
 
-    $m-font-color-caution: #ed473b;  
+    $m-font-color-caution: #ce3812;  
     $m-font-color-important: #1156a8;  
     $m-font-color-helpful: #585858;  
 
@@ -67,21 +67,52 @@ $v-error-indicator-color: #ed473b;
         margin-bottom: 8px;
     }
 
+    /* HORIZONTAL GROUP OF CONTROLS */
+
+    // style for a control placed on the left side
+    .v-slot-hgroup-left .hgroup-left {
+        margin-right: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    // style for a control placed in the middle
+    .v-slot-hgroup-center .hgroup-center {
+        margin-right: 0px;
+        margin-left: 0px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-left-style: none;
+    }
+
+    // style for a control placed on the right side
+    .v-slot-hgroup-right .hgroup-right {
+        margin-left: 0px;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-left-style: none;
+    }    
 
     /* ICONS */
-    
-    .m-caution .v-icon{
+
+    .m-icon-caution .v-icon{
         color: $m-font-color-caution;
     }
-    
-    .m-important .v-icon{
+
+    .m-icon-important .v-icon{
         color: $m-font-color-important;
     }
-    
-    .m-helpful .v-icon{
+
+    .m-icon-helpful .v-icon{
         color: $m-font-color-helpful;
     }
-    
+
+    .m-icon-large .v-icon{
+        font-size: large;    
+    }
+
     /* TABLE */
 
     // button placed in the table row
@@ -97,7 +128,7 @@ $v-error-indicator-color: #ed473b;
     .m-table-control {
         margin: 8px 0px 8px 8px;
     } 
-    
+
     .v-slot-horzSeparator {
         margin-left: 16px;
     }

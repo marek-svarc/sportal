@@ -12385,16 +12385,43 @@ div.v-layout.v-horizontal.v-widget {
 	margin-bottom: 8px;
 }
 
-.valo_base .m-caution .v-icon {
-	color: #ed473b;
+.valo_base .v-slot-hgroup-left .hgroup-left {
+	margin-right: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
 }
 
-.valo_base .m-important .v-icon {
+.valo_base .v-slot-hgroup-center .hgroup-center {
+	margin-right: 0px;
+	margin-left: 0px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-left-style: none;
+}
+
+.valo_base .v-slot-hgroup-right .hgroup-right {
+	margin-left: 0px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-left-style: none;
+}
+
+.valo_base .m-icon-caution .v-icon {
+	color: #ce3812;
+}
+
+.valo_base .m-icon-important .v-icon {
 	color: #1156a8;
 }
 
-.valo_base .m-helpful .v-icon {
+.valo_base .m-icon-helpful .v-icon {
 	color: #585858;
+}
+
+.valo_base .m-icon-large .v-icon {
+	font-size: large;
 }
 
 .valo_base .v-button-table-row {

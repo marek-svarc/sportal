@@ -45,7 +45,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
             new ActionTable.UserColumnInfo(Columns.EXPIRATION_DATE, String.class, Messages.getString("expirationDate")),};
 
         // create and place table
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
         table.addToOwner(this);
     }
 

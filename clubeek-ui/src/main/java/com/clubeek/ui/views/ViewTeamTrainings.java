@@ -36,7 +36,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
             new ActionTable.UserColumnInfo(ViewTeamTrainings.Columns.PLACE, String.class, Messages.getString("place"))};
 
         // vytvoreni tabulky a ovladacich tlacitek
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(true, true), columns, this);
         table.addToOwner(this);
 
         // custom style

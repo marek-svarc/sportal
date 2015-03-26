@@ -34,7 +34,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             new ActionTable.UserColumnInfo(Columns.TEAM_MEMBER, String.class, Messages.getString("teamMember"))
         };
 
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
         table.addToOwner(this);
     }
 
