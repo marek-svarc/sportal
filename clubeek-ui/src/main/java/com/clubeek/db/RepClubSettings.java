@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.model.ClubSettings;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RepClubSettings implements Repository<ClubSettings> {
 
@@ -35,32 +37,36 @@ public class RepClubSettings implements Repository<ClubSettings> {
 	 * Vraci nastaveni klubu z tabulky "club_settings"
 	 * 
 	 * @return data nastaveni klubu
-	 * @throws SQLException
 	 */
-	public static ClubSettings select(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<ClubSettings> clubSettingsList = Admin.query(ClubSettings.class, String.format("SELECT %s FROM %s WHERE %s = %d",
-				Admin.createSelectParams(columns), tableName, TableColumn.ID.name, 1), columns, getInstance());
-		return (clubSettingsList != null) && (clubSettingsList.size() == 1) ? clubSettingsList.get(0) : null;
+	public static ClubSettings select(int id, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                List<ClubSettings> clubSettingsList = Admin.query(ClubSettings.class, String.format("SELECT %s FROM %s WHERE %s = %d",
+                        Admin.createSelectParams(columns), tableName, TableColumn.ID.name, 1), columns, getInstance());
+                return (clubSettingsList != null) && (clubSettingsList.size() == 1) ? clubSettingsList.get(0) : null;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
     @Override
-	public void updateRow(ClubSettings value) throws SQLException {
+	public void updateRow(ClubSettings value) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void insertRow(ClubSettings value) throws SQLException {
+	public void insertRow(ClubSettings value) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
+	public void deleteRow(int id) {
 		// TODO Auto-generated method stub
 	}
 	
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, ClubSettings data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, ClubSettings data, Object dataColumnId) {
+            try {
 		switch ((RepClubSettings.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(resultsColumnId));
@@ -75,6 +81,9 @@ public class RepClubSettings implements Repository<ClubSettings> {
 			data.setLogo(result.getBytes(resultsColumnId));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -171,15 +170,10 @@ public class ViewNews extends VerticalLayout implements View {
 	}
 
 	private List<Article> getArticles(ClubTeam team, Location location) {
-		try {
-			if (team != null)
-				return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
-			else
-				return RepArticle.select(0, 0, location, null);
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
-		return null;
+            if (team != null)
+                return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
+            else
+                return RepArticle.select(0, 0, location, null);
 	}
 
 	/* PUBLIC */
@@ -293,72 +287,59 @@ public class ViewNews extends VerticalLayout implements View {
 		trainings = null;
 		games = null;
 
-		try {
-			// nacteni kategori tymu
-			ClubTeam team = null;
-			if (teamId > 0)
-				team = RepClubTeam.selectById(teamId, new RepClubTeam.TableColumn[] { TableColumn.ID, TableColumn.CATEGORY_ID });
-
-			// zobrazeni clanku na levou cast stranky (nastenka)
-			List<PublishableArticle> boardArticles = new ArrayList<>();
-			PublishableArticle.addArticlesToContainer(boardArticles, getArticles(team, Location.BULLETIN_BOARD), ViewId.ARTICLE);
-			createNewsLayoutList(boardArticles, vlLeftPanel, false, true, "layout-board", "label-h3", "label-h5"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-			// zobrazeni clanku na stredni cast stranky (seznam clanku)
-			List<PublishableArticle> listArticles = new ArrayList<>();
-			PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, Location.NEWS), ViewId.ARTICLE);
-			if (team != null) {
-				PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
-						ViewId.ARTICLE);
-			} else {
-				List<ClubTeam> teams = RepClubTeam.select(true, new RepClubTeam.TableColumn[] { RepClubTeam.TableColumn.ID });
-				for (ClubTeam item : teams)
-					PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(item.getId(), null),
-							ViewId.ARTICLE);
-			}
-			createNewsLayoutList(listArticles, vlCenterPanel, true, false, "layout-list", "label-h2", "label-h5"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-			vlTeamInfo.setVisible(team != null);
-			vlClubInfo.setVisible(team == null);
-
-			// zobrazeni planovanych akci jednoho tymu
-			if (team != null) {
-
-				// zobrazeni nejblizsiho treninku
-				trainings = RepTeamTraining.selectByClubTeamId(teamId, null);
-				if (trainings != null) {
-					TeamTraining earliestTraining = Tools.DateTime.getEarliestEvent(trainings);
-					if (earliestTraining != null)
-						laEarliestTraining.setValue(Tools.Strings.getHtmlTraining(earliestTraining));
-					else
-						laEarliestTraining.setValue(""); //$NON-NLS-1$
-				}
-
-				// zobrazeni nejblizsiho zapasu
-				games = RepTeamMatch.selectByTeamId(teamId, null);
-				if (games != null) {
-					TeamMatch earliestGame = Tools.DateTime.getEarliestEvent(games);
-					if (earliestGame != null)
-						laEarliestMatch.setValue(Tools.Strings.getHtmlGame(earliestGame));
-					else
-						laEarliestMatch.setValue(""); //$NON-NLS-1$
-				}
-			} else {
-				// nacteni nejblizscih domacich zapasu z databaze
-				List<TeamMatch> homeMatches = RepTeamMatch.selectHomeMatches(6, null);
-				// vypis nejblizscih domacich zapasu z databaze
-				String text = ""; //$NON-NLS-1$
-				for (int i = 0; i < Math.min(8, homeMatches.size()); ++i) {
+                ClubTeam team = null;
+                if (teamId > 0)
+                    team = RepClubTeam.selectById(teamId, new RepClubTeam.TableColumn[] { TableColumn.ID, TableColumn.CATEGORY_ID });
+                List<PublishableArticle> boardArticles = new ArrayList<>();
+                PublishableArticle.addArticlesToContainer(boardArticles, getArticles(team, Location.BULLETIN_BOARD), ViewId.ARTICLE);
+                createNewsLayoutList(boardArticles, vlLeftPanel, false, true, "layout-board", "label-h3", "label-h5");
+                List<PublishableArticle> listArticles = new ArrayList<>();
+                PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, Location.NEWS), ViewId.ARTICLE);
+                if (team != null) {
+                    PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
+                            ViewId.ARTICLE);
+                } else {
+                    List<ClubTeam> teams = RepClubTeam.select(true, new RepClubTeam.TableColumn[] { RepClubTeam.TableColumn.ID });
+                    for (ClubTeam item : teams)
+                        PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(item.getId(), null),
+                                ViewId.ARTICLE);
+                }
+                createNewsLayoutList(listArticles, vlCenterPanel, true, false, "layout-list", "label-h2", "label-h5");
+                vlTeamInfo.setVisible(team != null);
+                vlClubInfo.setVisible(team == null);
+                if (team != null) {
+                    
+                    // zobrazeni nejblizsiho treninku
+                    trainings = RepTeamTraining.selectByClubTeamId(teamId, null);
+                    if (trainings != null) {
+                        TeamTraining earliestTraining = Tools.DateTime.getEarliestEvent(trainings);
+                        if (earliestTraining != null)
+                            laEarliestTraining.setValue(Tools.Strings.getHtmlTraining(earliestTraining));
+                        else
+                            laEarliestTraining.setValue(""); //$NON-NLS-1$
+                    }
+                    
+                    // zobrazeni nejblizsiho zapasu
+                    games = RepTeamMatch.selectByTeamId(teamId, null);
+                    if (games != null) {
+                        TeamMatch earliestGame = Tools.DateTime.getEarliestEvent(games);
+                        if (earliestGame != null)
+                            laEarliestMatch.setValue(Tools.Strings.getHtmlGame(earliestGame));
+                        else
+                            laEarliestMatch.setValue(""); //$NON-NLS-1$
+                    }
+                } else {
+                    // nacteni nejblizscih domacich zapasu z databaze
+                    List<TeamMatch> homeMatches = RepTeamMatch.selectHomeMatches(6, null);
+                    // vypis nejblizscih domacich zapasu z databaze
+                    String text = ""; //$NON-NLS-1$
+                    for (int i = 0; i < Math.min(8, homeMatches.size()); ++i) {
 					text += "<br>" + Tools.Strings.getHtmlGame(homeMatches.get(i)) + "<br>"; //$NON-NLS-1$ //$NON-NLS-2$
 					if (i > 5)
 						break;
 				}
 				laHomeMatches.setValue(text);
 			}
-
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
 
 		calendar.markAsDirty();
 	}

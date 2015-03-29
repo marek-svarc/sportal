@@ -1,6 +1,5 @@
 package com.clubeek.model;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +91,7 @@ public class TeamMember extends Model {
 		}
 	}
 
-	public ClubTeam getClubTeam() throws SQLException {
+	public ClubTeam getClubTeam() {
 		if (clubTeam == null)
 			clubTeam = RepClubTeam.selectById(clubTeamId, null);
 		return clubTeam;
@@ -117,7 +116,7 @@ public class TeamMember extends Model {
 	 * 
 	 * @throws SQLException
 	 */
-	public ClubMember getClubMember() throws SQLException {
+	public ClubMember getClubMember() {
 		if (clubMember == null)
 			clubMember = RepClubMember.selectById(getClubMemberId(), null);
 		return clubMember;

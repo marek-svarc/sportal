@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.Contact;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Trida poskytujici pristup do databazove tabulky "contact"
@@ -46,33 +48,39 @@ public class RepContact implements Repository<Contact> {
 	 * 
 	 * @param contact
 	 *            data jednoho kontaktu, ktera budou vlozena do databaze
-	 * @throws SQLException
 	 */
-	public static void insert(Contact contact) throws SQLException {
-		insert(contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
-				contact.getClubMemberId());
+	public static void insert(Contact contact) {
+            insert(contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
+                    contact.getClubMemberId());
 	}
 
 	/**
 	 * Vlozi a inicializuje radek v tabulce "contact"
 	 * 
-	 * @throws SQLException
 	 */
 	public static void insert(Contact.ContactType type, String description, String contact,
-			Contact.NotificationType notification, int memberId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?)", tableName,
-				TableColumn.TYPE.name, TableColumn.DESCRIPTION.name, TableColumn.CONTACT.name, TableColumn.NOTIFICATION.name,
-				TableColumn.CLUB_MEMBER_ID.name);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(type.ordinal()), new ColumnData(description),
-				new ColumnData(contact), new ColumnData(notification.ordinal()), new ColumnData(memberId) });
+			Contact.NotificationType notification, int memberId) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?)", tableName,
+                        TableColumn.TYPE.name, TableColumn.DESCRIPTION.name, TableColumn.CONTACT.name, TableColumn.NOTIFICATION.name,
+                        TableColumn.CLUB_MEMBER_ID.name);
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(type.ordinal()), new ColumnData(description),
+                    new ColumnData(contact), new ColumnData(notification.ordinal()), new ColumnData(memberId) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML delete
 
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
+	public static void delete(int id) {
+            try {
+                Admin.delete(tableName, TableColumn.ID.name, id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Update
@@ -85,10 +93,13 @@ public class RepContact implements Repository<Contact> {
 	 *            seznam puvodnich kontaktu
 	 * @param newContacts
 	 *            seznam novych kontaktu
-	 * @throws SQLException
 	 */
-	public static void update(List<Contact> oldContacts, List<Contact> newContacts) throws SQLException {
-		Admin.synchronize(oldContacts, newContacts, getInstance());
+	public static void update(List<Contact> oldContacts, List<Contact> newContacts) {
+            try {
+                Admin.synchronize(oldContacts, newContacts, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
@@ -96,11 +107,10 @@ public class RepContact implements Repository<Contact> {
 	 * 
 	 * @param contact
 	 *            data kontaktu
-	 * @throws SQLException
 	 */
-	public static void update(Contact contact) throws SQLException {
-		update(contact.getId(), contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
-				contact.getClubMemberId());
+	public static void update(Contact contact) {
+            update(contact.getId(), contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
+                    contact.getClubMemberId());
 	}
 
 	/**
@@ -112,17 +122,20 @@ public class RepContact implements Repository<Contact> {
 	 *            popis kategorie
 	 * @param priority
 	 *            priorita kategorie
-	 * @throws SQLException
 	 */
 	public static void update(int id, Contact.ContactType type, String description, String contact,
-			Contact.NotificationType notification, int clubMemberId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName,
-				TableColumn.TYPE.name, TableColumn.DESCRIPTION.name, TableColumn.CONTACT.name, TableColumn.NOTIFICATION.name,
-				TableColumn.CLUB_MEMBER_ID.name, TableColumn.ID.name, Integer.toString(id));
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(type.ordinal()), new ColumnData(description),
-				new ColumnData(contact), new ColumnData(notification.ordinal()), new ColumnData(clubMemberId) });
+			Contact.NotificationType notification, int clubMemberId) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName,
+                        TableColumn.TYPE.name, TableColumn.DESCRIPTION.name, TableColumn.CONTACT.name, TableColumn.NOTIFICATION.name,
+                        TableColumn.CLUB_MEMBER_ID.name, TableColumn.ID.name, Integer.toString(id));
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(type.ordinal()), new ColumnData(description),
+                    new ColumnData(contact), new ColumnData(notification.ordinal()), new ColumnData(clubMemberId) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Select
@@ -131,33 +144,37 @@ public class RepContact implements Repository<Contact> {
 	 * Vraci seznam kontaktu asociovanych se clenem klubu
 	 * 
 	 * @return seznam kontaktu
-	 * @throws SQLException
 	 */
-	public static List<Contact> selectByClubMemberId(int clubMemberId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(Contact.class, String.format("SELECT %s FROM %s WHERE %s = %s", Admin.createSelectParams(columns),
-				tableName, TableColumn.CLUB_MEMBER_ID.name, Integer.toString(clubMemberId)), columns, getInstance());
+	public static List<Contact> selectByClubMemberId(int clubMemberId, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(Contact.class, String.format("SELECT %s FROM %s WHERE %s = %s", Admin.createSelectParams(columns),
+                        tableName, TableColumn.CLUB_MEMBER_ID.name, Integer.toString(clubMemberId)), columns, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// Rozhrani Globals.SqlExtension<Contact, ContactDb.TableColumn>
 
 	@Override
-	public void updateRow(Contact value) throws SQLException {
+	public void updateRow(Contact value)  {
 		update(value);
 	}
 
 	@Override
-	public void insertRow(Contact value) throws SQLException {
+	public void insertRow(Contact value) {
 		insert(value);
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
+	public void deleteRow(int id) {
 		delete(id);
 	}
 
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, Contact data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, Contact data, Object dataColumnId) {
+            try {
 		switch ((RepContact.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(TableColumn.ID.name));
@@ -178,6 +195,9 @@ public class RepContact implements Repository<Contact> {
 			data.setClubMemberId(result.getInt(TableColumn.CLUB_MEMBER_ID.name));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

@@ -1,6 +1,5 @@
 package com.clubeek.ui;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -208,11 +207,7 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		mUI = ui;
 
 		ClubSettings settings = null;
-		try {
-			settings = RepClubSettings.select(1, null);
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
+                settings = RepClubSettings.select(1, null);
 
 		// Zakladni rozvrzeni stranky
 
@@ -412,35 +407,22 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		// odstraneni puvodnich prvku menu
 		mbMainHorz.removeItems();
 
-		try {
-			// nacteni aktivnich kategorii z databaze
-			List<Category> categoryList = RepCategory.select(true, null);
-			// nacteni aktivnich tymu z databaze
-			List<ClubTeam> teamList = RepClubTeam.select(true, null);
-
-			// menu aktualne
-			addMenuCommand(null, "Klub", views, HorzMenuNavigationViews.NEWS, null); //$NON-NLS-1$
-
-			// vkladani aktivnich tymu (bez kategorie nebo se skrytou kategorii)
-			if (teamList != null)
-				for (ClubTeam team : teamList)
-					if ((team.getCategory() == null) || (!team.getCategory().getActive()))
-						addMenuCommand(null, team.getName(), views, HorzMenuNavigationViews.TEAM, Integer.toString(team.getId()));
-
-			// vkladani aktivnich kategorii
-			if (categoryList != null)
-				for (Category category : categoryList) {
-					menuItem = mbMainHorz.addItem(category.getDescription(), null);
-					// vkladana aktivnich tymu asociovanych s kategorii
-					for (ClubTeam team : teamList)
-						if (team.getCategoryId() == category.getId())
-							addMenuCommand(menuItem, team.getName(), views, HorzMenuNavigationViews.TEAM,
+                List<Category> categoryList = RepCategory.select(true, null);
+                List<ClubTeam> teamList = RepClubTeam.select(true, null);
+                addMenuCommand(null, "Klub", views, HorzMenuNavigationViews.NEWS, null);
+                if (teamList != null)
+                    for (ClubTeam team : teamList)
+                        if ((team.getCategory() == null) || (!team.getCategory().getActive()))
+                            addMenuCommand(null, team.getName(), views, HorzMenuNavigationViews.TEAM, Integer.toString(team.getId()));
+                if (categoryList != null)
+                    for (Category category : categoryList) {
+                        menuItem = mbMainHorz.addItem(category.getDescription(), null);
+                        // vkladana aktivnich tymu asociovanych s kategorii
+                        for (ClubTeam team : teamList)
+                            if (team.getCategoryId() == category.getId())
+                                addMenuCommand(menuItem, team.getName(), views, HorzMenuNavigationViews.TEAM,
 									Integer.toString(team.getId()));
 				}
-
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
 
 		// menu nastaveni
 		if ((user != null) && (Security.checkRole(user.getRole(), User.Role.EDITOR))) {

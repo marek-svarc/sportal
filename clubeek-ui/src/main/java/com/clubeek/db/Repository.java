@@ -14,25 +14,22 @@ public interface Repository<T> {
 	/**
 	 * Modifikuje radek tabulky
 	 * 
-	 * @throws SQLException
 	 */
-	void updateRow(T value) throws SQLException;
+	void updateRow(T value);
 
 	/**
 	 * Vlozi a inicializuje radek v tabulce
 	 * 
-	 * @throws SQLException
 	 */
-	void insertRow(T value) throws SQLException;
+	void insertRow(T value);
 
 	/**
 	 * Odmaze radek z tabulky
 	 * 
 	 * @param id
 	 *            index radky ktera ma byt vymazana s tabulky
-	 * @throws SQLException
 	 */
-	void deleteRow(int id) throws SQLException;
+	void deleteRow(int id);
 
 	/**
 	 * Vysledek SQL prikazu SELECT zap�e do dat
@@ -45,7 +42,6 @@ public interface Repository<T> {
 	 *            data do kterych se zapisuje Vysledek SELECTu
 	 * @param dataColumnId
 	 *            identifiktor datoveho pole, kam se zapise vysledek
-	 * @throws SQLException
 	 */
-	void readValue(ResultSet result, int resultsColumnId, T data, Object dataColumnId) throws SQLException;
+	void readValue(ResultSet result, int resultsColumnId, T data, Object dataColumnId);
 }

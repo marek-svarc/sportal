@@ -1,6 +1,5 @@
 package com.clubeek.model;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -122,7 +121,7 @@ public class ClubMember extends Model {
 		this.code = code;
 	}
 	
-	public List<Contact> getContacts() throws SQLException {
+	public List<Contact> getContacts() {
 		if (contacts == null)
 			contacts = RepContact.selectByClubMemberId(getId(), null);
 		
@@ -140,4 +139,8 @@ public class ClubMember extends Model {
 	public void setPhoto(byte[] image) {
 		this.photo = image;
 	}
+        
+        public String getMemberFullName() {
+            return name + " " + surname;
+        }
 }

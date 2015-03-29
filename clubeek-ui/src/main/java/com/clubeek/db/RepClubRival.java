@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.ClubRival;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RepClubRival implements Repository<ClubRival> {
 
@@ -39,27 +41,28 @@ public class RepClubRival implements Repository<ClubRival> {
 	 * 
 	 * @param club
 	 *            data klubu, ktera budou zapsana do databaze
-	 * @throws SQLException
 	 */
-	public static int insert(ClubRival club) throws SQLException {
-		return insert(club.getName(), club.getWeb(), club.getGPS(), club.getStreet(), club.getCity(), club.getCode(),
-				club.getIcon());
+	public static int insert(ClubRival club) {
+            return insert(club.getName(), club.getWeb(), club.getGPS(), club.getStreet(), club.getCity(), club.getCode(),
+                    club.getIcon());
 	}
 
 	/**
 	 * Vlozi a inicializuje radek v tabulce "club".
 	 * 
-	 * @throws SQLException
 	 */
-	public static int insert(String name, String web, String gps, String street, String city, String code, byte[] icon)
-			throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?, ?, ?)", tableName,
-				TableColumn.NAME.name, TableColumn.WEB.name, TableColumn.GPS.name, TableColumn.STREET.name,
-				TableColumn.CITY.name, TableColumn.CODE.name, TableColumn.ICON.name);
-		// provedeni transakce
-		return Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(web), new ColumnData(gps),
-				new ColumnData(street), new ColumnData(city), new ColumnData(code), new ColumnData(icon) }, true);
+	public static int insert(String name, String web, String gps, String street, String city, String code, byte[] icon) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?, ?, ?)", tableName,
+                        TableColumn.NAME.name, TableColumn.WEB.name, TableColumn.GPS.name, TableColumn.STREET.name,
+                        TableColumn.CITY.name, TableColumn.CODE.name, TableColumn.ICON.name);
+                // provedeni transakce
+                return Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(web), new ColumnData(gps),
+                    new ColumnData(street), new ColumnData(city), new ColumnData(code), new ColumnData(icon) }, true);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML Update
@@ -69,11 +72,10 @@ public class RepClubRival implements Repository<ClubRival> {
 	 * 
 	 * @param club
 	 *            data klubu, ktera budou zapsana do databaze
-	 * @throws SQLException
 	 */
-	public static void update(ClubRival club) throws SQLException {
-		update(club.getId(), club.getName(), club.getWeb(), club.getGPS(), club.getStreet(), club.getCity(), club.getCode(),
-				club.getIcon());
+	public static void update(ClubRival club) {
+            update(club.getId(), club.getName(), club.getWeb(), club.getGPS(), club.getStreet(), club.getCity(), club.getCode(),
+                    club.getIcon());
 	}
 
 	/**
@@ -81,17 +83,20 @@ public class RepClubRival implements Repository<ClubRival> {
 	 * 
 	 * @param id
 	 *            index modifikovane radky tabulky
-	 * @throws SQLException
 	 */
 	public static void update(int id, String name, String web, String gps, String street, String city, String code,
-			byte[] small_icon) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d",
-				tableName, TableColumn.NAME.name, TableColumn.WEB.name, TableColumn.GPS.name, TableColumn.STREET.name,
-				TableColumn.CITY.name, TableColumn.CODE.name, TableColumn.ICON.name, TableColumn.ID.name, id);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(web), new ColumnData(gps),
-				new ColumnData(street), new ColumnData(city), new ColumnData(code), new ColumnData(small_icon) });
+			byte[] small_icon) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d",
+                        tableName, TableColumn.NAME.name, TableColumn.WEB.name, TableColumn.GPS.name, TableColumn.STREET.name,
+                        TableColumn.CITY.name, TableColumn.CODE.name, TableColumn.ICON.name, TableColumn.ID.name, id);
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(web), new ColumnData(gps),
+                    new ColumnData(street), new ColumnData(city), new ColumnData(code), new ColumnData(small_icon) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML delete
@@ -101,10 +106,13 @@ public class RepClubRival implements Repository<ClubRival> {
 	 * 
 	 * @param id
 	 *            unikatni identifikator radky tabulky
-	 * @throws SQLException
 	 */
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
+	public static void delete(int id) {
+            try {
+                Admin.delete(tableName, TableColumn.ID.name, id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Select
@@ -113,46 +121,53 @@ public class RepClubRival implements Repository<ClubRival> {
 	 * Vraci vsechny radky a vsechny sloupce tabulky "club"
 	 * 
 	 * @return seznam vsech radek tabulky
-	 * @throws SQLException
 	 */
-	public static List<ClubRival> selectAll(TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(ClubRival.class, String.format("SELECT %s FROM %s ORDER BY %s ASC", Admin.createSelectParams(columns),
-				tableName, TableColumn.NAME), columns, RepClubRival.getInstance());
+	public static List<ClubRival> selectAll(TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(ClubRival.class, String.format("SELECT %s FROM %s ORDER BY %s ASC", Admin.createSelectParams(columns),
+                        tableName, TableColumn.NAME), columns, RepClubRival.getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
 	 * Vraci klub z tabulky "club" dle primarniho klice
 	 * 
 	 * @return data clena klubu
-	 * @throws SQLException
 	 */
-	public static ClubRival selectById(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<ClubRival> clubList = Admin.query(ClubRival.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s ASC",
-				Admin.createSelectParams(columns), tableName, TableColumn.ID, id, TableColumn.NAME), columns, getInstance());
-		return (clubList != null) && (clubList.size() == 1) ? clubList.get(0) : null;
+	public static ClubRival selectById(int id, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                List<ClubRival> clubList = Admin.query(ClubRival.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s ASC",
+                        Admin.createSelectParams(columns), tableName, TableColumn.ID, id, TableColumn.NAME), columns, getInstance());
+                return (clubList != null) && (clubList.size() == 1) ? clubList.get(0) : null;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// interface Globals.SqlExtension<Club>
 
 	@Override
-	public void updateRow(ClubRival value) throws SQLException {
+	public void updateRow(ClubRival value) {
 		update(value);
 	}
 
 	@Override
-	public void insertRow(ClubRival value) throws SQLException {
+	public void insertRow(ClubRival value) {
 		insert(value);
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
+	public void deleteRow(int id) {
 		delete(id);
 	}
 
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, ClubRival data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, ClubRival data, Object dataColumnId) {
+            try {
 		switch ((RepClubRival.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(resultsColumnId));
@@ -179,6 +194,9 @@ public class RepClubRival implements Repository<ClubRival> {
 			data.setIcon(result.getBytes(resultsColumnId));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

@@ -2,7 +2,6 @@ package com.clubeek.ui.frames;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -191,16 +190,12 @@ public class FrameClubMember extends HorizontalLayout implements ModalInput<Club
 		tfZipCode.setValue(data.getCode());
 		// kontakty
 		Contact contact;
-		try {
-			if (data.getContacts() != null)
-				for (int i = 0; i < data.getContacts().size(); ++i) {
-					contact = data.getContacts().get(i);
-					addContactComponent(contact.getId(), contact.getType(), contact.getDescription(), contact.getContact(),
-							contact.getNotification());
-				}
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
+                if (data.getContacts() != null)
+                    for (int i = 0; i < data.getContacts().size(); ++i) {
+                        contact = data.getContacts().get(i);
+                        addContactComponent(contact.getId(), contact.getType(), contact.getDescription(), contact.getContact(),
+                                contact.getNotification());
+                    }
 		setupContactComponents();
 		// fotografie
 		Tools.Components.fillImageByPortrait(imPhoto, data.getPhoto(), Integer.toString(data.getId())); //$NON-NLS-1$

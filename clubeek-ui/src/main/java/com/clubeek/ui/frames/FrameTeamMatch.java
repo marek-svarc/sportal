@@ -1,6 +1,5 @@
 package com.clubeek.ui.frames;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -72,11 +71,7 @@ public class FrameTeamMatch extends VerticalLayout implements ModalInput<TeamMat
 		// souper
 
 		clubs = null;
-		try {
-			clubs = RepClubRival.selectAll(null);
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
+                clubs = RepClubRival.selectAll(null);
 
 		nsRival.addItem(-1);
 		nsRival.setItemCaption(-1, Messages.getString("notAssigned")); //$NON-NLS-1$

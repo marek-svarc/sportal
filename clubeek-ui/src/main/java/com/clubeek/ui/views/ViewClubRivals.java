@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepClubRival;
@@ -48,26 +47,21 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
         Security.authorize(Role.SPORT_MANAGER);
 
-        try {
-            clubs = RepClubRival.selectAll(null);
-
-            table.removeAllRows();
-            for (int i = 0; i < clubs.size(); ++i) {
-                ClubRival club = clubs.get(i);
-
-                // sestaveni adresy klubu do jednoho retezce
-                String address = Tools.Strings.concatenateText(
-                        new String[]{club.getStreet(), club.getCity(), club.getCode()}, ", "); //$NON-NLS-1$
-
-                // objekt odkazu na webove stranky klubu
-                Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
-                webLink.setTargetName("_blank"); //$NON-NLS-1$
-
-                // pridani radky tabulky
-                table.addRow(new Object[]{club.getName(), address, webLink, club.getGPS()}, i);
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        clubs = RepClubRival.selectAll(null);
+        table.removeAllRows();
+        for (int i = 0; i < clubs.size(); ++i) {
+            ClubRival club = clubs.get(i);
+            
+            // sestaveni adresy klubu do jednoho retezce
+            String address = Tools.Strings.concatenateText(
+                    new String[]{club.getStreet(), club.getCity(), club.getCode()}, ", "); //$NON-NLS-1$
+            
+            // objekt odkazu na webove stranky klubu
+            Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
+            webLink.setTargetName("_blank"); //$NON-NLS-1$
+            
+            // pridani radky tabulky
+            table.addRow(new Object[]{club.getName(), address, webLink, club.getGPS()}, i);
         }
     }
 

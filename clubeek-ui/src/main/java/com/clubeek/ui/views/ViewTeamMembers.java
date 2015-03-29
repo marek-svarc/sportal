@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,12 +70,7 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
         List<ClubTeam> teams = null;
         ClubTeam selectedTeam = getSelectedTeam();
 
-        // nplneni seznamu aktivnich tymu
-        try {
-            teams = RepClubTeam.select(true, null);
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
-        }
+        teams = RepClubTeam.select(true, null);
         Tools.Components.initNativeSelect(nsTeams, teams);
 
         // vyber defaultniho aktivniho tymu
@@ -114,22 +108,18 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
     private void updateTeamMembersTable() {
         table.removeAllRows();
 
-        try {
-            ClubTeam selectedTeam = getSelectedTeam();
-            if (selectedTeam != null) {
-                // read team members from database
-                teamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
-
-                // fill table
-                for (int i = 0; i < teamMembers.size(); ++i) {
-                    TeamMember teamMember = teamMembers.get(i);
-                    ClubMember clubMember = teamMember.getClubMember();
-                    table.addRow(new Object[]{clubMember.getName(), clubMember.getSurname(),
-                        clubMember.getBirthdateAsString(), teamMember.getFunctionsAsList().toString()}, new Integer(i));
-                }
+        ClubTeam selectedTeam = getSelectedTeam();
+        if (selectedTeam != null) {
+            // read team members from database
+            teamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
+            
+            // fill table
+            for (int i = 0; i < teamMembers.size(); ++i) {
+                TeamMember teamMember = teamMembers.get(i);
+                ClubMember clubMember = teamMember.getClubMember();
+                table.addRow(new Object[]{clubMember.getName(), clubMember.getSurname(),
+                    clubMember.getBirthdateAsString(), teamMember.getFunctionsAsList().toString()}, new Integer(i));
             }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
         }
     }
 
@@ -140,34 +130,21 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
         if (selectedTeam != null) {
 
-            try {
-                // seznam clenu klubu asociovanych se zobrazenymi cleny tymu
-                final List<ClubMember> clubMembers = new ArrayList<>(teamMembers.size());
-                for (TeamMember teamMember : teamMembers) {
-                    clubMembers.add(teamMember.getClubMember());
-                }
-
-                // vytvoreni dialogu
-                ModalDialog<List<ClubMember>> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("selectTeamMembers"), //$NON-NLS-1$
-                        new FrameSelectMembers(), clubMembers, new ClickListener() {
-
-                            @Override
-                            public void buttonClick(ClickEvent event) {
-                                try {
-                                    RepTeamMember.update(teamMembers,
-                                            RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
-                                } catch (SQLException e) {
-                                    Tools.msgBoxSQLException(e);
-                                }
-                                updateTeamMembersTable();
-                            }
-                        });
-
-                getUI().addWindow(dlg);
-
-            } catch (SQLException e) {
-                Tools.msgBoxSQLException(e);
+            final List<ClubMember> clubMembers = new ArrayList<>(teamMembers.size());
+            for (TeamMember teamMember : teamMembers) {
+                clubMembers.add(teamMember.getClubMember());
             }
+            ModalDialog<List<ClubMember>> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("selectTeamMembers"), //$NON-NLS-1$
+                    new FrameSelectMembers(), clubMembers, new ClickListener() {
+                        
+                        @Override
+                        public void buttonClick(ClickEvent event) {
+                            RepTeamMember.update(teamMembers,
+                                    RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
+                            updateTeamMembersTable();
+                        }
+                    });
+            getUI().addWindow(dlg);
         }
     }
 

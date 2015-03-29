@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepClubMember;
@@ -46,16 +45,12 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 
         // read training list from the database
         users = null;
-        try {
-            users = RepUser.selectAll(new RepUser.TableColumn[]{RepUser.TableColumn.ID, RepUser.TableColumn.NAME,
-                RepUser.TableColumn.PERMISSIONS, RepUser.TableColumn.CLUB_MEMBER_ID});
-            for (User user : users) {
-                user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), new RepClubMember.TableColumn[]{
-                    RepClubMember.TableColumn.ID, RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME,
-                    RepClubMember.TableColumn.BIRTHDATE}));
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        users = RepUser.selectAll(new RepUser.TableColumn[]{RepUser.TableColumn.ID, RepUser.TableColumn.NAME,
+            RepUser.TableColumn.PERMISSIONS, RepUser.TableColumn.CLUB_MEMBER_ID});
+        for (User user : users) {
+            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), new RepClubMember.TableColumn[]{
+                RepClubMember.TableColumn.ID, RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME,
+                RepClubMember.TableColumn.BIRTHDATE}));
         }
 
         // add table rows

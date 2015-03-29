@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 
 import com.clubeek.db.RepArticle;
 import com.clubeek.model.Article;
@@ -61,16 +60,12 @@ public class ViewArticle extends VerticalLayout implements View {
 			articleId = Tools.Strings.analyzeParameters(event);
 
 		if (articleId > 0) {
-			try {
-				Article article = RepArticle.selectById(articleId, new RepArticle.TableColumn[] { RepArticle.TableColumn.CAPTION,
-						RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE });
-				laCaption.setValue(article.getCaption());
-				laCreationDate.setValue(String.format("%s %s", Messages.getString("ViewArticle.6"), //$NON-NLS-1$ //$NON-NLS-2$
-						Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.SHORT_DAY)));
-				laContent.setValue(article.getContent());
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
+                    Article article = RepArticle.selectById(articleId, new RepArticle.TableColumn[] { RepArticle.TableColumn.CAPTION,
+                        RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE });
+                    laCaption.setValue(article.getCaption());
+                    laCreationDate.setValue(String.format("%s %s", Messages.getString("ViewArticle.6"), //$NON-NLS-1$ //$NON-NLS-2$
+                            Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.SHORT_DAY)));
+                    laContent.setValue(article.getContent());
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,21 +67,16 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
 
         Security.authorize(Role.CLUB_MANAGER);
 
-        try {
-            members = RepClubMember.selectAll(null);
-
-            table.removeAllRows();
-            for (int i = 0; i < members.size(); ++i) {
-                ClubMember member = members.get(i);
-
-                String address = Tools.Strings.concatenateText(
-                        new String[]{member.getStreet(), member.getCity(), member.getCode()}, ", "); //$NON-NLS-1$
-
-                table.addRow(new Object[]{member.getName(), member.getSurname(), member.getIdRegistration(),
-                    member.getBirthdateAsString(), member.getIdPersonal(), address}, i);
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        members = RepClubMember.selectAll(null);
+        table.removeAllRows();
+        for (int i = 0; i < members.size(); ++i) {
+            ClubMember member = members.get(i);
+            
+            String address = Tools.Strings.concatenateText(
+                    new String[]{member.getStreet(), member.getCity(), member.getCode()}, ", "); //$NON-NLS-1$
+            
+            table.addRow(new Object[]{member.getName(), member.getSurname(), member.getIdRegistration(),
+                member.getBirthdateAsString(), member.getIdPersonal(), address}, i);
         }
     }
 
@@ -95,32 +89,18 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     public void editMember(int id) {
         // data asociovana s vybranym radkem
         final ClubMember data = members.get(id);
-        try {
-            // kopie kontaktu
-            final ArrayList<Contact> oldContacts = new ArrayList<>(data.getContacts());
-            // vytvoreni dialogu
-            ModalDialog<ClubMember> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("clubMemberProperties"), //$NON-NLS-1$
-                    new FrameClubMember(), data, new ClickListener() {
-
-                        @Override
-                        public void buttonClick(ClickEvent event) {
-                            try {
-                                // zmena vlastnosti clena v databazi
-                                RepClubMember.update(data);
-                                // zmena kontaktu v databazi
-                                RepContact.update(oldContacts, data.getContacts());
-                                // aktualizace stranky
-                                enter(null);
-                            } catch (SQLException e) {
-                                Tools.msgBoxSQLException(e);
-                            }
-                        }
-                    });
-            // zobrazeni dialogu
-            getUI().addWindow(dlg);
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
-        }
+        final ArrayList<Contact> oldContacts = new ArrayList<>(data.getContacts());
+        ModalDialog<ClubMember> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("clubMemberProperties"), //$NON-NLS-1$
+                new FrameClubMember(), data, new ClickListener() {
+                    
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        RepClubMember.update(data);
+                        RepContact.update(oldContacts, data.getContacts());
+                        enter(null);
+                    }
+                });
+        getUI().addWindow(dlg);
     }
 
     public void deleteMember(int id) {

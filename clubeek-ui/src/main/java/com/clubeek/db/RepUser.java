@@ -8,6 +8,8 @@ import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.TeamMember;
 import com.clubeek.model.User;
 import com.clubeek.model.User.Role;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RepUser implements Repository<User> {
 
@@ -42,10 +44,9 @@ public class RepUser implements Repository<User> {
 	 * 
 	 * @param user
 	 *            informace o uzivateli
-	 * @throws SQLException
 	 */
-	public static void insert(User user) throws SQLException {
-		insert(user.getName(), user.GetHashPassword(), user.getRole(), user.getClubMemberId());
+	public static void insert(User user) {
+            insert(user.getName(), user.GetHashPassword(), user.getRole(), user.getClubMemberId());
 	}
 
 	/**
@@ -57,15 +58,18 @@ public class RepUser implements Repository<User> {
 	 *            heslo uzivatele
 	 * @param role
 	 *            uzivatelska role
-	 * @throws SQLException
 	 */
-	public static void insert(String name, String password, Role role, int clubMemberId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES ( ? , ? , ? , ? )", tableName, TableColumn.NAME,
-				TableColumn.PASSWORD, TableColumn.PERMISSIONS, TableColumn.CLUB_MEMBER_ID);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(password), new ColumnData(role.ordinal()),
-				new ColumnData(clubMemberId > 0 ? clubMemberId : Integer.MIN_VALUE) });
+	public static void insert(String name, String password, Role role, int clubMemberId) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES ( ? , ? , ? , ? )", tableName, TableColumn.NAME,
+                        TableColumn.PASSWORD, TableColumn.PERMISSIONS, TableColumn.CLUB_MEMBER_ID);
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(name), new ColumnData(password), new ColumnData(role.ordinal()),
+                    new ColumnData(clubMemberId > 0 ? clubMemberId : Integer.MIN_VALUE) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML update
@@ -75,10 +79,9 @@ public class RepUser implements Repository<User> {
 	 * 
 	 * @param user
 	 *            data uzivatele
-	 * @throws SQLException
 	 */
-	public static void update(User user) throws SQLException {
-		update(user.getId(), user.getRole(), user.GetHashPassword());
+	public static void update(User user) {
+            update(user.getId(), user.getRole(), user.GetHashPassword());
 	}
 
 	/**
@@ -90,9 +93,9 @@ public class RepUser implements Repository<User> {
 	 *            uzivatelska role
 	 * @param clubMemberId
 	 *            id clena klubu asociovaneho s uzivatelem
-	 * @throws SQLException
 	 */
-	public static void update(int id, Role role, String password) throws SQLException {
+	public static void update(int id, Role role, String password) {
+            try {
 		if (password != null) {
 			// sestaveni sql prikazu
 			String sql = String.format("UPDATE %s SET %s = ?, %s = ? WHERE %s = %d", tableName, TableColumn.PERMISSIONS,
@@ -106,6 +109,9 @@ public class RepUser implements Repository<User> {
 			// provedeni transakce
 			Admin.update(sql, new ColumnData[] { new ColumnData(role.ordinal()) });
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML delete
@@ -123,33 +129,36 @@ public class RepUser implements Repository<User> {
 	 *            uzivatelske jmeno
 	 * @param columns
 	 *            seznam pozadovanych sloupcu tabulky
-	 * @throws SQLException
 	 */
-	public static User selectByName(String name, boolean fillDependencies, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<User> userList = Admin.query(User.class, String.format("SELECT %s FROM %s WHERE lower(%s) = lower('%s')",
-				Admin.createSelectParams(columns), tableName, TableColumn.NAME, name), columns, getInstance());
-		User user = (userList != null) && (userList.size() == 1) ? userList.get(0) : null;
-
-		if ((user != null) && fillDependencies) {
-			// nacteni dat uzivatele
-			if (user.getClubMemberId() > 0) {
-				user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
-				// nacteni asociovanych tymu
-				List<TeamMember> teams = RepTeamMember.selectByClubMemberId(user.getClubMemberId(),
-						new RepTeamMember.TableColumn[] { RepTeamMember.TableColumn.CLUB_TEAM_ID });
-				if ((teams != null) && (teams.size() > 0)) {
-					int[] teamsId = new int[teams.size()];
-					for (int i = 0; i < teams.size(); ++i)
-						teamsId[i] = teams.get(i).getClubTeamId();
-					user.setTeams(teamsId);
-				} else {
-					user.setTeams(null);
-				}
-
-			}
-		}
-		return user;
+	public static User selectByName(String name, boolean fillDependencies, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                List<User> userList = Admin.query(User.class, String.format("SELECT %s FROM %s WHERE lower(%s) = lower('%s')",
+                        Admin.createSelectParams(columns), tableName, TableColumn.NAME, name), columns, getInstance());
+                User user = (userList != null) && (userList.size() == 1) ? userList.get(0) : null;
+                
+                if ((user != null) && fillDependencies) {
+                    // nacteni dat uzivatele
+                    if (user.getClubMemberId() > 0) {
+                        user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
+                        // nacteni asociovanych tymu
+                        List<TeamMember> teams = RepTeamMember.selectByClubMemberId(user.getClubMemberId(),
+                                new RepTeamMember.TableColumn[] { RepTeamMember.TableColumn.CLUB_TEAM_ID });
+                        if ((teams != null) && (teams.size() > 0)) {
+                            int[] teamsId = new int[teams.size()];
+                            for (int i = 0; i < teams.size(); ++i)
+                                teamsId[i] = teams.get(i).getClubTeamId();
+                            user.setTeams(teamsId);
+                        } else {
+                            user.setTeams(null);
+                        }
+                        
+                    }
+                }
+                return user;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
@@ -159,21 +168,28 @@ public class RepUser implements Repository<User> {
 	 *            identifikator clena klubu
 	 * @param columns
 	 *            seznam pozadovanych sloupcu tabulky
-	 * @throws SQLException
 	 */
-	public static User selectByClubMemberId(int clubMemberId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<User> userList = Admin.query(User.class, String.format("SELECT %s FROM %s WHERE %s = %s",
-				Admin.createSelectParams(columns), tableName, TableColumn.CLUB_MEMBER_ID, Integer.toString(clubMemberId)),
-				columns, getInstance());
-		return (userList != null) && (userList.size() == 1) ? userList.get(0) : null;
+	public static User selectByClubMemberId(int clubMemberId, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                List<User> userList = Admin.query(User.class, String.format("SELECT %s FROM %s WHERE %s = %s",
+                        Admin.createSelectParams(columns), tableName, TableColumn.CLUB_MEMBER_ID, Integer.toString(clubMemberId)),
+                        columns, getInstance());
+                return (userList != null) && (userList.size() == 1) ? userList.get(0) : null;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/** Vrati vsechny uzivatele s pravy administratiora */
-	public static List<User> selectAllAdministrators(TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(User.class, String.format("SELECT %s FROM %s WHERE %s = %s", Admin.createSelectParams(columns),
-				tableName, TableColumn.PERMISSIONS, User.Role.ADMINISTRATOR.ordinal()), columns, getInstance());
+	public static List<User> selectAllAdministrators(TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(User.class, String.format("SELECT %s FROM %s WHERE %s = %s", Admin.createSelectParams(columns),
+                        tableName, TableColumn.PERMISSIONS, User.Role.ADMINISTRATOR.ordinal()), columns, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
@@ -181,33 +197,41 @@ public class RepUser implements Repository<User> {
 	 * 
 	 * @param columns
 	 *            Pole pozadovanych sloupcu tabulky
-	 * @throws SQLException
 	 */
-	public static List<User> selectAll(TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(User.class, String.format("SELECT %s FROM %s", Admin.createSelectParams(columns), tableName), columns,
-				getInstance());
+	public static List<User> selectAll(TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(User.class, String.format("SELECT %s FROM %s", Admin.createSelectParams(columns), tableName), columns,
+                        getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// interface Repository<User>
 
 	@Override
-	public void updateRow(User value) throws SQLException {
+	public void updateRow(User value) {
 		update(value);
 	}
 
 	@Override
-	public void insertRow(User value) throws SQLException {
+	public void insertRow(User value) {
 		insert(value);
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
-		delete(id);
+	public void deleteRow(int id) {
+            try {
+                delete(id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, User data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, User data, Object dataColumnId) {
+            try {
 		switch ((RepUser.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(resultsColumnId));
@@ -225,6 +249,9 @@ public class RepUser implements Repository<User> {
 			data.setClubMemberId(result.getInt(resultsColumnId));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

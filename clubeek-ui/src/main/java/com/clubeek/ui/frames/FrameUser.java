@@ -1,6 +1,5 @@
 package com.clubeek.ui.frames;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,12 +52,8 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 
 		if (insert) {
 			List<ClubMember> clubMembers = null;
-			try {
-				clubMembers = RepClubMember.selectAll(new RepClubMember.TableColumn[] { RepClubMember.TableColumn.ID,
-						RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME, RepClubMember.TableColumn.BIRTHDATE });
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
+                        clubMembers = RepClubMember.selectAll(new RepClubMember.TableColumn[] { RepClubMember.TableColumn.ID,
+                            RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME, RepClubMember.TableColumn.BIRTHDATE });
 			Tools.Components.initNativeSelect(nsClubMember, clubMembers, true);
 
 			nsRole.setValue(data.getRole());
@@ -132,29 +127,21 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 
 	/** testuje zda zadane uzivatelske jmeno jiz neexistuje */
 	private void testUserName() {
-		try {
-			if (RepUser.selectByName(tfName.getValue(), false, null) != null)
-				throw new Validator.EmptyValueException(String.format("Uživatel %s již existuje.", tfName.getValue()));
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
+            if (RepUser.selectByName(tfName.getValue(), false, null) != null)
+                throw new Validator.EmptyValueException(String.format("Uživatel %s již existuje.", tfName.getValue()));
 	}
 
 	/** Testuje zda clen klubu jiz nema vytvoreny ucet */
 	private void testClubMember() {
 		if (nsClubMember.getValue() != null) {
 			User user = null;
-			try {
-				user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
-						RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
-				if (user != null){
-					user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
-					throw new Validator.EmptyValueException(String.format("Člen klubu '%s' již má přiřazen účet.", user
-							.getClubMember().toString()));
+                        user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
+                            RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
+                        if (user != null){
+                            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
+                            throw new Validator.EmptyValueException(String.format("Člen klubu '%s' již má přiřazen účet.", user
+                                    .getClubMember().toString()));
 				}
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
 		}
 
 	}

@@ -8,6 +8,8 @@ import java.util.List;
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Trida poskytujici pristup do databazove tabulky "club_member"
@@ -56,35 +58,37 @@ public class RepClubMember implements Repository<ClubMember> {
 	 * 
 	 * @param clubMember
 	 *            data clena klubu, ktera budou zapsana do databaze
-	 * @throws SQLException
 	 */
-	public static int insert(ClubMember clubMember) throws SQLException {
-		return insert(clubMember.getIdPersonal(), clubMember.getIdRegistration(), clubMember.getName(), clubMember.getSurname(),
-				clubMember.getBirthdate(), clubMember.getStreet(), clubMember.getCity(), clubMember.getCode(),
-				clubMember.getPhoto(), clubMember.getContacts());
+	public static int insert(ClubMember clubMember) {
+            return insert(clubMember.getIdPersonal(), clubMember.getIdRegistration(), clubMember.getName(), clubMember.getSurname(),
+                    clubMember.getBirthdate(), clubMember.getStreet(), clubMember.getCity(), clubMember.getCode(),
+                    clubMember.getPhoto(), clubMember.getContacts());
 	}
 
 	/**
 	 * Vlozi a inicializuje radek v tabulce "club_member". Zaroven vlozi
 	 * asociovane kontakty do tabulky "contact".
 	 * 
-	 * @throws SQLException
 	 */
 	public static int insert(String idPersonal, String idRegistration, String name, String surname, Date birthdate, String street,
-			String city, String code, byte[] photo, List<Contact> contacts) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-				tableName, TableColumn.ID_PERSONAL.name, TableColumn.ID_REGISTRATION.name, TableColumn.NAME.name,
-				TableColumn.SURNAME.name, TableColumn.BIRTHDATE.name, TableColumn.STREET.name, TableColumn.CITY.name,
-				TableColumn.CODE.name, TableColumn.PHOTO.name);
-		// provedeni transakce
-		int id = Admin.update(sql, new ColumnData[] { new ColumnData(idPersonal), new ColumnData(idRegistration),
-				new ColumnData(name), new ColumnData(surname), new ColumnData(birthdate, true), new ColumnData(street),
-				new ColumnData(city), new ColumnData(code), new ColumnData(photo) }, true);
-		// vlozeni kontaktu do tabulky "contact"
-		for (Contact contact : contacts)
-			RepContact.insert(contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(), id);
-		return id;
+			String city, String code, byte[] photo, List<Contact> contacts) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        tableName, TableColumn.ID_PERSONAL.name, TableColumn.ID_REGISTRATION.name, TableColumn.NAME.name,
+                        TableColumn.SURNAME.name, TableColumn.BIRTHDATE.name, TableColumn.STREET.name, TableColumn.CITY.name,
+                        TableColumn.CODE.name, TableColumn.PHOTO.name);
+                // provedeni transakce
+                int id = Admin.update(sql, new ColumnData[] { new ColumnData(idPersonal), new ColumnData(idRegistration),
+                    new ColumnData(name), new ColumnData(surname), new ColumnData(birthdate, true), new ColumnData(street),
+                    new ColumnData(city), new ColumnData(code), new ColumnData(photo) }, true);
+                // vlozeni kontaktu do tabulky "contact"
+                for (Contact contact : contacts)
+                    RepContact.insert(contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(), id);
+                return id;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Update
@@ -94,12 +98,11 @@ public class RepClubMember implements Repository<ClubMember> {
 	 * 
 	 * @param clubMember
 	 *            data clena klubu, ktera budou zapsana do databaze
-	 * @throws SQLException
 	 */
-	public static void update(ClubMember clubMember) throws SQLException {
-		update(clubMember.getId(), clubMember.getIdPersonal(), clubMember.getIdRegistration(), clubMember.getName(),
-				clubMember.getSurname(), clubMember.getBirthdate(), clubMember.getStreet(), clubMember.getCity(),
-				clubMember.getCode(), clubMember.getPhoto());
+	public static void update(ClubMember clubMember) {
+            update(clubMember.getId(), clubMember.getIdPersonal(), clubMember.getIdRegistration(), clubMember.getName(),
+                    clubMember.getSurname(), clubMember.getBirthdate(), clubMember.getStreet(), clubMember.getCity(),
+                    clubMember.getCode(), clubMember.getPhoto());
 	}
 
 	/**
@@ -107,20 +110,23 @@ public class RepClubMember implements Repository<ClubMember> {
 	 * 
 	 * @param id
 	 *            index modifikovane radky tabulky
-	 * @throws SQLException
 	 */
 	public static void update(int id, String idPersonal, String idRegistration, String name, String surname, Date birthdate,
-			String street, String city, String code, byte[] photo) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format(
-				"UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName,
-				TableColumn.ID_PERSONAL.name, TableColumn.ID_REGISTRATION.name, TableColumn.NAME.name, TableColumn.SURNAME.name,
-				TableColumn.BIRTHDATE.name, TableColumn.STREET.name, TableColumn.CITY.name, TableColumn.CODE.name,
-				TableColumn.PHOTO.name, TableColumn.ID.name, Integer.toString(id));
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(idPersonal), new ColumnData(idRegistration), new ColumnData(name),
-				new ColumnData(surname), new ColumnData(birthdate, true), new ColumnData(street), new ColumnData(city),
-				new ColumnData(code), new ColumnData(photo) });
+			String street, String city, String code, byte[] photo) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format(
+                        "UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName,
+                        TableColumn.ID_PERSONAL.name, TableColumn.ID_REGISTRATION.name, TableColumn.NAME.name, TableColumn.SURNAME.name,
+                        TableColumn.BIRTHDATE.name, TableColumn.STREET.name, TableColumn.CITY.name, TableColumn.CODE.name,
+                        TableColumn.PHOTO.name, TableColumn.ID.name, Integer.toString(id));
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(idPersonal), new ColumnData(idRegistration), new ColumnData(name),
+                    new ColumnData(surname), new ColumnData(birthdate, true), new ColumnData(street), new ColumnData(city),
+                    new ColumnData(code), new ColumnData(photo) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL delete
@@ -130,10 +136,13 @@ public class RepClubMember implements Repository<ClubMember> {
 	 * 
 	 * @param id
 	 *            unikatni identifikator radky tabulky
-	 * @throws SQLException
 	 */
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
+	public static void delete(int id) {
+            try {
+                Admin.delete(tableName, TableColumn.ID.name, id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Select
@@ -142,68 +151,86 @@ public class RepClubMember implements Repository<ClubMember> {
 	 * Vraci vsechny radky a vsechny sloupce tabulky
 	 * 
 	 * @return seznam vsech radek tabulky
-	 * @throws SQLException
 	 */
-	public static List<ClubMember> selectAll(TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(ClubMember.class, String.format("SELECT %s FROM %s", Admin.createSelectParams(columns), tableName),
-				columns, getInstance());
+	public static List<ClubMember> selectAll(TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(ClubMember.class, String.format("SELECT %s FROM %s", Admin.createSelectParams(columns), tableName),
+                        columns, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
 	 * Vraci clena klubu dle unikatniho identifikatoru
 	 * 
 	 * @return data clena klubu
-	 * @throws SQLException
 	 */
-	public static ClubMember selectById(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<ClubMember> clubMemberList = Admin.query(ClubMember.class, String.format("SELECT %s FROM %s WHERE %s = %d",
-				Admin.createSelectParams(columns), tableName, TableColumn.ID, id), columns, getInstance());
-		return (clubMemberList != null) && (clubMemberList.size() == 1) ? clubMemberList.get(0) : null;
+	public static ClubMember selectById(int id, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                List<ClubMember> clubMemberList = Admin.query(ClubMember.class, String.format("SELECT %s FROM %s WHERE %s = %d",
+                        Admin.createSelectParams(columns), tableName, TableColumn.ID, id), columns, getInstance());
+                return (clubMemberList != null) && (clubMemberList.size() == 1) ? clubMemberList.get(0) : null;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
-	public static List<ClubMember> selectByTeamId(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(ClubMember.class, String.format("SELECT %s FROM %s WHERE %s = %d", Admin.createSelectParams(columns),
-				viewClubMemberByTeam, viewClubMemberByTeam_team_id, id), columns, getInstance());
+	public static List<ClubMember> selectByTeamId(int id, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(ClubMember.class, String.format("SELECT %s FROM %s WHERE %s = %d", Admin.createSelectParams(columns),
+                        viewClubMemberByTeam, viewClubMemberByTeam_team_id, id), columns, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
-	public static List<ClubMember> dbSelectByYearOfBirth(int yearMin, int yearMax, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(ClubMember.class, String.format("SELECT %s FROM %s WHERE (YEAR(%s) >= %d) AND (YEAR(%s) <= %d)",
-				Admin.createSelectParams(columns), tableName, TableColumn.BIRTHDATE, yearMin, TableColumn.BIRTHDATE,
-				yearMax), columns, getInstance());
+	public static List<ClubMember> dbSelectByYearOfBirth(int yearMin, int yearMax, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(ClubMember.class, String.format("SELECT %s FROM %s WHERE (YEAR(%s) >= %d) AND (YEAR(%s) <= %d)",
+                        Admin.createSelectParams(columns), tableName, TableColumn.BIRTHDATE, yearMin, TableColumn.BIRTHDATE,
+                        yearMax), columns, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
-	public static List<ClubMember> dbSelectByBirthdate(int olderOrEqualTo, int youngerOrEqualTo, TableColumn[] columns)
-			throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(ClubMember.class, String.format(
-				"SELECT %s , TRUNC(MONTHS_BETWEEN(SYSDATE, %s) / 12) AS age FROM %s WHERE (age >= %d) AND (age <= %d)",
-				Admin.createSelectParams(columns), TableColumn.BIRTHDATE, tableName, olderOrEqualTo, youngerOrEqualTo),
-				columns, getInstance());
+	public static List<ClubMember> dbSelectByBirthdate(int olderOrEqualTo, int youngerOrEqualTo, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(ClubMember.class, String.format(
+                        "SELECT %s , TRUNC(MONTHS_BETWEEN(SYSDATE, %s) / 12) AS age FROM %s WHERE (age >= %d) AND (age <= %d)",
+                        Admin.createSelectParams(columns), TableColumn.BIRTHDATE, tableName, olderOrEqualTo, youngerOrEqualTo),
+                        columns, getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// Rozhrani Globals.SqlReadable<ClubMember>
 
 	@Override
-	public void insertRow(ClubMember value) throws SQLException {
+	public void insertRow(ClubMember value) {
 		insert(value);
 	}
 
 	@Override
-	public void updateRow(ClubMember value) throws SQLException {
+	public void updateRow(ClubMember value) {
 		update(value);
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
+	public void deleteRow(int id) {
 		delete(id);
 	}
 
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, ClubMember data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, ClubMember data, Object dataColumnId) {
+            try {
 		switch ((RepClubMember.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(resultsColumnId));
@@ -236,6 +263,9 @@ public class RepClubMember implements Repository<ClubMember> {
 			data.setPhoto(result.getBytes(resultsColumnId));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

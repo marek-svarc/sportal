@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepClubTeam;
@@ -44,17 +43,12 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
         Security.authorize(Role.SPORT_MANAGER);
 
-        try {
-            teams = RepClubTeam.select(false, null);
-
-            table.removeAllRows();
-            for (int i = 0; i < teams.size(); ++i) {
-                ClubTeam team = teams.get(i);
-                table.addRow(new Object[]{Tools.Strings.getCheckString(team.getActive()) + "  " + team.getName(),
-                    team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        teams = RepClubTeam.select(false, null);
+        table.removeAllRows();
+        for (int i = 0; i < teams.size(); ++i) {
+            ClubTeam team = teams.get(i);
+            table.addRow(new Object[]{Tools.Strings.getCheckString(team.getActive()) + "  " + team.getName(),
+                team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
         }
     }
 

@@ -17,6 +17,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Admin {
 
@@ -24,11 +26,14 @@ public class Admin {
     /**
      * Vytvori spojeni s MySQL databazi
      *
-     * @throws SQLException
      */
-    public static Connection getConnection() throws SQLException {
-        Connection connection = instance.createConnection();
-        return connection;
+    public static Connection getConnection() {
+        try {
+            Connection connection = instance.createConnection();
+            return connection;
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**

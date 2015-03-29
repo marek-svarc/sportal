@@ -1,6 +1,5 @@
 package com.clubeek.ui;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -43,18 +42,13 @@ public class MyUI extends UI {
             }
         });
 
-        // kontrola existence administratorskeho uctu
-        try {
-            List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
-            if ((admins == null) || (admins.size() <= 0)) {
-                User user = new User();
-                user.setName("admin");
-                user.setPassword("admin");
-                user.setRole(User.Role.ADMINISTRATOR);
-                RepUser.insert(user);
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
+        if ((admins == null) || (admins.size() <= 0)) {
+            User user = new User();
+            user.setName("admin");
+            user.setPassword("admin");
+            user.setRole(User.Role.ADMINISTRATOR);
+            RepUser.insert(user);
         }
 
         // pouziti prostredi s horizontalnim navigacnim menu

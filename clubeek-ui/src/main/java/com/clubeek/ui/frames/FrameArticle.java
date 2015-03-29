@@ -1,6 +1,5 @@
 package com.clubeek.ui.frames;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,12 +83,8 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 
 		List<Category> categories = null;
 		List<ClubTeam> teams = null;
-		try {
-			categories = RepCategory.selectAll(null);
-			teams = RepClubTeam.select(false, null);
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
+                categories = RepCategory.selectAll(null);
+                teams = RepClubTeam.select(false, null);
 
 		// sestaveni seznamu moznych vlastniku clanku
 

@@ -1,6 +1,5 @@
 package com.clubeek.ui.frames;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -69,17 +68,10 @@ public class FrameSelectMembers extends VerticalLayout implements ModalInput<Lis
 				// sestaveni seznamu tymu pro filtrovani dle prirazeni k tymu
 				case TEAM:
 					nsFilterParams.setVisible(true);
-					try {
-						// nacteni aktivnich tymu z databaze
-						List<ClubTeam> teams = RepClubTeam.select(true, null);
-
-						// pridani seznamu do komponenty
-						Tools.Components.initNativeSelect(nsFilterParams, teams);
-						if (teams.size() > 0)
-							nsFilterParams.setValue(teams.get(0));
-					} catch (SQLException e) {
-						Tools.msgBoxSQLException(e);
-					}
+                                        List<ClubTeam> teams = RepClubTeam.select(true, null);
+                                        Tools.Components.initNativeSelect(nsFilterParams, teams);
+                                        if (teams.size() > 0)
+                                            nsFilterParams.setValue(teams.get(0));
 					break;
 
 				// sestavani seznamu rocniku pro filtrovani dle roku narozeni
@@ -233,30 +225,25 @@ public class FrameSelectMembers extends VerticalLayout implements ModalInput<Lis
 	private void updateSourceItems(Iterable<ClubMemberWrapper> selectedItems) {
 		ArrayList<ClubMemberWrapper> sourceItems = new ArrayList<>();
 
-		// nacteni vybiranych prvku dle aktualniho filtru
-		try {
-			List<ClubMember> sourceMembers = null;
-			switch (getSelectedFilterType()) {
-			case TEAM:
-				if (nsFilterParams.getValue() instanceof ClubTeam)
-					sourceMembers = RepClubMember.selectByTeamId(((ClubTeam) nsFilterParams.getValue()).getId(), null);
-				break;
-			case YEAR_OF_BIRTH:
-				if (nsFilterParams.getValue() instanceof ClubMemberYear) {
-					ClubMemberYear clubMemberYear = (ClubMemberYear) nsFilterParams.getValue();
-					sourceMembers = RepClubMember.dbSelectByYearOfBirth(clubMemberYear.yearMin, clubMemberYear.yearMax, null);
-				}
-				break;
-			default:
-				sourceMembers = RepClubMember.selectAll(null);
-				break;
+                List<ClubMember> sourceMembers = null;
+                switch (getSelectedFilterType()) {
+                    case TEAM:
+                        if (nsFilterParams.getValue() instanceof ClubTeam)
+                            sourceMembers = RepClubMember.selectByTeamId(((ClubTeam) nsFilterParams.getValue()).getId(), null);
+                        break;
+                    case YEAR_OF_BIRTH:
+                        if (nsFilterParams.getValue() instanceof ClubMemberYear) {
+                            ClubMemberYear clubMemberYear = (ClubMemberYear) nsFilterParams.getValue();
+                            sourceMembers = RepClubMember.dbSelectByYearOfBirth(clubMemberYear.yearMin, clubMemberYear.yearMax, null);
+                        }
+                        break;
+                    default:
+                        sourceMembers = RepClubMember.selectAll(null);
+                        break;
 			}
-			if (sourceMembers != null)
+            if (sourceMembers != null)
 				for (ClubMember sourceMember : sourceMembers)
 					sourceItems.add(new ClubMemberWrapper(sourceMember));
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
 
 		// odmazat vybrane rvky ze seznamu
 		ModelTools.listRemoveDuplicates(sourceItems, selectedItems);

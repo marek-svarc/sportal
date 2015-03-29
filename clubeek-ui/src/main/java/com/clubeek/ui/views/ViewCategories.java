@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepCategory;
@@ -44,17 +43,12 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
 
         Security.authorize(Role.CLUB_MANAGER);
 
-        try {
-            categories = RepCategory.selectAll(null);
-
-            table.removeAllRows();
-            for (int i = 0; i < categories.size(); ++i) {
-                Category category = categories.get(i);
-                table.addRow(new Object[]{Tools.Strings.getCheckString(category.getActive())
+        categories = RepCategory.selectAll(null);
+        table.removeAllRows();
+        for (int i = 0; i < categories.size(); ++i) {
+            Category category = categories.get(i);
+            table.addRow(new Object[]{Tools.Strings.getCheckString(category.getActive())
                     + "  " + category.getDescription()}, i);
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
         }
     }
 

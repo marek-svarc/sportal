@@ -1,6 +1,5 @@
 package com.clubeek.model;
 
-import java.sql.SQLException;
 
 import com.clubeek.db.RepCategory;
 
@@ -61,8 +60,9 @@ public class ClubTeam extends Model {
 	}
 
 	/** Vraci kategorii ke ktere tym patri 
-	 * @throws SQLException */
-	public Category getCategory() throws SQLException {
+	 * 
+         */
+	public Category getCategory() {
 		if (category == null)
 			category = RepCategory.selectById(categoryId, null);
 		return category;

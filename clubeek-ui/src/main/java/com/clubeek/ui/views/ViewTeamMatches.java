@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepTeamMatch;
@@ -55,11 +54,7 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
         if (teamId > 0) {
             // nacteni seznamu treninku z databaze
             games = null;
-            try {
-                games = RepTeamMatch.selectByTeamId(teamId, null);
-            } catch (SQLException e) {
-                Tools.msgBoxSQLException(e);
-            }
+            games = RepTeamMatch.selectByTeamId(teamId, null);
 
             // inicializace tbulky
             if (games != null) {

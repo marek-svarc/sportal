@@ -1,6 +1,5 @@
 package com.clubeek.ui;
 
-import java.sql.SQLException;
 
 import com.clubeek.db.Repository;
 import com.clubeek.model.Unique;
@@ -129,20 +128,15 @@ public class ModalDialog<T> extends Window {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				// zmena dat
-				try {
-					switch (mode) {
-					case ADD_ONCE:
-					case ADD_MULTI:
-						dataAdmin.insertRow(data);
-						break;
-					case EDIT:
-						dataAdmin.updateRow(data);
-						break;
-					}
-				} catch (SQLException e) {
-					Tools.msgBoxSQLException(e);
-				}
+                            switch (mode) {
+                                case ADD_ONCE:
+                                case ADD_MULTI:
+                                    dataAdmin.insertRow(data);
+                                    break;
+                                case EDIT:
+                                    dataAdmin.updateRow(data);
+                                    break;
+                            }
 				// aktualizace stranky
 				if (owner instanceof View)
 					((View) owner).enter(null);

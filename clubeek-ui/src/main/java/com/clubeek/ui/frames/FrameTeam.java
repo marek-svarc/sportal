@@ -1,6 +1,5 @@
 package com.clubeek.ui.frames;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepCategory;
@@ -44,11 +43,7 @@ public class FrameTeam extends VerticalLayout implements ModalInput<ClubTeam> {
 
 		// nacteni vsech dostupnych kategorii
 		List<Category> categoryList = null;
-		try {
-			categoryList = RepCategory.selectAll(null);
-		} catch (SQLException e) {
-			Tools.msgBoxSQLException(e);
-		}
+                categoryList = RepCategory.selectAll(null);
 
 		// zadavani kategorie tymu
 		if ((categoryList != null) && (categoryList.size() > 0)) {
@@ -69,14 +64,10 @@ public class FrameTeam extends VerticalLayout implements ModalInput<ClubTeam> {
 		cbActive.setValue(data.getActive());
 		tfName.setValue(data.getName());
 		if (nsCategory != null) {
-			try {
-				if (data.getCategory() != null)
-					nsCategory.setValue(data.getCategory().getId());
-				else
-					nsCategory.setValue(0);
-			} catch (SQLException e) {
-				Tools.msgBoxSQLException(e);
-			}
+                    if (data.getCategory() != null)
+                        nsCategory.setValue(data.getCategory().getId());
+                    else
+                        nsCategory.setValue(0);
 		}
 	}
 

@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.TeamMatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RepTeamMatch implements Repository<TeamMatch> {
 
@@ -39,29 +41,31 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	/**
 	 * Vlozi a inicializuje radek v tabulce "game".
 	 * 
-	 * @throws SQLException
 	 */
-	public static int insert(TeamMatch match) throws SQLException {
-		return insert(match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
-				match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
+	public static int insert(TeamMatch match) {
+            return insert(match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
+                    match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
 	}
 
 	/**
 	 * Vlozi a inicializuje radek v tabulce "game".
 	 * 
-	 * @throws SQLException
 	 */
 	public static int insert(Date start, int clubTeamId, int clubRivalId, String clubRivalComment, boolean homeCourt,
-			int scorePos, int scoreNeg, boolean publish, String comment) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )",
-				tableName, TableColumn.START.name, TableColumn.CLUB_TEAM_ID.name, TableColumn.CLUB_RIVAL_ID.name,
-				TableColumn.CLUB_RIVAL_COMMENT.name, TableColumn.HOME_COURT.name, TableColumn.SCORE_POS.name,
-				TableColumn.SCORE_NEG.name, TableColumn.PUBLISH.name, TableColumn.COMMENT.name);
-		// provedeni transakce
-		return Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(clubTeamId),
-				new ColumnData(clubRivalId), new ColumnData(clubRivalComment), new ColumnData(homeCourt),
-				new ColumnData(scorePos), new ColumnData(scoreNeg), new ColumnData(publish), new ColumnData(comment) }, true);
+			int scorePos, int scoreNeg, boolean publish, String comment) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )",
+                        tableName, TableColumn.START.name, TableColumn.CLUB_TEAM_ID.name, TableColumn.CLUB_RIVAL_ID.name,
+                        TableColumn.CLUB_RIVAL_COMMENT.name, TableColumn.HOME_COURT.name, TableColumn.SCORE_POS.name,
+                        TableColumn.SCORE_NEG.name, TableColumn.PUBLISH.name, TableColumn.COMMENT.name);
+                // provedeni transakce
+                return Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(clubTeamId),
+                    new ColumnData(clubRivalId), new ColumnData(clubRivalComment), new ColumnData(homeCourt),
+                    new ColumnData(scorePos), new ColumnData(scoreNeg), new ColumnData(publish), new ColumnData(comment) }, true);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML Update
@@ -69,30 +73,32 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	/**
 	 * Modifikuje radek v tabulce "game"
 	 * 
-	 * @throws SQLException
 	 */
-	public static void update(TeamMatch match) throws SQLException {
-		update(match.getId(), match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
-				match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
+	public static void update(TeamMatch match) {
+            update(match.getId(), match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
+                    match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
 	}
 
 	/**
 	 * Modifikuje radek v tabulce "game"
 	 * 
-	 * @throws SQLException
 	 */
 	public static void update(int id, Date start, int clubTeamId, int clubRivalId, String clubRivalComment, boolean homeCourt,
-			int scorePos, int scoreNeg, boolean publish, String comment) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format(
-				"UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName,
-				TableColumn.START.name, TableColumn.CLUB_TEAM_ID.name, TableColumn.CLUB_RIVAL_ID.name,
-				TableColumn.CLUB_RIVAL_COMMENT.name, TableColumn.HOME_COURT.name, TableColumn.SCORE_POS.name,
-				TableColumn.SCORE_NEG.name, TableColumn.PUBLISH.name, TableColumn.COMMENT.name, TableColumn.ID.name, id);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(clubTeamId),
-				new ColumnData(clubRivalId), new ColumnData(clubRivalComment), new ColumnData(homeCourt),
-				new ColumnData(scorePos), new ColumnData(scoreNeg), new ColumnData(publish), new ColumnData(comment) });
+			int scorePos, int scoreNeg, boolean publish, String comment) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format(
+                        "UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName,
+                        TableColumn.START.name, TableColumn.CLUB_TEAM_ID.name, TableColumn.CLUB_RIVAL_ID.name,
+                        TableColumn.CLUB_RIVAL_COMMENT.name, TableColumn.HOME_COURT.name, TableColumn.SCORE_POS.name,
+                        TableColumn.SCORE_NEG.name, TableColumn.PUBLISH.name, TableColumn.COMMENT.name, TableColumn.ID.name, id);
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(clubTeamId),
+                    new ColumnData(clubRivalId), new ColumnData(clubRivalComment), new ColumnData(homeCourt),
+                    new ColumnData(scorePos), new ColumnData(scoreNeg), new ColumnData(publish), new ColumnData(comment) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML delete
@@ -100,10 +106,13 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	/**
 	 * Maze radek urceny primarnim klicem v tabulce "game"
 	 * 
-	 * @throws SQLException
 	 */
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
+	public static void delete(int id) {
+            try {
+                Admin.delete(tableName, TableColumn.ID.name, id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Select
@@ -113,13 +122,16 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	 * 
 	 * @param id
 	 *            unikatni identifikator zapasu
-	 * @throws SQLException
 	 */
-	public static TeamMatch selectById(int id, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		List<TeamMatch> gameList = Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s DESC",
-				Admin.createSelectParams(columns), tableName, TableColumn.ID.name, id, TableColumn.START), columns, RepTeamMatch.getInstance());
-		return (gameList != null) && (gameList.size() == 1) ? gameList.get(0) : null;
+	public static TeamMatch selectById(int id, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                List<TeamMatch> gameList = Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s DESC",
+                        Admin.createSelectParams(columns), tableName, TableColumn.ID.name, id, TableColumn.START), columns, RepTeamMatch.getInstance());
+                return (gameList != null) && (gameList.size() == 1) ? gameList.get(0) : null;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 
 	}
 
@@ -128,12 +140,15 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	 * 
 	 * @param clubTeamId
 	 *            unikatni identifikator tymu
-	 * @throws SQLException
 	 */
-	public static List<TeamMatch> selectByTeamId(int clubTeamId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s DESC", Admin.createSelectParams(columns),
-				tableName, TableColumn.CLUB_TEAM_ID.name, clubTeamId, TableColumn.START), columns, RepTeamMatch.getInstance());
+	public static List<TeamMatch> selectByTeamId(int clubTeamId, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s DESC", Admin.createSelectParams(columns),
+                        tableName, TableColumn.CLUB_TEAM_ID.name, clubTeamId, TableColumn.START), columns, RepTeamMatch.getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
@@ -142,11 +157,15 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	 * @param clubTeamId
 	 *            unikatni identifikator tymu
 	 */
-	public static List<TeamMatch> selectPublishable(int clubTeamId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s = 1) AND (SYSDATE() >= %s) ORDER BY %s DESC",
-				Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID, clubTeamId, TableColumn.PUBLISH,
-				TableColumn.START, TableColumn.START), columns, RepTeamMatch.getInstance());
+	public static List<TeamMatch> selectPublishable(int clubTeamId, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s = 1) AND (SYSDATE() >= %s) ORDER BY %s DESC",
+                        Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID, clubTeamId, TableColumn.PUBLISH,
+                        TableColumn.START, TableColumn.START), columns, RepTeamMatch.getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/**
@@ -154,35 +173,39 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 	 * 
 	 * @param months
 	 *            pocet mesicu pro vyhledavani
-	 * @throws SQLException
 	 */
-	public static List<TeamMatch> selectHomeMatches(int months, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(TeamMatch.class,	String.format(
-				"SELECT %s FROM %s WHERE (%s = 1) AND (%s > SYSDATE()) AND (%s <= DATE_ADD(SYSDATE(), INTERVAL %d MONTH)) ORDER BY %s",
-				Admin.createSelectParams(columns), tableName, TableColumn.HOME_COURT, TableColumn.START,
-				TableColumn.START, months, TableColumn.START), columns, RepTeamMatch.getInstance());
+	public static List<TeamMatch> selectHomeMatches(int months, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(TeamMatch.class,	String.format(
+                        "SELECT %s FROM %s WHERE (%s = 1) AND (%s > SYSDATE()) AND (%s <= DATE_ADD(SYSDATE(), INTERVAL %d MONTH)) ORDER BY %s",
+                        Admin.createSelectParams(columns), tableName, TableColumn.HOME_COURT, TableColumn.START,
+                        TableColumn.START, months, TableColumn.START), columns, RepTeamMatch.getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// implementation of Repository<Game>
 
 	@Override
-	public void updateRow(TeamMatch value) throws SQLException {
+	public void updateRow(TeamMatch value) {
 		update(value);
 	}
 
 	@Override
-	public void insertRow(TeamMatch value) throws SQLException {
+	public void insertRow(TeamMatch value) {
 		insert(value);
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
+	public void deleteRow(int id) {
 		delete(id);
 	}
 
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, TeamMatch data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, TeamMatch data, Object dataColumnId) {
+            try {
 		switch ((RepTeamMatch.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(resultsColumnId));
@@ -217,6 +240,9 @@ public class RepTeamMatch implements Repository<TeamMatch> {
 			data.setClubTeam(RepClubTeam.selectById(data.getClubTeamId(), null));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

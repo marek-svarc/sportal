@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.TeamTraining;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RepTeamTraining implements Repository<TeamTraining> {
 
@@ -38,24 +40,26 @@ public class RepTeamTraining implements Repository<TeamTraining> {
 	/**
 	 * Vlozi a inicializuje radek v tabulce "training".
 	 * 
-	 * @throws SQLException
 	 */
-	public static int insert(TeamTraining training) throws SQLException {
-		return insert(training.getStart(), training.getEnd(), training.getPlace(), training.getClubTeamId());
+	public static int insert(TeamTraining training) {
+            return insert(training.getStart(), training.getEnd(), training.getPlace(), training.getClubTeamId());
 	}
 
 	/**
 	 * Vlozi a inicializuje radek v tabulce "training".
 	 * 
-	 * @throws SQLException
 	 */
-	public static int insert(Date start, Date end, String place, int clubTeamId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES ( ?, ?, ?, ?)", tableName, TableColumn.START.name,
-				TableColumn.END.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name);
-		// provedeni transakce
-		return Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(end, false),
-				new ColumnData(place), new ColumnData(clubTeamId) }, true);
+	public static int insert(Date start, Date end, String place, int clubTeamId) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES ( ?, ?, ?, ?)", tableName, TableColumn.START.name,
+                        TableColumn.END.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name);
+                // provedeni transakce
+                return Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(end, false),
+                    new ColumnData(place), new ColumnData(clubTeamId) }, true);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML Update
@@ -63,25 +67,27 @@ public class RepTeamTraining implements Repository<TeamTraining> {
 	/**
 	 * Modifikuje radek v tabulce "training"
 	 * 
-	 * @throws SQLException
 	 */
-	public static void update(TeamTraining training) throws SQLException {
-		update(training.getId(), training.getStart(), training.getEnd(), training.getPlace(), training.getClubTeamId());
+	public static void update(TeamTraining training) {
+            update(training.getId(), training.getStart(), training.getEnd(), training.getPlace(), training.getClubTeamId());
 	}
 
 	/**
 	 * Modifikuje radek v tabulce "training"
 	 * 
-	 * @throws SQLException
 	 */
-	public static void update(int id, Date start, Date end, String place, int clubTeamId) throws SQLException {
-		// sestaveni sql prikazu
-		String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName,
-				TableColumn.START.name, TableColumn.END.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name,
-				TableColumn.ID.name, id);
-		// provedeni transakce
-		Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(end, false), new ColumnData(place),
-				new ColumnData(clubTeamId) });
+	public static void update(int id, Date start, Date end, String place, int clubTeamId) {
+            try {
+                // sestaveni sql prikazu
+                String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName,
+                        TableColumn.START.name, TableColumn.END.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name,
+                        TableColumn.ID.name, id);
+                // provedeni transakce
+                Admin.update(sql, new ColumnData[] { new ColumnData(start, false), new ColumnData(end, false), new ColumnData(place),
+                    new ColumnData(clubTeamId) });
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// DML delete
@@ -89,10 +95,13 @@ public class RepTeamTraining implements Repository<TeamTraining> {
 	/**
 	 * Maze radek urceny primarnim klicem v tabulce "training"
 	 * 
-	 * @throws SQLException
 	 */
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
+	public static void delete(int id) {
+            try {
+                Admin.delete(tableName, TableColumn.ID.name, id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Select
@@ -101,34 +110,38 @@ public class RepTeamTraining implements Repository<TeamTraining> {
 	 * Vraci radky z tabulky "training" dle prislusnosti k tymu pouzitim klice
 	 * club_team_id
 	 * 
-	 * @throws SQLException
 	 */
-	public static List<TeamTraining> selectByClubTeamId(int clubTeamId, TableColumn[] columns) throws SQLException {
-		columns = getColumns(columns);
-		return Admin.query(TeamTraining.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s DESC",
-				Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID.name, clubTeamId, TableColumn.START.name),
-				columns, RepTeamTraining.getInstance());
+	public static List<TeamTraining> selectByClubTeamId(int clubTeamId, TableColumn[] columns) {
+            try {
+                columns = getColumns(columns);
+                return Admin.query(TeamTraining.class, String.format("SELECT %s FROM %s WHERE %s = %d ORDER BY %s DESC",
+                        Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID.name, clubTeamId, TableColumn.START.name),
+                        columns, RepTeamTraining.getInstance());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// implementation of Repository<Training>
 
 	@Override
-	public void updateRow(TeamTraining value) throws SQLException {
+	public void updateRow(TeamTraining value) {
 		update(value);
 	}
 
 	@Override
-	public void insertRow(TeamTraining value) throws SQLException {
+	public void insertRow(TeamTraining value) {
 		insert(value);
 	}
 
 	@Override
-	public void deleteRow(int id) throws SQLException {
+	public void deleteRow(int id) {
 		delete(id);
 	}
 
 	@Override
-	public void readValue(ResultSet result, int resultsColumnId, TeamTraining data, Object dataColumnId) throws SQLException {
+	public void readValue(ResultSet result, int resultsColumnId, TeamTraining data, Object dataColumnId) {
+            try {
 		switch ((RepTeamTraining.TableColumn) dataColumnId) {
 		case ID:
 			data.setId(result.getInt(resultsColumnId));
@@ -146,6 +159,9 @@ public class RepTeamTraining implements Repository<TeamTraining> {
 			data.setClubTeamId(result.getInt(resultsColumnId));
 			break;
 		}
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	/* PRIVATE */

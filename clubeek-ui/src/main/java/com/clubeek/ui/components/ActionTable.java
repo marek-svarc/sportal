@@ -1,6 +1,5 @@
 package com.clubeek.ui.components;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.Repository;
@@ -9,6 +8,7 @@ import com.clubeek.ui.Messages;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.util.SimpleEnumSet;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.AbstractOrderedLayout;
@@ -274,12 +274,7 @@ public final class ActionTable {
     public <T extends Unique> void deleteRow(int id, final Repository<T> dataAdmin, final Component parent,
             final Navigation navigation) {
         if (id > 0) {
-            // delete from the database
-            try {
-                dataAdmin.deleteRow(id);
-            } catch (SQLException e) {
-                Tools.msgBoxSQLException(e);
-            }
+            dataAdmin.deleteRow(id);
             // update view
             if (parent instanceof View) {
                 ((View) parent).enter(null);
@@ -308,6 +303,14 @@ public final class ActionTable {
             ++count;
         }
         return count;
+    }
+    
+    public void setSelectable(boolean selectable) {
+        table.setSelectable(selectable);
+    }
+    
+    public void setSelectListener(ItemClickEvent.ItemClickListener selectListener) {
+        table.addItemClickListener(selectListener);
     }
 
     /* PRIVATE */

@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepArticle;
@@ -55,18 +54,13 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
 
         Security.authorize(Role.EDITOR);
 
-        try {
-            List<Article> articles = RepArticle.selectAll(null);
-
-            table.removeAllRows();
-            for (int i = 0; i < articles.size(); ++i) {
-                Article article = articles.get(i);
-                table.addRow(new Object[]{article.getCaption(), GetArticleLocationAsString(article),
-                    Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.DAY_AND_TIME),
-                    getExpirationInfoAsString(article)}, article.getId());
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        List<Article> articles = RepArticle.selectAll(null);
+        table.removeAllRows();
+        for (int i = 0; i < articles.size(); ++i) {
+            Article article = articles.get(i);
+            table.addRow(new Object[]{article.getCaption(), GetArticleLocationAsString(article),
+                Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.DAY_AND_TIME),
+                getExpirationInfoAsString(article)}, article.getId());
         }
     }
 
@@ -94,14 +88,10 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     }
 
     public void editArticle(int id) {
-        try {
-            Article article = RepArticle.selectById(id, null);
-            if (article != null) {
-                ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
-                        article, RepArticle.getInstance(), navigation);
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        Article article = RepArticle.selectById(id, null);
+        if (article != null) {
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
+                    article, RepArticle.getInstance(), navigation);
         }
     }
 
@@ -114,31 +104,27 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     public static String GetArticleLocationAsString(Article article) {
         String locationStr = article.getLocation().toString();
 
-        try {
-            switch (article.getOwner()) {
-                case CLUB_ALL:
-                    locationStr += ", " + Messages.getString("ViewArticles.1"); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case CLUB:
-                    locationStr += ", " + Messages.getString("ViewArticles.3"); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case CATEGORY:
-                    Category category = RepCategory.selectById(article.getCategoryId(),
-                            new RepCategory.TableColumn[]{RepCategory.TableColumn.DESCRIPTION});
-                    if (category != null) {
-                        locationStr += ", " + category.getDescription(); //$NON-NLS-1$
-                    }
-                    break;
-                case TEAM:
-                    ClubTeam clubTeam = RepClubTeam.selectById(article.getClubTeamId(),
-                            new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.NAME});
-                    if (clubTeam != null) {
-                        locationStr += ", " + clubTeam.getName(); //$NON-NLS-1$
-                    }
-                    break;
-            }
-        } catch (SQLException e) {
-            Tools.msgBoxSQLException(e);
+        switch (article.getOwner()) {
+            case CLUB_ALL:
+                locationStr += ", " + Messages.getString("ViewArticles.1"); //$NON-NLS-1$ //$NON-NLS-2$
+                break;
+            case CLUB:
+                locationStr += ", " + Messages.getString("ViewArticles.3"); //$NON-NLS-1$ //$NON-NLS-2$
+                break;
+            case CATEGORY:
+                Category category = RepCategory.selectById(article.getCategoryId(),
+                        new RepCategory.TableColumn[]{RepCategory.TableColumn.DESCRIPTION});
+                if (category != null) {
+                    locationStr += ", " + category.getDescription(); //$NON-NLS-1$
+                }
+                break;
+            case TEAM:
+                ClubTeam clubTeam = RepClubTeam.selectById(article.getClubTeamId(),
+                        new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.NAME});
+                if (clubTeam != null) {
+                    locationStr += ", " + clubTeam.getName(); //$NON-NLS-1$
+                }
+                break;
         }
 
         if (article.getPriority()) {
