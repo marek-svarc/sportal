@@ -116,8 +116,12 @@ public class RepUser implements Repository<User> {
 
 	// DML delete
 
-	public static void delete(int id) throws SQLException {
-		Admin.delete(tableName, TableColumn.ID.name, id);
+	public static void delete(int id) {
+            try {
+                Admin.delete(tableName, TableColumn.ID.name, id);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
 	}
 
 	// SQL Select
@@ -222,11 +226,7 @@ public class RepUser implements Repository<User> {
 
 	@Override
 	public void deleteRow(int id) {
-            try {
-                delete(id);
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            delete(id);
 	}
 
 	@Override
