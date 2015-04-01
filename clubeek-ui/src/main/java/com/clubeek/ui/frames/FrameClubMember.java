@@ -12,6 +12,7 @@ import com.clubeek.model.Contact.NotificationType;
 import com.clubeek.ui.ModalInput;
 import com.clubeek.ui.Tools;
 import com.vaadin.annotations.Theme;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -301,7 +302,6 @@ public class FrameClubMember extends HorizontalLayout implements ModalInput<Club
 		glContacts.addComponent(nsContactNotify, 3, index);
 
 		// tlacitko pro odstraneni kontaktu
-		ThemeResource iconDel = Tools.IconId.ICO_7X7_DELETE_RED.image;
 		btDelete = new NativeButton("", new ClickListener() { //$NON-NLS-1$
 
 					@Override
@@ -315,7 +315,7 @@ public class FrameClubMember extends HorizontalLayout implements ModalInput<Club
 				});
 		btDelete.addStyleName("table"); //$NON-NLS-1$
 		btDelete.setWidth(20, Unit.PIXELS);
-		btDelete.setIcon(iconDel);
+		btDelete.setIcon(FontAwesome.MINUS_CIRCLE);
 		btDelete.setDescription(Messages.getString("deleteContact")); //$NON-NLS-1$
 		btDelete.setData(new Integer(index));
 		glContacts.addComponent(btDelete, 4, index);

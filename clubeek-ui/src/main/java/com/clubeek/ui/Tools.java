@@ -81,14 +81,7 @@ public final class Tools {
 	/** Vraci soubor pro dane ikony */
 
 	public static enum IconId {
-		IMG_LOGO_SMALL("images/img_logo_small.png"), //$NON-NLS-1$
-		IMG_LOGO_LARGE("images/img_logo_large.png"), //$NON-NLS-1$
-		IMG_EMPTY_PORTRAIT("images/img_empty_portrait.png"), //$NON-NLS-1$
-		ICO_7X7_DELETE_RED("images/ico_7x7_delete_red.png"), //$NON-NLS-1$
-		ICO_7X7_DELETE_BLACK("images/ico_7x7_delete_black.png"), //$NON-NLS-1$
-		ICO_16X16_PHONE_BLACK("images/ico_16x16_phone_black.png"), //$NON-NLS-1$
-		ICO_16X16_OPEN_BLACK("images/ico_16x16_open_black.png"), //$NON-NLS-1$
-		ICO_16X16_MAIL_BLACK("images/ico_16x16_mail_black.png"); //$NON-NLS-1$
+		IMG_EMPTY_PORTRAIT("images/img_empty_portrait.png"); //$NON-NLS-1$
 
 		private IconId(String path) {
 			this.path = path;
