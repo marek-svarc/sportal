@@ -1,5 +1,6 @@
 package com.clubeek.ui.views;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepTeamTraining;
@@ -35,7 +36,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
             new ActionTable.UserColumnInfo(ViewTeamTrainings.Columns.PLACE, String.class, Messages.getString("place"))};
 
         // vytvoreni tabulky a ovladacich tlacitek
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(true, true), columns, this);
         table.addToOwner(this);
 
         // custom style
@@ -67,7 +68,6 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
 
         if (teamId > 0) {
             // nacteni seznamu treninku z databaze
-            trainings = null;
             trainings = RepTeamTraining.selectByClubTeamId(teamId, null);
 
             // inicializace tbulky

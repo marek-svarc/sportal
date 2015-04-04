@@ -69,19 +69,19 @@ $v-error-indicator-color: #ed473b;
 
 
     /* ICONS */
-    
+
     .m-caution .v-icon{
         color: $m-font-color-caution;
     }
-    
+
     .m-important .v-icon{
         color: $m-font-color-important;
     }
-    
+
     .m-helpful .v-icon{
         color: $m-font-color-helpful;
     }
-    
+
     /* TABLE */
 
     // button placed in the table row
@@ -97,7 +97,7 @@ $v-error-indicator-color: #ed473b;
     .m-table-control {
         margin: 8px 0px 8px 8px;
     } 
-    
+
     .v-slot-horzSeparator {
         margin-left: 16px;
     }

@@ -13,44 +13,27 @@ import java.util.ResourceBundle;
 
 import com.clubeek.model.ModelTools;
 import com.clubeek.model.Unique;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Admin {
 
     /* PUBLIC */
-    /**
-     * Vytvori spojeni s MySQL databazi
-     *
-     */
     public static Connection getConnection() {
         try {
             Connection connection = instance.createConnection();
             return connection;
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Metoda provede SQL dotaz do databaze.
-     *
-     * @throws SQLException
-     */
-    public static <T extends Unique> List<T> query(Class<T> dataClass, String sql, Object[] columns, Repository<T> reader)
-            throws SQLException {
-        T data = null;
+    public static <T extends Unique> List<T> query(Class<T> dataClass, String sql, Object[] columns, Repository<T> reader) {
         List<T> valueList = new ArrayList<>();
         try (Connection connection = getConnection()) {
 
             ResultSet rslt = connection.createStatement().executeQuery(sql);
 
             while (rslt.next()) {
-                data = dataClass.newInstance();
+                T data = dataClass.newInstance();
 
                 for (int i = 1; i <= columns.length; ++i) {
                     reader.readValue(rslt, i, data, columns[i - 1]);
@@ -58,8 +41,8 @@ public class Admin {
 
                 valueList.add(data);
             }
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return valueList;
     }
@@ -113,74 +96,76 @@ public class Admin {
      * @returnLastId priznak zda ma funkce vracet posledni ID pouzite
      * automatickym cislovanim. Pokud je priznak false vraci se standardni
      * navratov hodnota SQL operace
-     *
-     * @throws SQLException
      */
-    public static int update(String sql, ColumnData[] parameters, boolean returnLastId) throws SQLException {
+    public static int update(String sql, ColumnData[] parameters, boolean returnLastId) {
         int result = 0;
-        try (Connection connection = getConnection()) {
-            if (connection != null) {
-                // vypnuti automatickeho provedeni prikazu
-                connection.setAutoCommit(false);
-                // vytvoreni bodu obnovy
-                Savepoint save = connection.setSavepoint();
-                try {
-                    // sestaveni sql prikazu
-                    PreparedStatement statement = connection.prepareStatement(sql,
-                            returnLastId ? PreparedStatement.RETURN_GENERATED_KEYS : PreparedStatement.NO_GENERATED_KEYS);
-                    // nastaveni parametru
-                    if (parameters != null) {
-                        for (int i = 0; i < parameters.length; ++i) {
-                            if (parameters[i].data != null) {
-                                switch (parameters[i].type) {
-                                    case java.sql.Types.VARCHAR:
-                                        statement.setString(i + 1, (String) parameters[i].data);
-                                        break;
-                                    case java.sql.Types.DATE:
-                                        statement.setDate(i + 1, (java.sql.Date) parameters[i].data);
-                                        break;
-                                    case java.sql.Types.TIMESTAMP:
-                                        statement.setTimestamp(i + 1, (java.sql.Timestamp) parameters[i].data);
-                                        break;
-                                    case java.sql.Types.INTEGER:
-                                        statement.setInt(i + 1, (int) parameters[i].data);
-                                        break;
-                                    case java.sql.Types.BLOB:
-                                        if (parameters[i].data != null) {
-                                            statement.setBytes(i + 1, (byte[]) parameters[i].data);
-                                        }
-                                        break;
-                                    case java.sql.Types.BOOLEAN:
-                                        statement.setBoolean(i + 1, (boolean) parameters[i].data);
-                                        break;
+        try {
+            try (Connection connection = getConnection()) {
+                if (connection != null) {
+                    // vypnuti automatickeho provedeni prikazu
+                    connection.setAutoCommit(false);
+                    // vytvoreni bodu obnovy
+                    Savepoint save = connection.setSavepoint();
+                    try {
+                        // sestaveni sql prikazu
+                        PreparedStatement statement = connection.prepareStatement(sql,
+                                returnLastId ? PreparedStatement.RETURN_GENERATED_KEYS : PreparedStatement.NO_GENERATED_KEYS);
+                        // nastaveni parametru
+                        if (parameters != null) {
+                            for (int i = 0; i < parameters.length; ++i) {
+                                if (parameters[i].data != null) {
+                                    switch (parameters[i].type) {
+                                        case java.sql.Types.VARCHAR:
+                                            statement.setString(i + 1, (String) parameters[i].data);
+                                            break;
+                                        case java.sql.Types.DATE:
+                                            statement.setDate(i + 1, (java.sql.Date) parameters[i].data);
+                                            break;
+                                        case java.sql.Types.TIMESTAMP:
+                                            statement.setTimestamp(i + 1, (java.sql.Timestamp) parameters[i].data);
+                                            break;
+                                        case java.sql.Types.INTEGER:
+                                            statement.setInt(i + 1, (int) parameters[i].data);
+                                            break;
+                                        case java.sql.Types.BLOB:
+                                            if (parameters[i].data != null) {
+                                                statement.setBytes(i + 1, (byte[]) parameters[i].data);
+                                            }
+                                            break;
+                                        case java.sql.Types.BOOLEAN:
+                                            statement.setBoolean(i + 1, (boolean) parameters[i].data);
+                                            break;
+                                    }
+                                } else {
+                                    statement.setNull(i + 1, parameters[i].type);
                                 }
-                            } else {
-                                statement.setNull(i + 1, parameters[i].type);
                             }
                         }
-                    }
-                    // provedeni prikazu
-                    result = statement.executeUpdate();
+                        // provedeni prikazu
+                        result = statement.executeUpdate();
 
-                    // zjisteni naposledy pouzite ID automatickym cislovanim
-                    if (returnLastId) {
-                        ResultSet keys = statement.getGeneratedKeys();
-                        if ((keys != null) && (keys.next())) {
-                            result = keys.getInt(1);
+                        // zjisteni naposledy pouzite ID automatickym cislovanim
+                        if (returnLastId) {
+                            ResultSet keys = statement.getGeneratedKeys();
+                            if ((keys != null) && (keys.next())) {
+                                result = keys.getInt(1);
+                            }
                         }
+
+                        // dokonceni transakce
+                        connection.commit();
+
+                    } catch (SQLException e) {
+                        connection.rollback(save);
+                        throw e;
+                    } finally {
+
+                        connection.setAutoCommit(true);
                     }
-
-                    // dokonceni transakce
-                    connection.commit();
-
-                } catch (SQLException e) {
-                    connection.rollback(save);
-                    throw e;
-                } finally {
-
-                    connection.setAutoCommit(true);
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return result;
     }
@@ -194,7 +179,7 @@ public class Admin {
      *
      * @throws SQLException
      */
-    public static int update(String sql, ColumnData[] parameters) throws SQLException {
+    public static int update(String sql, ColumnData[] parameters) {
         return update(sql, parameters, false);
     }
 
@@ -206,8 +191,7 @@ public class Admin {
      * @param newValues seznam novych kontaktu
      * @throws SQLException
      */
-    public static <T extends Unique> void synchronize(List<T> oldValues, List<T> newValues, Repository<T> reader)
-            throws SQLException {
+    public static <T extends Unique> void synchronize(List<T> oldValues, List<T> newValues, Repository<T> reader) {
         T value;
 
         // pridavani novych, uprava stavajicich
@@ -234,9 +218,8 @@ public class Admin {
      * @param tableName nazev tabulky
      * @param idName nazev sloupce tabulky, ktery obsahuje identifikator
      * @param id index radky ktera ma byt vymazana z tabulky
-     * @throws SQLException
      */
-    public static void delete(String tableName, String idName, int id) throws SQLException {
+    public static void delete(String tableName, String idName, int id) {
         // sestaveni sql prikazu
         String sql = String.format("DELETE FROM %s WHERE %s = %s", tableName, idName, Integer.toString(id));
         // provedeni transakce
@@ -323,14 +306,14 @@ public class Admin {
                 password = config.getString(CONFIG_KEY_PASSWORD);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         // zavadeni ovladace pro databazi
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         // parametry pripojeni k databazi na OpenShift

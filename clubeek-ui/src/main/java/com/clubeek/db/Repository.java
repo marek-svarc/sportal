@@ -1,47 +1,52 @@
 package com.clubeek.db;
 
+import com.clubeek.model.Unique;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
- * Rozhrani definujici operace nad jednou tabulkou databaze
- * 
- * @param <T>
- *            Trida zapouzdrujici data z databaze
+ * Interface providing standard operations on the database table.
+ *
+ * @param <T> Data class used for data exchange with database.
  */
-public interface Repository<T> {
+public interface Repository<T extends Unique> {
 
-	/**
-	 * Modifikuje radek tabulky
-	 * 
-	 */
-	void updateRow(T value);
+    /**
+     * Modifies one row in the database table.
+     *
+     * @param value Data to be writen into database.
+     */
+    void updateRow(T value);
 
-	/**
-	 * Vlozi a inicializuje radek v tabulce
-	 * 
-	 */
-	void insertRow(T value);
+    /**
+     * Insert one row to the database table.
+     *
+     * @param value Data to be inserted into database.
+     */
+    void insertRow(T value);
 
-	/**
-	 * Odmaze radek z tabulky
-	 * 
-	 * @param id
-	 *            index radky ktera ma byt vymazana s tabulky
-	 */
-	void deleteRow(int id);
+    /**
+     * Delete one row from the database table.
+     *
+     * @param id Index of row which to be deleted from the database.
+     */
+    void deleteRow(int id);
 
-	/**
-	 * Vysledek SQL prikazu SELECT zap�e do dat
-	 * 
-	 * @param result
-	 *            Vysledek SQL prikazu
-	 * @param resultsColumnId
-	 *            index sloupce tabulky, ze ktereho se mel nacist Vysledek
-	 * @param data
-	 *            data do kterych se zapisuje Vysledek SELECTu
-	 * @param dataColumnId
-	 *            identifiktor datoveho pole, kam se zapise vysledek
-	 */
-	void readValue(ResultSet result, int resultsColumnId, T data, Object dataColumnId);
+    /**
+     * Exchange two records in the table
+     *
+     * @param idA first index of the row to be exchanged
+     * @param idB second index of the row to be exchanged
+     */
+    void exchangeRows(int idA, int idB);
+
+    /**
+     * Reads data from one column and writes them into data object.
+     *
+     * @param result Result of the SQL select command.
+     * @param resultsColumnId Id of the table column.
+     * @param data Instance of data object.
+     * @param dataColumnId Id of object item where are writen data from the
+     * database.
+     */
+    void readValue(ResultSet result, int resultsColumnId, T data, Object dataColumnId);
 }

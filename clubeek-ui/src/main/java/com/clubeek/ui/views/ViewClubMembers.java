@@ -71,13 +71,14 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
         table.removeAllRows();
         for (int i = 0; i < members.size(); ++i) {
             ClubMember member = members.get(i);
-            
+
             String address = Tools.Strings.concatenateText(
                     new String[]{member.getStreet(), member.getCity(), member.getCode()}, ", "); //$NON-NLS-1$
-            
+
             table.addRow(new Object[]{member.getName(), member.getSurname(), member.getIdRegistration(),
                 member.getBirthdateAsString(), member.getIdPersonal(), address}, i);
         }
+        //table.table.resetFilters();
     }
 
     // operations
@@ -92,7 +93,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
         final ArrayList<Contact> oldContacts = new ArrayList<>(data.getContacts());
         ModalDialog<ClubMember> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("clubMemberProperties"), //$NON-NLS-1$
                 new FrameClubMember(), data, new ClickListener() {
-                    
+
                     @Override
                     public void buttonClick(ClickEvent event) {
                         RepClubMember.update(data);

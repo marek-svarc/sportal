@@ -65,6 +65,12 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
             case SINGLE_DELETE:
                 deleteCategory((int) data);
                 break;
+            case SINGLE_MOVE_UP:
+                exchangeCategories((int) data, true);
+                break;
+            case SINGLE_MOVE_DOWN:
+                exchangeCategories((int) data, false);
+                break;
         }
         return true;
     }
@@ -85,35 +91,11 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
         table.deleteRow(categories.get(id).getId(), RepCategory.getInstance(), this, navigation);
     }
 
-    /**
-     * Posune vybranou radku nahoru nebo dolu
-     *
-     * @param moveUp smer posunu
-     */
-    public void exchangeCategories(boolean moveUp) {
-//        int idA = table.getSelectedRow();
-//        int idB = table.getMoveIndex(moveUp);
-//        if ((idA >= 0) && (idB >= 0)) {
-//            try {
-//                RepCategory.exchange(categories.get(idA).getId(), categories.get(idB).getId());
-//                //table.table.setValue(idB);
-//                updateApp();
-//            } catch (SQLException e) {
-//                Tools.msgBoxSQLException(e);
-//            }
-//        }
+    public void exchangeCategories(int id, boolean moveUp) {
+        table.exchangeRows(categories, id, moveUp, RepCategory.getInstance(), this, navigation);
     }
 
     /* PRIVATE */
-    /** Aktualizaje tabulky i navigacni menu aplikace */
-    private void updateApp() {
-        // aktualizace tabulky
-        enter(null);
-        // aktualizace navigacniho menu
-        if (navigation != null) {
-            navigation.updateNavigationMenu();
-        }
-    }
 
     /** Komponenty tabulky */
     private final ActionTable table;

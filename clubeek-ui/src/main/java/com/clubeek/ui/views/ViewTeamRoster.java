@@ -64,15 +64,6 @@ public class ViewTeamRoster extends VerticalLayout implements View {
             new ActionTable.UserColumnInfo("surname", String.class, Messages.getString("surname")),
             new ActionTable.UserColumnInfo("functions", String.class, Messages.getString("functions"))
         }, null);
-        tableMembers.setSelectable(true);
-        tableMembers.setSelectListener(new ItemClickEvent.ItemClickListener() {
-
-            @Override
-            public void itemClick(ItemClickEvent event) {
-                showProfile((TeamMember) event.getItemId());
-            }
-
-        });
         tableMembers.addToOwner(vlTablesLayout);
         
         memberCard = new MemberCard();

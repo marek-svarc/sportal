@@ -9,7 +9,7 @@
     <name>clubeek-parent</name>
 
     <properties>
-        <vaadin.version>7.4.0</vaadin.version>
+        <vaadin.version>7.4.2</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
         <jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
         <project.source.version>1.7</project.source.version>
@@ -109,13 +109,21 @@
                 <artifactId>stylecalendar</artifactId>
                 <version>2.1.0</version>
             </dependency>                        
+            
+            <!-- Add-on FilteringTable -->
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>filteringtable</artifactId>
+                <version>0.9.11.v7</version>
+            </dependency>
         
             <!-- MySQL connector -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.34</version>
-            </dependency>       
+            </dependency>    
+                              
         </dependencies>
     </dependencyManagement>
 

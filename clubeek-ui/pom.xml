@@ -44,6 +44,11 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>       
         
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>filteringtable</artifactId>
+        </dependency>
+        
         <!-- Custom components -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -133,6 +138,6 @@
     </build>
     
     <properties>
-        <vaadin.version>7.4.0</vaadin.version>
+        <vaadin.version>7.4.2</vaadin.version>
     </properties>
 </project>

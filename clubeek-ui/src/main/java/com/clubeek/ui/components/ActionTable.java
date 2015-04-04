@@ -5,10 +5,9 @@ import java.util.List;
 import com.clubeek.db.Repository;
 import com.clubeek.model.Unique;
 import com.clubeek.ui.Messages;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.util.SimpleEnumSet;
-import com.vaadin.event.ItemClickEvent;
+import com.vaadin.data.Property;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.AbstractOrderedLayout;
@@ -28,33 +27,46 @@ import com.vaadin.ui.themes.ValoTheme;
 public final class ActionTable {
 
     /* PUBLIC */
+    /** Table */
+    public final Table table;
+    
     /** All actions provided by the table */
     public static enum Action {
 
         SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE, SINGLE_MOVE_UP, SINGLE_MOVE_DOWN, SELECTED_EDIT, SELECTED_DELETE;
 
-        public static SimpleEnumSet<Action> getStandardSet(boolean useSelection) {
-            if (useSelection) {
-                return new SimpleEnumSet<>(SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE, SELECTED_EDIT, SELECTED_DELETE);
-            } else {
-                return new SimpleEnumSet<>(SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE);
+        public static SimpleEnumSet<Action> getStandardSet(boolean useSelectedEdit, boolean useSelectedDelete) {
+            SimpleEnumSet<Action> flags = new SimpleEnumSet<>(SINGLE_ADD, SINGLE_EDIT, SINGLE_DELETE);
+
+            if (useSelectedEdit) {
+                flags.addValue(SELECTED_EDIT);
             }
+            if (useSelectedDelete) {
+                flags.addValue(SELECTED_DELETE);
+            }
+
+            return flags;
         }
 
         public static SimpleEnumSet<Action> getStandardSet() {
-            return getStandardSet(false);
+            return getStandardSet(false, false);
         }
 
-        public static SimpleEnumSet<Action> getMaximalSet(boolean useSelection) {
+        public static SimpleEnumSet<Action> getMaximalSet(boolean useSelectedEdit, boolean useSelectedDelete) {
             SimpleEnumSet<Action> flags = new SimpleEnumSet<>(Action.values());
-            if (!useSelection) {
-                flags.removeValues(SELECTED_EDIT, SELECTED_DELETE);
+
+            if (!useSelectedEdit) {
+                flags.removeValues(SELECTED_EDIT);
             }
+            if (!useSelectedDelete) {
+                flags.removeValues(SELECTED_DELETE);
+            }
+
             return flags;
         }
 
         public static SimpleEnumSet<Action> getMaximalSet() {
-            return getMaximalSet(false);
+            return getMaximalSet(false, false);
         }
     }
 
@@ -100,22 +112,37 @@ public final class ActionTable {
         controlsLayout = new HorizontalLayout();
         controlsLayout.setSizeUndefined();
 
-        // buttons
-        Button buttonAdd = new Button(Messages.getString("add"), new Button.ClickListener() {
+        // header buttons
+        if (ctrlColumns.contains(Action.SINGLE_ADD)) {
+            controlsLayout.addComponent(createHeaderButton(Action.SINGLE_ADD, FontAwesome.PLUS_CIRCLE,
+                    Messages.getString("add"), "m-helpful"));
+        }
 
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                callOnActionListener(Action.SINGLE_ADD, null);
-            }
-        });
-        setButtonStyle(buttonAdd, ValoTheme.BUTTON_FRIENDLY); //$NON-NLS-1$
-        controlsLayout.addComponent(buttonAdd);
+        if (ctrlColumns.contains(Action.SELECTED_EDIT)) {
+            btnSelectedEdit = createHeaderButton(Action.SELECTED_EDIT, FontAwesome.PENCIL, "Upravit vybrané",
+                    "m-important");
+            controlsLayout.addComponent(btnSelectedEdit);
+        } else {
+            btnSelectedEdit = null;
+        }
+
+        if (ctrlColumns.contains(Action.SELECTED_DELETE)) {
+            btnSelectedDelete = createHeaderButton(Action.SELECTED_DELETE, FontAwesome.MINUS_CIRCLE, "Odstranit vybrané",
+                    "m-caution");
+            controlsLayout.addComponent(btnSelectedDelete);
+        } else {
+            btnSelectedDelete = null;
+        }
+
+        if ((btnSelectedEdit != null) && (btnSelectedDelete != null)) {
+            btnSelectedEdit.addStyleName("hgroup-left");
+            btnSelectedDelete.addStyleName("hgroup-right");
+        }
 
         // create and initialize table
         table = new Table();
         table.addStyleName(ValoTheme.TABLE_SMALL);
         table.addStyleName(ValoTheme.TABLE_BORDERLESS);
-        table.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
         table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
         table.setSizeFull();
         table.setSelectable(false);
@@ -129,10 +156,10 @@ public final class ActionTable {
             table.addContainerProperty("selectionClm", CheckBox.class, null, "", null, null);
         }
         if (isEditColumn()) {
-            table.addContainerProperty("editClm", HorizontalLayout.class, null, "", null, null);
+            table.addContainerProperty("editClm", HorizontalLayout.class, null, "Úpravy", null, null);
         }
         if (isSortColumn()) {
-            table.addContainerProperty("sortClm", HorizontalLayout.class, null, "", null, null);
+            table.addContainerProperty("sortClm", HorizontalLayout.class, null, "Pořadí", null, null);
         }
 
         // crate user columns
@@ -142,6 +169,8 @@ public final class ActionTable {
         if (this.userColumns.length > 0) {
             table.setColumnExpandRatio(this.userColumns[this.userColumns.length - 1].propertyId, 1.0f);
         }
+
+        updateButtons();
     }
 
     /**
@@ -185,55 +214,40 @@ public final class ActionTable {
 
         int column = 0;
 
+        // Column to select row
         if (isSelectionColumn()) {
-            cells[column] = new CheckBox();
+            CheckBox cbx = new CheckBox();
+            cbx.addValueChangeListener(cbxSelectionListener);
+
+            cells[column] = cbx;
             ++column;
         }
 
+        // Column for actions SINGLE_EDIT and SINGLE_DELETE
         if (isEditColumn()) {
             HorizontalLayout layout = new HorizontalLayout();
             if (userActions.contains(Action.SINGLE_EDIT)) {
-                layout.addComponent(createInRowButton(FontAwesome.PENCIL, null, "m-important", new Button.ClickListener() {
-
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        callOnActionListener(Action.SINGLE_EDIT, data);
-                    }
-                }));
+                layout.addComponent(createTableButton(Action.SINGLE_EDIT, data, FontAwesome.PENCIL, null, "m-important"));
             }
             if (userActions.contains(Action.SINGLE_DELETE)) {
-                layout.addComponent(createInRowButton(FontAwesome.MINUS_CIRCLE, null, "m-caution", new Button.ClickListener() {
-
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        callOnActionListener(Action.SINGLE_DELETE, data);
-                    }
-                }));
+                layout.addComponent(createTableButton(Action.SINGLE_DELETE, data, FontAwesome.MINUS_CIRCLE, null, "m-caution"));
             }
+
             cells[column] = layout;
             ++column;
         }
 
+        // Column for actions SINGLE_MOVE_UP and SINGLE_MOVE_DOWN
         if (isSortColumn()) {
             HorizontalLayout layout = new HorizontalLayout();
-            layout.addComponent(createInRowButton(null, "\u25B2", "m-helpful", new Button.ClickListener() {
+            layout.addComponent(createTableButton(Action.SINGLE_MOVE_UP, data, null, "\u25B2", "m-icon-helpful"));
+            layout.addComponent(createTableButton(Action.SINGLE_MOVE_DOWN, data, null, "\u25BC", "m-helpful"));
 
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    callOnActionListener(Action.SINGLE_MOVE_UP, data);
-                }
-            }));
-            layout.addComponent(createInRowButton(null, "\u25BC", "m-helpful", new Button.ClickListener() {
-
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    callOnActionListener(Action.SINGLE_MOVE_DOWN, data);
-                }
-            }));
             cells[column] = layout;
             ++column;
         }
 
+        // Custom columns
         for (Object value : userCells) {
             cells[column] = value;
             ++column;
@@ -249,19 +263,6 @@ public final class ActionTable {
         table.setPageLength(21);
     }
 
-    /** Aktualizuje tlacitka dle vybrane radky tabulky */
-    public void updateButtons() {
-        boolean enable = table.size() > 0;
-//        buttonEdit.setEnabled(enable);
-//        buttonDelete.setEnabled(enable);
-//        if (buttonMoveUp != null) {
-//            buttonMoveUp.setEnabled(enable);
-//        }
-//        if (buttonMoveDown != null) {
-//            buttonMoveDown.setEnabled(enable);
-//        }
-    }
-
     /**
      * Delete one row from the table.
      *
@@ -275,15 +276,18 @@ public final class ActionTable {
             final Navigation navigation) {
         if (id > 0) {
             dataAdmin.deleteRow(id);
-            // update view
-            if (parent instanceof View) {
-                ((View) parent).enter(null);
-            }
-            // aupdate navigation menu
-            if (navigation != null) {
-                navigation.updateNavigationMenu();
-            }
+            updateApplication(parent, navigation);
         }
+    }
+
+    public <T extends Unique> void exchangeRows(List<T> data, int id, boolean moveUp,
+            final Repository<T> dataAdmin, final Component parent, final Navigation navigation) {
+        int idNext = id + (moveUp ? -1 : 1);
+        if ((id >= 0) && (id < data.size()) && (idNext >= 0) && (idNext < data.size())) {
+            dataAdmin.exchangeRows(data.get(id).getId(), data.get(idNext).getId());
+            updateApplication(parent, navigation);
+        }
+
     }
 
     /**
@@ -304,16 +308,38 @@ public final class ActionTable {
         }
         return count;
     }
-    
-    public void setSelectable(boolean selectable) {
-        table.setSelectable(selectable);
+
+    public void styleTableButton(Button button, String... customStyles) {
+        button.addStyleName(ValoTheme.BUTTON_TINY);
+        button.addStyleName(ValoTheme.BUTTON_QUIET);
+        button.addStyleName("table-row");
+
+        for (String style : customStyles) {
+            button.addStyleName(style);
+        }
     }
-    
-    public void setSelectListener(ItemClickEvent.ItemClickListener selectListener) {
-        table.addItemClickListener(selectListener);
+
+    public void styleHeaderButton(Button button, String... customStyles) {
+        button.addStyleName(ValoTheme.BUTTON_TINY);
+        button.addStyleName("table");
+
+        for (String style : customStyles) {
+            button.addStyleName(style);
+        }
     }
 
     /* PRIVATE */
+    private void updateApplication(final Component parent, final Navigation navigation) {
+        // update view
+        if (parent instanceof View) {
+            ((View) parent).enter(null);
+        }
+        // aupdate navigation menu
+        if (navigation != null) {
+            navigation.updateNavigationMenu();
+        }
+    }
+
     private boolean callOnActionListener(Action action, Object data) {
         if (onActionListener != null) {
             return onActionListener.doAction(action, data);
@@ -334,33 +360,73 @@ public final class ActionTable {
         return userActions.containsSome(Action.SINGLE_MOVE_UP, Action.SINGLE_MOVE_DOWN);
     }
 
-    private Button createInRowButton(FontAwesome font, String caption, String iconStyle, Button.ClickListener listener) {
+    private Button createTableButton(final Action action, final Object data, FontAwesome font, String caption, String... customStyles) {
         Button btn = new Button(caption, font);
-        btn.addClickListener(listener);
-        btn.addStyleName(ValoTheme.BUTTON_TINY);
-        btn.addStyleName(ValoTheme.BUTTON_QUIET);
-        btn.addStyleName("table-row");
-        if (iconStyle != null) {
-            btn.addStyleName(iconStyle);
-        }
+        btn.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                callOnActionListener(action, data);
+            }
+        });
+
+        styleTableButton(btn, customStyles);
+
         return btn;
     }
 
-    private void setButtonStyle(Button button, String style) {
-        button.setStyleName(ValoTheme.BUTTON_TINY);
-        button.addStyleName("table"); //$NON-NLS-1$
-        if (style != null) {
-            button.addStyleName(style);
+    public Button createHeaderButton(final Action action, FontAwesome font, String caption, String... customStyles) {
+        Button btn = new Button(caption, font);
+
+        btn.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                callOnActionListener(action, null);
+            }
+        });
+
+        styleHeaderButton(btn, customStyles);
+
+        btn.setImmediate(true);
+        return btn;
+    }
+
+    /** Aktualizuje tlacitka dle vybrane radky tabulky */
+    public void updateButtons() {
+        boolean enable = selectedCount > 0;
+
+        if (btnSelectedEdit != null) {
+            btnSelectedEdit.setEnabled(enable);
         }
-        button.setImmediate(true);
+        if (btnSelectedDelete != null) {
+            btnSelectedDelete.setEnabled(enable);
+        }
+    }
+
+    // Listeners
+    private class CheckBoxListener implements Property.ValueChangeListener {
+
+        @Override
+        public void valueChange(Property.ValueChangeEvent event) {
+            if (((CheckBox) event.getProperty()).getValue()) {
+                ++selectedCount;
+            } else {
+                --selectedCount;
+            }
+            updateButtons();
+        }
     }
 
     // Controls
     /** Layout for buttons. */
     private final HorizontalLayout controlsLayout;
 
-    /** Table */
-    private final Table table;
+    /** Button to edit selected rows */
+    private final Button btnSelectedEdit;
+
+    /** Button to delete selected rows */
+    private final Button btnSelectedDelete;
 
     // Customizing
     /** Set of required actions. */
@@ -371,4 +437,10 @@ public final class ActionTable {
 
     /** Calling when action is performed. */
     private final OnActionListener onActionListener;
+
+    /** Counter of the selected rows */
+    private int selectedCount = 0;
+
+    // Listeners
+    CheckBoxListener cbxSelectionListener = new CheckBoxListener();
 }

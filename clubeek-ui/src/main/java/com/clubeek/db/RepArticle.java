@@ -9,24 +9,26 @@ import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.Article;
 import com.clubeek.model.Article.Location;
 import com.clubeek.model.Article.Owner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RepArticle implements Repository<Article> {
 
-    /**
-     * Nazev tabulky
-     */
+    /** Nazev tabulky */
     public static final String tableName = "article";
 
-    /**
-     * Identifikatory sloupcu tabulky
-     */
-    public enum TableColumn {
+    /** Identifikatory sloupcu tabulky */
+    public static enum TableColumn {
 
-        ID("id"), LOCATION("location"), PRIORITY("priority"), CAPTION("caption"), SUMMARY("summary"), CONTENT("content"), CREATION_DATE(
-                "creation_date"), EXPIRATION_DATE("expiration_date"), OWNER_TYPE("owner_type"), CLUB_TEAM_ID("club_team_id"), CATEGORY_ID(
-                        "category_id");
+        ID("id"),
+        LOCATION("location"),
+        PRIORITY("priority"),
+        CAPTION("caption"),
+        SUMMARY("summary"),
+        CONTENT("content"),
+        CREATION_DATE("creation_date"),
+        EXPIRATION_DATE("expiration_date"),
+        OWNER_TYPE("owner_type"),
+        CLUB_TEAM_ID("club_team_id"),
+        CATEGORY_ID("category_id");
 
         private TableColumn(String dbColumnName) {
             this.name = dbColumnName;
@@ -45,12 +47,12 @@ public class RepArticle implements Repository<Article> {
         return articleDb;
     }
 
-	// SQL insert
+    // SQL insert
     /**
      * Vlozi a inicializuje radek v tabulce "Article"
      *
      * @param article data publikovaneho clanku
-     * @throws SQLException
+     *
      */
     public static void insert(Article article) {
         insert(article.getLocation(), article.getPriority(), article.getCaption(), article.getSummary(), article.getContent(),
@@ -70,25 +72,21 @@ public class RepArticle implements Repository<Article> {
      */
     public static void insert(Article.Location location, boolean priority, String caption, String summary, String content,
             Date creationDate, Date expirationDate, Owner owner, int clubTeamId, int categoryId) {
-        try {
-            // sestaveni sql prikazu
-            String sql = String.format(
-                    "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ( ? , ? ,? ,? , ? , ?, ?, ?, ?, ?)", tableName,
-                    TableColumn.LOCATION, TableColumn.PRIORITY, TableColumn.CAPTION, TableColumn.SUMMARY, TableColumn.CONTENT,
-                    TableColumn.CREATION_DATE, TableColumn.EXPIRATION_DATE, TableColumn.OWNER_TYPE, TableColumn.CLUB_TEAM_ID,
-                    TableColumn.CATEGORY_ID);
-            // provedeni transakce
-            Admin.update(sql, new ColumnData[]{new ColumnData(location.ordinal()), new ColumnData(priority),
-                new ColumnData(caption), new ColumnData(summary), new ColumnData(content), new ColumnData(creationDate, false),
-                new ColumnData(expirationDate, true), new ColumnData(owner.ordinal()),
-                new ColumnData(clubTeamId > 0 ? clubTeamId : Integer.MIN_VALUE),
-                new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE)});
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        // sestaveni sql prikazu
+        String sql = String.format(
+                "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ( ? , ? ,? ,? , ? , ?, ?, ?, ?, ?)", tableName,
+                TableColumn.LOCATION, TableColumn.PRIORITY, TableColumn.CAPTION, TableColumn.SUMMARY, TableColumn.CONTENT,
+                TableColumn.CREATION_DATE, TableColumn.EXPIRATION_DATE, TableColumn.OWNER_TYPE, TableColumn.CLUB_TEAM_ID,
+                TableColumn.CATEGORY_ID);
+        // provedeni transakce
+        Admin.update(sql, new ColumnData[]{new ColumnData(location.ordinal()), new ColumnData(priority),
+            new ColumnData(caption), new ColumnData(summary), new ColumnData(content), new ColumnData(creationDate, false),
+            new ColumnData(expirationDate, true), new ColumnData(owner.ordinal()),
+            new ColumnData(clubTeamId > 0 ? clubTeamId : Integer.MIN_VALUE),
+            new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE)});
     }
 
-	// SQL update
+    // SQL update
     /**
      * Modifikuje radek tabulky "Article"
      *
@@ -110,49 +108,43 @@ public class RepArticle implements Repository<Article> {
      * @param content Obsah clanku
      * @param creationDate Datum vytvoreni/posledn� zm�ny clanku
      * @param expirationDate Datum znepristupneni clanku
+     *
      */
     public static void update(int id, Article.Location location, boolean priority, String caption, String summary,
             String content, Date creationDate, Date expirationDate, Owner owner, int clubTeamId, int categoryId) {
-        try {
-            // sestaveni sql prikazu
-            String sql = String
-                    .format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d",
-                            tableName, TableColumn.LOCATION, TableColumn.PRIORITY, TableColumn.CAPTION, TableColumn.SUMMARY,
-                            TableColumn.CONTENT, TableColumn.CREATION_DATE, TableColumn.EXPIRATION_DATE, TableColumn.OWNER_TYPE,
-                            TableColumn.CLUB_TEAM_ID, TableColumn.CATEGORY_ID, TableColumn.ID, id);
-            // provedeni transakce
-            Admin.update(sql, new ColumnData[]{new ColumnData(location.ordinal()), new ColumnData(priority),
-                new ColumnData(caption), new ColumnData(summary), new ColumnData(content), new ColumnData(creationDate, false),
-                new ColumnData(expirationDate, true), new ColumnData(owner.ordinal()),
-                new ColumnData(clubTeamId > 0 ? clubTeamId : Integer.MIN_VALUE),
-                new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE)});
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        // sestaveni sql prikazu
+        String sql = String
+                .format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d",
+                        tableName, TableColumn.LOCATION, TableColumn.PRIORITY, TableColumn.CAPTION, TableColumn.SUMMARY,
+                        TableColumn.CONTENT, TableColumn.CREATION_DATE, TableColumn.EXPIRATION_DATE, TableColumn.OWNER_TYPE,
+                        TableColumn.CLUB_TEAM_ID, TableColumn.CATEGORY_ID, TableColumn.ID, id);
+        // provedeni transakce
+        Admin.update(sql, new ColumnData[]{new ColumnData(location.ordinal()), new ColumnData(priority),
+            new ColumnData(caption), new ColumnData(summary), new ColumnData(content), new ColumnData(creationDate, false),
+            new ColumnData(expirationDate, true), new ColumnData(owner.ordinal()),
+            new ColumnData(clubTeamId > 0 ? clubTeamId : Integer.MIN_VALUE),
+            new ColumnData(categoryId > 0 ? categoryId : Integer.MIN_VALUE)});
     }
 
-	// DML delete
-    public static void delete(int id) throws SQLException {
+    // DML delete
+    public static void delete(int id) {
         Admin.delete(tableName, TableColumn.ID.name, id);
     }
 
-	// SQL select
+    // SQL select
     /**
      * Vrati vsechny radky tabulky "Article", ale pouze vybran� sloupce
      *
      * @param columns seznam pozadovanych sloupcu
      * @return seznam v�ech radek tabulky
+     *
      */
     public static List<Article> select(int clubTeamId, int categoryId, Location location, TableColumn[] columns) {
-        try {
-            columns = getColumns(columns);
-            return Admin.query(Article.class, String.format("SELECT %s FROM %s WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
-                    Admin.createSelectParams(columns), tableName, sqlOwnerCondition(clubTeamId, categoryId),
-                    sqlLocationCondition(location), sqlExpiredDateCondition(), TableColumn.PRIORITY, TableColumn.CREATION_DATE),
-                    columns, getInstance());
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        columns = getColumns(columns);
+        return Admin.query(Article.class, String.format("SELECT %s FROM %s WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
+                Admin.createSelectParams(columns), tableName, sqlOwnerCondition(clubTeamId, categoryId),
+                sqlLocationCondition(location), sqlExpiredDateCondition(), TableColumn.PRIORITY, TableColumn.CREATION_DATE),
+                columns, getInstance());
     }
 
     /**
@@ -160,16 +152,13 @@ public class RepArticle implements Repository<Article> {
      *
      * @param columns seznam pozadovanych sloupcu
      * @return seznam v�ech radek tabulky
+     *
      */
     public static List<Article> selectAll(TableColumn[] columns) {
-        try {
-            columns = getColumns(columns);
-            return Admin.query(Article.class, String.format("SELECT %s FROM %s ORDER BY %s DESC, %s DESC",
-                    Admin.createSelectParams(columns), tableName, TableColumn.PRIORITY, TableColumn.CREATION_DATE), columns,
-                    getInstance());
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        columns = getColumns(columns);
+        return Admin.query(Article.class, String.format("SELECT %s FROM %s ORDER BY %s DESC, %s DESC",
+                Admin.createSelectParams(columns), tableName, TableColumn.PRIORITY, TableColumn.CREATION_DATE), columns,
+                getInstance());
     }
 
     /**
@@ -179,19 +168,16 @@ public class RepArticle implements Repository<Article> {
      * @param columns seznam sloupcu, ktere je potreba nacist z databaze (pokud
      * je null, uvazuji se vsechny sloupce)
      * @return vraci kategorii, ktere odpovida index id
+     *
      */
     public static Article selectById(int id, TableColumn[] columns) {
-        try {
-            columns = getColumns(columns);
-            List<Article> articleList = Admin.query(Article.class, String.format("SELECT %s FROM %s WHERE %s = %s",
-                    Admin.createSelectParams(columns), tableName, TableColumn.ID, Integer.toString(id)), columns, getInstance());
-            return (articleList != null) && (articleList.size() == 1) ? articleList.get(0) : null;
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        columns = getColumns(columns);
+        List<Article> articleList = Admin.query(Article.class, String.format("SELECT %s FROM %s WHERE %s = %s",
+                Admin.createSelectParams(columns), tableName, TableColumn.ID, Integer.toString(id)), columns, getInstance());
+        return (articleList != null) && (articleList.size() == 1) ? articleList.get(0) : null;
     }
 
-	// Rozhrani Repository<Article>
+    // Rozhrani Repository<Article>
     @Override
     public void insertRow(Article value) {
         RepArticle.insert(value);
@@ -204,11 +190,12 @@ public class RepArticle implements Repository<Article> {
 
     @Override
     public void deleteRow(int id) {
-        try {
-            RepArticle.delete(id);
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        RepArticle.delete(id);
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
@@ -249,22 +236,18 @@ public class RepArticle implements Repository<Article> {
                     data.setCategoryId(result.getInt(resultsColumnId));
                     break;
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     /* PRIVATE */
-    /**
-     * Podminka pro vyber clanku dle umisteni na jedne strance
-     */
+    /** Podminka pro vyber clanku dle umisteni na jedne strance */
     private static String sqlLocationCondition(Location location) {
         return String.format("(%s = %d)", TableColumn.LOCATION, location.ordinal());
     }
 
-    /**
-     * Podminka pro vyber clanku dle umisteni na webu
-     */
+    /** Podminka pro vyber clanku dle umisteni na webu */
     private static String sqlOwnerCondition(int clubTeamId, int categoryId) {
         if ((clubTeamId > 0) || (categoryId > 0)) {
             return String.format("((%s = %d) OR (%s = %d) OR (%s = %d))", TableColumn.CLUB_TEAM_ID, clubTeamId,
@@ -275,9 +258,7 @@ public class RepArticle implements Repository<Article> {
         }
     }
 
-    /**
-     * Podminka pro vyber clanku dle datumu vyprseni platnosti
-     */
+    /** Podminka pro vyber clanku dle datumu vyprseni platnosti */
     private static String sqlExpiredDateCondition() {
         return String.format("((%s is null) OR (SYSDATE() <= %s))", TableColumn.EXPIRATION_DATE, TableColumn.EXPIRATION_DATE);
     }
@@ -289,6 +270,6 @@ public class RepArticle implements Repository<Article> {
     private RepArticle() {
     }
 
-    private static RepArticle articleDb = new RepArticle();
+    private final static RepArticle articleDb = new RepArticle();
 
 }
