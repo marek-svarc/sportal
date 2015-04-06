@@ -5,18 +5,30 @@ import java.util.List;
 import com.clubeek.db.Repository;
 import com.clubeek.model.Unique;
 import com.clubeek.ui.Messages;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.util.SimpleEnumSet;
+import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Resource;
+import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomTable;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.ValoTheme;
+import java.util.Locale;
+import org.tepi.filtertable.FilterDecorator;
+import org.tepi.filtertable.FilterGenerator;
+import org.tepi.filtertable.FilterTable;
+import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
 
 /**
  * Component that contains of table with buttons for single action and buttons
@@ -28,8 +40,8 @@ public final class ActionTable {
 
     /* PUBLIC */
     /** Table */
-    public final Table table;
-    
+    public final FilterTable table;
+
     /** All actions provided by the table */
     public static enum Action {
 
@@ -83,6 +95,125 @@ public final class ActionTable {
         boolean doAction(Action action, Object data);
     }
 
+    // Classes
+    /** Basic class for filters decoration */
+    public static class FilterDecoratorBase implements FilterDecorator {
+
+        @Override
+        public String getEnumFilterDisplayName(Object propertyId, Object value) {
+            return value.toString();
+        }
+
+        @Override
+        public Resource getEnumFilterIcon(Object propertyId, Object value) {
+            return null;
+        }
+
+        @Override
+        public String getBooleanFilterDisplayName(Object propertyId, boolean value) {
+            return value ? "ano" : "ne";
+        }
+
+        @Override
+        public Resource getBooleanFilterIcon(Object propertyId, boolean value) {
+            return value ? FontAwesome.CHECK : FontAwesome.TIMES;
+        }
+
+        @Override
+        public boolean isTextFilterImmediate(Object propertyId) {
+            return true;
+        }
+
+        @Override
+        public int getTextChangeTimeout(Object propertyId) {
+            return 500;
+        }
+
+        @Override
+        public String getFromCaption() {
+            return "Od";
+        }
+
+        @Override
+        public String getToCaption() {
+            return "Do";
+        }
+
+        @Override
+        public String getSetCaption() {
+            return null;
+        }
+
+        @Override
+        public String getClearCaption() {
+            return null;
+        }
+
+        @Override
+        public Resolution getDateFieldResolution(Object propertyId) {
+            return Resolution.DAY;
+        }
+
+        @Override
+        public String getDateFormatPattern(Object propertyId) {
+            return Tools.DateTime.getDateFormatString(Tools.DateTime.DateStyle.DAY);
+        }
+
+        @Override
+        public Locale getLocale() {
+            return Tools.getLocale();
+        }
+
+        @Override
+        public String getAllItemsVisibleString() {
+            return "Ukázat vše";
+        }
+
+        @Override
+        public NumberFilterPopupConfig getNumberFilterPopupConfig() {
+            return null;
+        }
+
+        @Override
+        public boolean usePopupForNumericProperty(Object propertyId) {
+            return true;
+        }
+    }
+
+    public static class FilterGeneratorBase implements FilterGenerator {
+
+        @Override
+        public Container.Filter generateFilter(Object propertyId, Object value) {
+            return null;
+        }
+
+        @Override
+        public Container.Filter generateFilter(Object propertyId, Field<?> originatingField) {
+            return null;
+        }
+
+        @Override
+        public AbstractField<?> getCustomFilterComponent(Object propertyId) {
+            return null;
+        }
+
+        @Override
+        public void filterRemoved(Object propertyId) {
+            //
+        }
+
+        @Override
+        public void filterAdded(Object propertyId, Class<? extends Container.Filter> filterType, Object value) {
+            //
+        }
+
+        @Override
+        public Container.Filter filterGeneratorFailed(Exception reason, Object propertyId, Object value) {
+            return null;
+        }
+
+    }
+
     /** Class that provides informations about one column in the table. */
     public static class UserColumnInfo {
 
@@ -103,6 +234,11 @@ public final class ActionTable {
     }
 
     public ActionTable(SimpleEnumSet<Action> ctrlColumns, UserColumnInfo[] userColumns, OnActionListener actionListener) {
+        this(ctrlColumns, userColumns, actionListener, new ActionTable.FilterDecoratorBase(), new ActionTable.FilterGeneratorBase());
+    }
+
+    public ActionTable(SimpleEnumSet<Action> ctrlColumns, UserColumnInfo[] userColumns, OnActionListener actionListener,
+            FilterDecorator filterDecorator, FilterGenerator filterGenerator) {
 
         this.userActions = ctrlColumns;
         this.userColumns = userColumns;
@@ -140,16 +276,25 @@ public final class ActionTable {
         }
 
         // create and initialize table
-        table = new Table();
+        table = new FilterTable();
+        table.addStyleName(ValoTheme.TABLE_COMPACT);
         table.addStyleName(ValoTheme.TABLE_SMALL);
         table.addStyleName(ValoTheme.TABLE_BORDERLESS);
+        table.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
         table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
         table.setSizeFull();
+        table.setValue(null);
+
+        if (!isSortColumn()) {
+            table.setFilterDecorator(filterDecorator);
+            table.setFilterGenerator(filterGenerator);
+//            table.setFilterBarVisible(true);
+        }
+
         table.setSelectable(false);
         table.setMultiSelect(false);
         table.setNullSelectionAllowed(true);
-        table.setSortEnabled(!isSelectionColumn());
-        table.setValue(null);
+        table.setSortEnabled(!isSortColumn());
 
         // create controls column
         if (isSelectionColumn()) {
@@ -170,6 +315,14 @@ public final class ActionTable {
             table.setColumnExpandRatio(this.userColumns[this.userColumns.length - 1].propertyId, 1.0f);
         }
 
+//        if (!isSortColumn()) {
+//            Object[] visibleClms = new Object[userColumns.length];
+//            for (int i = 0; i < visibleClms.length; ++i) {
+//                visibleClms[i] = userColumns[i].propertyId;
+//            }
+//            table.setVisibleColumns(visibleClms);
+//        }
+       
         updateButtons();
     }
 
@@ -199,7 +352,7 @@ public final class ActionTable {
      *
      * @param generator New cell style generator or null to remove generator.
      */
-    public void setCellStyleGenerator(Table.CellStyleGenerator generator) {
+    public void setCellStyleGenerator(CustomTable.CellStyleGenerator generator) {
         table.setCellStyleGenerator(generator);
     }
 
@@ -240,7 +393,7 @@ public final class ActionTable {
         // Column for actions SINGLE_MOVE_UP and SINGLE_MOVE_DOWN
         if (isSortColumn()) {
             HorizontalLayout layout = new HorizontalLayout();
-            layout.addComponent(createTableButton(Action.SINGLE_MOVE_UP, data, null, "\u25B2", "m-icon-helpful"));
+            layout.addComponent(createTableButton(Action.SINGLE_MOVE_UP, data, null, "\u25B2", "m-helpful"));
             layout.addComponent(createTableButton(Action.SINGLE_MOVE_DOWN, data, null, "\u25BC", "m-helpful"));
 
             cells[column] = layout;
@@ -416,6 +569,15 @@ public final class ActionTable {
             }
             updateButtons();
         }
+    }
+
+    private void setButtonStyle(Button button, String style) {
+        button.setStyleName(ValoTheme.BUTTON_TINY);
+        button.addStyleName("table"); //$NON-NLS-1$
+        if (style != null) {
+            button.addStyleName(style);
+        }
+        button.setImmediate(true);
     }
 
     // Controls

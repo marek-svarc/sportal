@@ -8,7 +8,6 @@ import com.clubeek.model.User;
 import com.clubeek.model.User.Role;
 import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameUser;
@@ -33,7 +32,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             new ActionTable.UserColumnInfo(Columns.TEAM_MEMBER, String.class, Messages.getString("teamMember"))
         };
 
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
         table.addToOwner(this);
     }
 

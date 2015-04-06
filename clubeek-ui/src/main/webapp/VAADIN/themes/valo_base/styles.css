@@ -921,7 +921,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "7.4.0";
+	content: "7.4.2";
 }
 
 .v-widget {
@@ -12385,6 +12385,29 @@ div.v-layout.v-horizontal.v-widget {
 	margin-bottom: 8px;
 }
 
+.valo_base .v-slot-hgroup-left .hgroup-left {
+	margin-right: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+.valo_base .v-slot-hgroup-center .hgroup-center {
+	margin-right: 0px;
+	margin-left: 0px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-left-style: none;
+}
+
+.valo_base .v-slot-hgroup-right .hgroup-right {
+	margin-left: 0px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-left-style: none;
+}
+
 .valo_base .m-caution .v-icon {
 	color: #ed473b;
 }
@@ -12394,7 +12417,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .valo_base .m-helpful .v-icon {
-	color: #585858;
+	color: #2c9720;
 }
 
 .valo_base .v-button-table-row {

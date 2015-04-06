@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepTeamTraining;
@@ -14,9 +13,9 @@ import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeamTraining;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
@@ -40,10 +39,10 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
         table.addToOwner(this);
 
         // custom style
-        table.setCellStyleGenerator(new Table.CellStyleGenerator() {
+        table.setCellStyleGenerator(new CustomTable.CellStyleGenerator() {
 
             @Override
-            public String getStyle(Table source, Object itemId, Object propertyId) {
+            public String getStyle(CustomTable source, Object itemId, Object propertyId) {
                 TeamTraining trainig = trainings.get((int) itemId);
                 if (trainig.isGone()) {
                     return "disabled"; //$NON-NLS-1$
@@ -52,6 +51,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
                 }
             }
         });
+        
     }
 
     // interface View

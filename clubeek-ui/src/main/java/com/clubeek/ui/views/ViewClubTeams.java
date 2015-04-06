@@ -1,5 +1,6 @@
 package com.clubeek.ui.views;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepClubTeam;
@@ -33,7 +34,7 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
             new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category"))
         };
 
-        table = new ActionTable(ActionTable.Action.getMaximalSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getMaximalSet(false, true), columns, this);
         table.addToOwner(this);
     }
 
@@ -44,17 +45,19 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
         Security.authorize(Role.SPORT_MANAGER);
 
         teams = RepClubTeam.select(false, null);
+
         table.removeAllRows();
         for (int i = 0; i < teams.size(); ++i) {
             ClubTeam team = teams.get(i);
-            table.addRow(new Object[]{Tools.Strings.getCheckString(team.getActive()) + "  " + team.getName(),
+            table.addRow(new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
                 team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
         }
     }
 
     // interface ActionTable.OnActionListener
     @Override
-    public boolean doAction(ActionTable.Action action, Object data) {
+    public boolean doAction(ActionTable.Action action, Object data
+    ) {
         switch (action) {
             case SINGLE_ADD:
                 addTeam();
@@ -65,11 +68,18 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
             case SINGLE_DELETE:
                 deleteTeam((int) data);
                 break;
+            case SINGLE_MOVE_UP:
+                exchangeTeams((int) data, true);
+                break;
+            case SINGLE_MOVE_DOWN:
+                exchangeTeams((int) data, false);
+                break;
         }
         return true;
     }
-    
+
     // Operations
+
     public void addTeam() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"),
                 new FrameTeam(), new ClubTeam(), RepClubTeam.getInstance(), navigation);
@@ -86,30 +96,11 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
         table.deleteRow(teams.get(id).getId(), RepClubTeam.getInstance(), this, navigation);
     }
 
-    /**
-     * Posune vybranou radku nahoru nebo dolu
-     *
-     * @param moveUp směr posunu
-     */
-    public void exchangeCategories(boolean moveUp) {
-//        int idA = table.getSelectedRow();
-//        int idB = table.getMoveIndex(moveUp);
-//        if ((idA >= 0) && (idB >= 0)) {
-//            try {
-//                // prohozen
-//                RepClubTeam.exchange(teams.get(idA).getId(), teams.get(idB).getId());
-//                // změna vybrané řádky na novou pozici
-//                // table.table.setValue(idB);
-//                // aktualizace aplikace
-//                updateApp();
-//            } catch (SQLException e) {
-//                Tools.msgBoxSQLException(e);
-//            }
-//        }
+    public void exchangeTeams(int id, boolean moveUp) {
+        table.exchangeRows(teams, id, moveUp, RepClubTeam.getInstance(), this, navigation);
     }
 
     /* PRIVATE */
-
     /** Navigation provider */
     private final Navigation navigation;
 

@@ -40,7 +40,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
             new ActionTable.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address"))
         };
 
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
         table.addToOwner(this);
     }
 

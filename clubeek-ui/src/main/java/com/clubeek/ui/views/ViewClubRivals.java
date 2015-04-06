@@ -37,7 +37,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
         };
 
         // vytvoreni tabulky a ovladacich tlacitek
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
         table.addToOwner(this);
     }
 

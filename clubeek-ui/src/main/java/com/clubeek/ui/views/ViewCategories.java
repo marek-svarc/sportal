@@ -33,7 +33,7 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
             new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption"))
         };
 
-        table = new ActionTable(ActionTable.Action.getMaximalSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getMaximalSet(false, true), columns, this);
         table.addToOwner(this);
     }
 

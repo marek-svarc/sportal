@@ -36,7 +36,7 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
         };
 
         // vytvoreni tabulky a ovladacich tlacitek
-        table = new ActionTable(ActionTable.Action.getStandardSet(), columns, this);
+        table = new ActionTable(ActionTable.Action.getStandardSet(true, true), columns, this);
         table.addToOwner(this);
     }
 
@@ -45,24 +45,23 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
 
         Security.authorize(Role.SPORT_MANAGER);
 
-        if (event != null) {
-            teamId = Tools.Strings.analyzeParameters(event);
-        }
-
         table.removeAllRows();
 
-        if (teamId > 0) {
-            // nacteni seznamu treninku z databaze
-            games = null;
-            games = RepTeamMatch.selectByTeamId(teamId, null);
+        if (event != null) {
+            teamId = Tools.Strings.analyzeParameters(event);
+            if (teamId > 0) {
+                // nacteni seznamu treninku z databaze
+                games = null;
+                games = RepTeamMatch.selectByTeamId(teamId, null);
 
-            // inicializace tbulky
-            if (games != null) {
-                TeamMatch game;
-                for (int i = 0; i < games.size(); ++i) {
-                    game = games.get(i);
-                    table.addRow(new Object[]{Tools.Strings.getStrGameTeams(game),
-                        Tools.DateTime.dateToString(game.getStart(), DateStyle.DAY_AND_TIME), game.getScoreAsStr()}, i);
+                // inicializace tbulky
+                if (games != null) {
+                    TeamMatch game;
+                    for (int i = 0; i < games.size(); ++i) {
+                        game = games.get(i);
+                        table.addRow(new Object[]{Tools.Strings.getStrGameTeams(game),
+                            Tools.DateTime.dateToString(game.getStart(), DateStyle.DAY_AND_TIME), game.getScoreAsStr()}, i);
+                    }
                 }
             }
         }
