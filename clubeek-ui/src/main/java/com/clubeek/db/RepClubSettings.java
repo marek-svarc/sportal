@@ -44,7 +44,7 @@ public class RepClubSettings implements Repository<ClubSettings> {
     public static ClubSettings select(int id, TableColumn[] columns) {
         columns = getColumns(columns);
         List<ClubSettings> clubSettingsList = Admin.query(ClubSettings.class, String.format("SELECT %s FROM %s WHERE %s = %d",
-                Admin.createSelectParams(columns), tableName, TableColumn.ID.name, 1), columns, getInstance());
+                Admin.createSelectParams(columns), tableName, TableColumn.ID.name, id), columns, getInstance());
         return (clubSettingsList != null) && (clubSettingsList.size() == 1) ? clubSettingsList.get(0) : null;
     }
 
