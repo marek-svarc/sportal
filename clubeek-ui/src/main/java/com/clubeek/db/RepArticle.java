@@ -141,6 +141,9 @@ public class RepArticle implements Repository<Article> {
      */
     public static List<Article> select(int clubTeamId, int categoryId, Location location, TableColumn[] columns) {
         columns = getColumns(columns);
+        String str = String.format("SELECT %s FROM %s WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
+                Admin.createSelectParams(columns), tableName, sqlOwnerCondition(clubTeamId, categoryId),
+                sqlLocationCondition(location), sqlExpiredDateCondition(), TableColumn.PRIORITY, TableColumn.CREATION_DATE);
         return Admin.query(Article.class, String.format("SELECT %s FROM %s WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
                 Admin.createSelectParams(columns), tableName, sqlOwnerCondition(clubTeamId, categoryId),
                 sqlLocationCondition(location), sqlExpiredDateCondition(), TableColumn.PRIORITY, TableColumn.CREATION_DATE),
@@ -260,7 +263,7 @@ public class RepArticle implements Repository<Article> {
 
     /** Podminka pro vyber clanku dle datumu vyprseni platnosti */
     private static String sqlExpiredDateCondition() {
-        return String.format("((%s is null) OR (SYSDATE() <= %s))", TableColumn.EXPIRATION_DATE, TableColumn.EXPIRATION_DATE);
+        return String.format("((%s is null) OR (LOCALTIMESTAMP <= %s))", TableColumn.EXPIRATION_DATE, TableColumn.EXPIRATION_DATE);
     }
 
     private static RepArticle.TableColumn[] getColumns(RepArticle.TableColumn[] columns) {

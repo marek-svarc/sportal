@@ -139,7 +139,7 @@ public class RepTeamMatch implements Repository<TeamMatch> {
      */
     public static List<TeamMatch> selectPublishable(int clubTeamId, TableColumn[] columns) {
         columns = getColumns(columns);
-        return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s = 1) AND (SYSDATE() >= %s) ORDER BY %s DESC",
+        return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s = 1) AND (LOCALTIMESTAMP >= %s) ORDER BY %s DESC",
                 Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID, clubTeamId, TableColumn.PUBLISH,
                 TableColumn.START, TableColumn.START), columns, RepTeamMatch.getInstance());
     }
@@ -152,7 +152,7 @@ public class RepTeamMatch implements Repository<TeamMatch> {
     public static List<TeamMatch> selectHomeMatches(int months, TableColumn[] columns) {
         columns = getColumns(columns);
         return Admin.query(TeamMatch.class, String.format(
-                "SELECT %s FROM %s WHERE (%s = 1) AND (%s > SYSDATE()) AND (%s <= DATE_ADD(SYSDATE(), INTERVAL %d MONTH)) ORDER BY %s",
+                "SELECT %s FROM %s WHERE (%s = true) AND (%s > LOCALTIMESTAMP) AND (%s <= (LOCALTIMESTAMP + INTERVAL '%d MONTH')) ORDER BY %s",
                 Admin.createSelectParams(columns), tableName, TableColumn.HOME_COURT, TableColumn.START,
                 TableColumn.START, months, TableColumn.START), columns, RepTeamMatch.getInstance());
     }
