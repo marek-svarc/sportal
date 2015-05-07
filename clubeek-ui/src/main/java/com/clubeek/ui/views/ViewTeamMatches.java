@@ -9,35 +9,39 @@ import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.Tools.DateTime.DateStyle;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeamMatch;
+import com.clubeek.util.DateTime;
+import com.clubeek.util.StyleToDateConverter;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class ViewTeamMatches extends VerticalLayout implements View, ActionTable.OnActionListener {
 
     public enum Columns {
 
-        MATCH, DATE_TIME, RESULT;
+        MATCH, RESULT, DATE_TIME;
     }
 
     public ViewTeamMatches() {
 
-        this.setCaption(Messages.getString("matches")); //$NON-NLS-1$
+        this.setCaption(Messages.getString("matches"));
 
         // columns definition
         ActionTable.UserColumnInfo[] columns = {
             new ActionTable.UserColumnInfo(Columns.MATCH, String.class, Messages.getString("match")),
-            new ActionTable.UserColumnInfo(Columns.DATE_TIME, String.class, Messages.getString("dateTime")),
-            new ActionTable.UserColumnInfo(Columns.RESULT, String.class, Messages.getString("result"))
+            new ActionTable.UserColumnInfo(Columns.RESULT, String.class, Messages.getString("result")),
+            new ActionTable.UserColumnInfo(Columns.DATE_TIME, Date.class, Messages.getString("dateTime"))
         };
 
         // vytvoreni tabulky a ovladacich tlacitek
         table = new ActionTable(ActionTable.Action.getStandardSet(true, true), columns, this);
         table.addToOwner(this);
+        table.table.setConverter(Columns.DATE_TIME, new StyleToDateConverter(DateTime.DateStyle.DAY_AND_TIME));
     }
 
     @Override
@@ -49,21 +53,24 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
 
         if (event != null) {
             teamId = Tools.Strings.analyzeParameters(event);
-            if (teamId > 0) {
-                // nacteni seznamu treninku z databaze
-                games = null;
-                games = RepTeamMatch.selectByTeamId(teamId, null);
+        }
 
-                // inicializace tbulky
-                if (games != null) {
-                    TeamMatch game;
-                    for (int i = 0; i < games.size(); ++i) {
-                        game = games.get(i);
-                        table.addRow(new Object[]{Tools.Strings.getStrGameTeams(game),
-                            Tools.DateTime.dateToString(game.getStart(), DateStyle.DAY_AND_TIME), game.getScoreAsStr()}, i);
-                    }
+        if (teamId > 0) {
+            // nacteni seznamu treninku z databaze
+            games = null;
+            games = RepTeamMatch.selectByTeamId(teamId, null);
+
+            // inicializace tbulky
+            if (games != null) {
+                Container container = table.createDataContainer();
+                for (int i = 0; i < games.size(); ++i) {
+                    TeamMatch game = games.get(i);
+                    table.addRow(container, new Object[]{Tools.Strings.getStrGameTeams(game),
+                        game.getScoreAsStr(), game.getStart()}, i);
                 }
+                table.setDataContainer(container);
             }
+
         }
     }
 
@@ -90,7 +97,7 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
         data.setClubTeamId(teamId);
 
         ModalDialog.show(this, Mode.ADD_MULTI,
-                Messages.getString("match"), new FrameTeamMatch(), data, RepTeamMatch.getInstance(), null); //$NON-NLS-1$
+                Messages.getString("match"), new FrameTeamMatch(), data, RepTeamMatch.getInstance(), null);
     }
 
     public void editMatch(int id) {
@@ -102,7 +109,8 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
     }
 
     public void deleteMatch(int id) {
-        table.deleteRow(games.get(id).getId(), RepTeamMatch.getInstance(), this, null);
+        TeamMatch teamMatch = games.get(id);
+        table.deleteRow(teamMatch.getId(), id, RepTeamMatch.getInstance(), this, null, Columns.MATCH, Columns.DATE_TIME);
     }
 
     /* PRIVATE */

@@ -14,6 +14,7 @@ import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubMember;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button.ClickEvent;
@@ -68,17 +69,21 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
         Security.authorize(Role.CLUB_MANAGER);
 
         members = RepClubMember.selectAll(null);
-        table.removeAllRows();
-        for (int i = 0; i < members.size(); ++i) {
-            ClubMember member = members.get(i);
 
-            String address = Tools.Strings.concatenateText(
-                    new String[]{member.getStreet(), member.getCity(), member.getCode()}, ", "); //$NON-NLS-1$
+        if (members != null) {
+            table.removeAllRows();
+            Container container = table.createDataContainer();
+            for (int i = 0; i < members.size(); ++i) {
+                ClubMember member = members.get(i);
 
-            table.addRow(new Object[]{member.getName(), member.getSurname(), member.getIdRegistration(),
-                member.getBirthdateAsString(), member.getIdPersonal(), address}, i);
+                String address = Tools.Strings.concatenateText(
+                        new String[]{member.getStreet(), member.getCity(), member.getCode()}, ", ");
+
+                table.addRow(container, new Object[]{member.getName(), member.getSurname(), member.getIdRegistration(),
+                    member.getBirthdateAsString(), member.getIdPersonal(), address}, i);
+            }
+            table.setDataContainer(container);
         }
-        //table.table.resetFilters();
     }
 
     // operations
@@ -105,7 +110,8 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     }
 
     public void deleteMember(int id) {
-        table.deleteRow(members.get(id).getId(), RepClubMember.getInstance(), this, null);
+        table.deleteRow(members.get(id).getId(), id, RepClubMember.getInstance(), this, null, 
+                Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 
     /* PRIVATE */

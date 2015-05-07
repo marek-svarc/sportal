@@ -11,6 +11,7 @@ import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameCategory;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
@@ -44,11 +45,16 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
         Security.authorize(Role.CLUB_MANAGER);
 
         categories = RepCategory.selectAll(null);
+
         table.removeAllRows();
-        for (int i = 0; i < categories.size(); ++i) {
-            Category category = categories.get(i);
-            table.addRow(new Object[]{Tools.Strings.getCheckString(category.getActive())
+        if (categories != null) {
+            Container container = table.createDataContainer();
+            for (int i = 0; i < categories.size(); ++i) {
+                Category category = categories.get(i);
+                table.addRow(container, new Object[]{Tools.Strings.getCheckString(category.getActive())
                     + "  " + category.getDescription()}, i);
+            }
+            table.setDataContainer(container);
         }
     }
 
@@ -88,7 +94,8 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     }
 
     public void deleteCategory(int id) {
-        table.deleteRow(categories.get(id).getId(), RepCategory.getInstance(), this, navigation);
+        Category category = categories.get(id);
+        table.deleteRow(category.getId(), id, RepCategory.getInstance(), this, navigation, Columns.CAPTION);
     }
 
     public void exchangeCategories(int id, boolean moveUp) {
@@ -96,7 +103,6 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     }
 
     /* PRIVATE */
-
     /** Komponenty tabulky */
     private final ActionTable table;
 

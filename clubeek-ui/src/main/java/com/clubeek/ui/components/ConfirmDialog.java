@@ -1,5 +1,6 @@
 package com.clubeek.ui.components;
 
+import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -29,8 +30,8 @@ public class ConfirmDialog {
         Button yes = new Button("Ano", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                confirmation.onConfirm();
                 window.close();
+                confirmation.onConfirm();
             }
         });
         yes.addStyleName(ValoTheme.BUTTON_TINY);

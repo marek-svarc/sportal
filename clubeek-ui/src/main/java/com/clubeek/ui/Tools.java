@@ -3,17 +3,14 @@ package com.clubeek.ui;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import com.clubeek.model.Event;
 import com.clubeek.model.TeamMatch;
 import com.clubeek.model.TeamTraining;
 import com.clubeek.model.Unique;
+import com.clubeek.util.DateTime;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.converter.StringToIntegerConverter;
@@ -358,153 +355,6 @@ public final class Tools {
 
     }
 
-    public static class DateTime {
-
-        public static <T extends Event> T getEvent(Date date, List<T> events) {
-            Date today = new Date();
-            if (events != null) {
-                for (T event : events) {
-                    if (today.before(event.getStart()) && Tools.DateTime.sameDay(event.getStart(), date)) {
-                        return event;
-                    }
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Vyhleda nejblizsi udalost
-         *
-         * @param events seznam prohledavanych udalosti
-         * @return
-         */
-        public static <T extends Event> T getEarliestEvent(List<T> events) {
-            long timeDiff, minTimeDiff = Long.MAX_VALUE;
-            T earliestEvent = null;
-
-            Date today = new Date();
-            for (T event : events) {
-                if ((event.getStart() != null) && today.before(event.getStart())) {
-                    timeDiff = event.getStart().getTime() - today.getTime();
-                    if (timeDiff < minTimeDiff) {
-                        earliestEvent = event;
-                        minTimeDiff = timeDiff;
-                    }
-                }
-            }
-
-            return earliestEvent;
-        }
-
-        /**
-         * Porovna dva datumy a pokud znamenaji stejny den vraci true.
-         *
-         * @return vysledek porovnani
-         */
-        public static boolean sameDay(Date dateA, Date dateB) {
-            Calendar calA = Calendar.getInstance(getLocale());
-            calA.setTime(dateA);
-            Calendar calB = Calendar.getInstance(getLocale());
-            calB.setTime(dateB);
-
-            return (calA.get(Calendar.YEAR) == calB.get(Calendar.YEAR))
-                    && (calA.get(Calendar.DAY_OF_YEAR) == calB.get(Calendar.DAY_OF_YEAR));
-        }
-
-        /** Styl prevodu datumu na text */
-        public enum DateStyle {
-
-            NONE, YEAR, SHORT_DAY, DAY, TIME, DAY_AND_TIME, SHORT_DAY_AND_TIME;
-        }
-
-        private static String dateToString(Date value, String style) {
-            SimpleDateFormat format = new SimpleDateFormat(style, getLocale());
-            return format.format(value);
-        }
-
-        /**
-         * Prevede datum na text dle zvoleneho stylu
-         *
-         * @param value hodnota datumu
-         * @param style styl vypisu
-         * @return datum prevedeny na text
-         */
-        public static String dateToString(Date value, DateStyle style) {
-            if (value != null) {
-                switch (style) {
-                    case YEAR:
-                        return dateToString(value, "yyyy"); //$NON-NLS-1$
-                    case SHORT_DAY:
-                        return dateToString(value, "dd.MM.yyyy"); //$NON-NLS-1$
-                    case DAY:
-                        return dateToString(value, "EEEE dd.MM.yyyy"); //$NON-NLS-1$
-                    case TIME:
-                        return dateToString(value, "kk:mm"); //$NON-NLS-1$
-                    case DAY_AND_TIME:
-                        return String.format("%s %s", dateToString(value, "EEEE dd.MM.yyyy"), dateToString(value, "kk:mm")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    case SHORT_DAY_AND_TIME:
-                        return String.format("%s %s", dateToString(value, "dd.MM.yyyy"), dateToString(value, "kk:mm")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    default:
-                        return null;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Returns format string to convert date and time to string
-         * representation
-         *
-         * @param style Style of the date string
-         * @return Formating string
-         */
-        public static String getDateFormatString(DateStyle style) {
-            switch (style) {
-                case YEAR:
-                    return "yyyy";
-                case SHORT_DAY:
-                    return "dd.MM.yyyy";
-                case DAY:
-                    return "EEEE dd.MM.yyyy";
-                case TIME:
-                    return "kk:mm";
-                case DAY_AND_TIME:
-                    return "EEEE dd.MM.yyyy kk:mm";
-                case SHORT_DAY_AND_TIME:
-                    return "dd.MM.yyyy kk:mm";
-                default:
-                    return "";
-            }
-        }
-
-        /**
-         * Sestavi popis datumu a casu konani akce.
-         *
-         * @param event data konane akce
-         * @param styleStart styl vypisu zacatku konani akce
-         * @param styleEnd styl vypisu konce konani akce
-         * @return datum prevedeny na text
-         */
-        public static String eventToString(Event event, DateStyle styleStart, DateStyle styleEnd) {
-            if (styleEnd == DateStyle.NONE) {
-                return dateToString(event.getStart(), styleStart);
-            } else if (styleStart == DateStyle.NONE) {
-                return dateToString(event.getEnd(), styleEnd);
-            } else {
-                boolean sameDay = sameDay(event.getStart(), event.getEnd());
-                if (sameDay && (styleStart == DateStyle.DAY) && (styleEnd == DateStyle.DAY)) {
-                    return dateToString(event.getStart(), DateStyle.DAY);
-                } else if (sameDay && (styleStart == DateStyle.DAY_AND_TIME) && (styleEnd == DateStyle.DAY_AND_TIME)) {
-                    return String.format("%s - %s", dateToString(event.getStart(), DateStyle.DAY_AND_TIME), //$NON-NLS-1$
-                            dateToString(event.getEnd(), DateStyle.TIME));
-                } else {
-                    return String.format("%s - %s", dateToString(event.getStart(), styleStart), //$NON-NLS-1$
-                            dateToString(event.getEnd(), styleEnd));
-                }
-            }
-        }
-    }
-
     public static class Strings {
 
         public static String getErrorString(String caption, String error) {
@@ -540,14 +390,14 @@ public final class Tools {
 
         /** Zapise cas a misto treninku ve formtu HTML */
         public static String getHtmlTraining(TeamTraining training) {
-            return String.format("<span>%s</span></br><span>%s</span>", Tools.DateTime.eventToString(training, //$NON-NLS-1$
-                    Tools.DateTime.DateStyle.DAY_AND_TIME, Tools.DateTime.DateStyle.DAY_AND_TIME), training.getPlace());
+            return String.format("<span>%s</span></br><span>%s</span>", DateTime.eventToString(training, //$NON-NLS-1$
+                    DateTime.DateStyle.DAY_AND_TIME, DateTime.DateStyle.DAY_AND_TIME), training.getPlace());
         }
 
         /** Zapise cas a misto zapasu ve formtu HTML */
         public static String getHtmlGame(TeamMatch game) {
             return String.format("<strong>%s</strong></br>%s", getStrGameTeams(game), //$NON-NLS-1$
-                    Tools.DateTime.dateToString(game.getStart(), Tools.DateTime.DateStyle.DAY_AND_TIME));
+                    DateTime.dateToString(game.getStart(), DateTime.DateStyle.DAY_AND_TIME));
         }
 
         /**

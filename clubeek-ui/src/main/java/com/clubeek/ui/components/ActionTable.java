@@ -7,9 +7,11 @@ import com.clubeek.model.Unique;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.views.Navigation;
+import com.clubeek.util.DateTime;
 import com.clubeek.util.SimpleEnumSet;
 import com.vaadin.data.Container;
-import com.vaadin.data.Property;
+import com.vaadin.data.Item;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
@@ -22,7 +24,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.Locale;
 import org.tepi.filtertable.FilterDecorator;
@@ -80,6 +81,12 @@ public final class ActionTable {
         public static SimpleEnumSet<Action> getMaximalSet() {
             return getMaximalSet(false, false);
         }
+    }
+
+    /** Identifiers of columns which provides some action. */
+    public enum ActionColumns {
+
+        SELECTION, EDIT, SORT;
     }
 
     /** Enables to perform operation depending on the selected action. */
@@ -156,7 +163,7 @@ public final class ActionTable {
 
         @Override
         public String getDateFormatPattern(Object propertyId) {
-            return Tools.DateTime.getDateFormatString(Tools.DateTime.DateStyle.DAY);
+            return DateTime.getDateFormatString(DateTime.DateStyle.DAY);
         }
 
         @Override
@@ -166,7 +173,7 @@ public final class ActionTable {
 
         @Override
         public String getAllItemsVisibleString() {
-            return "Ukázat vše";
+            return "Vše";
         }
 
         @Override
@@ -280,15 +287,14 @@ public final class ActionTable {
         table.addStyleName(ValoTheme.TABLE_COMPACT);
         table.addStyleName(ValoTheme.TABLE_SMALL);
         table.addStyleName(ValoTheme.TABLE_BORDERLESS);
-        table.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
         table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
         table.setSizeFull();
         table.setValue(null);
 
-        if (!isSortColumn()) {
+        if (!isSortColumn() && (filterDecorator != null) && (filterGenerator != null)) {
             table.setFilterDecorator(filterDecorator);
             table.setFilterGenerator(filterGenerator);
-//            table.setFilterBarVisible(true);
+            table.setFilterBarVisible(true);
         }
 
         table.setSelectable(false);
@@ -298,13 +304,13 @@ public final class ActionTable {
 
         // create controls column
         if (isSelectionColumn()) {
-            table.addContainerProperty("selectionClm", CheckBox.class, null, "", null, null);
+            table.addContainerProperty(ActionColumns.SELECTION, CheckBox.class, null, "", null, null);
         }
         if (isEditColumn()) {
-            table.addContainerProperty("editClm", HorizontalLayout.class, null, "Úpravy", null, null);
+            table.addContainerProperty(ActionColumns.EDIT, HorizontalLayout.class, null, "Úpravy", null, null);
         }
         if (isSortColumn()) {
-            table.addContainerProperty("sortClm", HorizontalLayout.class, null, "Pořadí", null, null);
+            table.addContainerProperty(ActionColumns.SORT, HorizontalLayout.class, null, "Pořadí", null, null);
         }
 
         // crate user columns
@@ -314,16 +320,6 @@ public final class ActionTable {
         if (this.userColumns.length > 0) {
             table.setColumnExpandRatio(this.userColumns[this.userColumns.length - 1].propertyId, 1.0f);
         }
-
-//        if (!isSortColumn()) {
-//            Object[] visibleClms = new Object[userColumns.length];
-//            for (int i = 0; i < visibleClms.length; ++i) {
-//                visibleClms[i] = userColumns[i].propertyId;
-//            }
-//            table.setVisibleColumns(visibleClms);
-//        }
-       
-        updateButtons();
     }
 
     /**
@@ -361,19 +357,48 @@ public final class ActionTable {
         this.table.removeAllItems();
     }
 
-    public void addRow(Object[] userCells, final Object data) {
+    public Container createDataContainer() {
+        IndexedContainer cont = new IndexedContainer();
 
-        Object[] cells = new Object[userCells.length + getCtrlColumnsCount()];
+        // create controls column
+        if (isSelectionColumn()) {
+            cont.addContainerProperty(ActionColumns.SELECTION, CheckBox.class, null);
+        }
+        if (isEditColumn()) {
+            cont.addContainerProperty(ActionColumns.EDIT, HorizontalLayout.class, null);
+        }
+        if (isSortColumn()) {
+            cont.addContainerProperty(ActionColumns.SORT, HorizontalLayout.class, null);
+        }
 
-        int column = 0;
+        // crate user columns
+        for (UserColumnInfo clm : this.userColumns) {
+            cont.addContainerProperty(clm.propertyId, clm.propertyType, null);
+        }
+
+        return cont;
+    }
+
+    public void setDataContainer(Container container) {
+        table.setContainerDataSource(container);
+        if (isSelectionColumn()) {
+            table.setFilterFieldVisible(ActionTable.ActionColumns.SELECTION, false);
+        }
+        if (isEditColumn()) {
+            table.setFilterFieldVisible(ActionTable.ActionColumns.EDIT, false);
+        }
+        if (isSortColumn()) {
+            table.setFilterFieldVisible(ActionTable.ActionColumns.SORT, false);
+        }
+    }
+
+    public void addRow(Container container, Object[] userCells, final Object data) {
+        container.addItem(data);
 
         // Column to select row
         if (isSelectionColumn()) {
             CheckBox cbx = new CheckBox();
-            cbx.addValueChangeListener(cbxSelectionListener);
-
-            cells[column] = cbx;
-            ++column;
+            container.getContainerProperty(data, ActionColumns.SELECTION).setValue(cbx);
         }
 
         // Column for actions SINGLE_EDIT and SINGLE_DELETE
@@ -386,8 +411,7 @@ public final class ActionTable {
                 layout.addComponent(createTableButton(Action.SINGLE_DELETE, data, FontAwesome.MINUS_CIRCLE, null, "m-caution"));
             }
 
-            cells[column] = layout;
-            ++column;
+            container.getContainerProperty(data, ActionColumns.EDIT).setValue(layout);
         }
 
         // Column for actions SINGLE_MOVE_UP and SINGLE_MOVE_DOWN
@@ -396,17 +420,13 @@ public final class ActionTable {
             layout.addComponent(createTableButton(Action.SINGLE_MOVE_UP, data, null, "\u25B2", "m-helpful"));
             layout.addComponent(createTableButton(Action.SINGLE_MOVE_DOWN, data, null, "\u25BC", "m-helpful"));
 
-            cells[column] = layout;
-            ++column;
+            container.getContainerProperty(data, ActionColumns.SORT).setValue(layout);
         }
 
         // Custom columns
-        for (Object value : userCells) {
-            cells[column] = value;
-            ++column;
+        for (int i = 0; i < userCells.length; ++i) {
+            container.getContainerProperty(data, userColumns[i].propertyId).setValue(userCells[i]);
         }
-
-        table.addItem(cells, data);
     }
 
     public void addToOwner(AbstractOrderedLayout owner) {
@@ -420,16 +440,26 @@ public final class ActionTable {
      * Delete one row from the table.
      *
      * @param <T>
-     * @param id Unique id of deleted object
-     * @param dataAdmin
-     * @param parent
-     * @param navigation
+     * @param dataId Unique id of deleted object
+     * @param rowId Unique id of the table row
+     * @param dataAdmin DB manager providing delete operation
+     * @param parent Parent control used to update application
+     * @param navigation Navigation to update navigation in application
+     * @param columns Columns used to create information string about the deleting item
      */
-    public <T extends Unique> void deleteRow(int id, final Repository<T> dataAdmin, final Component parent,
-            final Navigation navigation) {
-        if (id > 0) {
-            dataAdmin.deleteRow(id);
-            updateApplication(parent, navigation);
+    public <T extends Unique> void deleteRow(final int dataId, int rowId, final Repository<T> dataAdmin, final Component parent,
+            final Navigation navigation, Object... columns) {
+        if (dataId > 0) {
+            ConfirmDialog.addConfirmDialog(parent.getCaption(), String.format("<strong>%s</strong><br><em>( %s )</em><br>",
+                    "Opravdu chcete smazat vybranou položku?", getTableRowInfo(rowId, columns)),
+                    new ConfirmDialog.Confirmation() {
+
+                        @Override
+                        public void onConfirm() {
+                            dataAdmin.deleteRow(dataId);
+                            updateApplication(parent, navigation);
+                        }
+                    });
         }
     }
 
@@ -460,6 +490,25 @@ public final class ActionTable {
             ++count;
         }
         return count;
+    }
+
+    public String getTableRowInfo(int rowId, Object... columns) {
+        Item item = table.getItem(rowId);
+
+        String info = "";
+        if (item != null) {
+            for (Object id : columns) {
+                String value = (String) item.getItemProperty(id).getValue();
+                if ((value != null) && (!value.isEmpty())) {
+                    if (!info.isEmpty()) {
+                        info += ", ";
+                    }
+                    info += value;
+                }
+            }
+        }
+
+        return info;
     }
 
     public void styleTableButton(Button button, String... customStyles) {
@@ -545,41 +594,6 @@ public final class ActionTable {
         return btn;
     }
 
-    /** Aktualizuje tlacitka dle vybrane radky tabulky */
-    public void updateButtons() {
-        boolean enable = selectedCount > 0;
-
-        if (btnSelectedEdit != null) {
-            btnSelectedEdit.setEnabled(enable);
-        }
-        if (btnSelectedDelete != null) {
-            btnSelectedDelete.setEnabled(enable);
-        }
-    }
-
-    // Listeners
-    private class CheckBoxListener implements Property.ValueChangeListener {
-
-        @Override
-        public void valueChange(Property.ValueChangeEvent event) {
-            if (((CheckBox) event.getProperty()).getValue()) {
-                ++selectedCount;
-            } else {
-                --selectedCount;
-            }
-            updateButtons();
-        }
-    }
-
-    private void setButtonStyle(Button button, String style) {
-        button.setStyleName(ValoTheme.BUTTON_TINY);
-        button.addStyleName("table"); //$NON-NLS-1$
-        if (style != null) {
-            button.addStyleName(style);
-        }
-        button.setImmediate(true);
-    }
-
     // Controls
     /** Layout for buttons. */
     private final HorizontalLayout controlsLayout;
@@ -599,10 +613,4 @@ public final class ActionTable {
 
     /** Calling when action is performed. */
     private final OnActionListener onActionListener;
-
-    /** Counter of the selected rows */
-    private int selectedCount = 0;
-
-    // Listeners
-    CheckBoxListener cbxSelectionListener = new CheckBoxListener();
 }

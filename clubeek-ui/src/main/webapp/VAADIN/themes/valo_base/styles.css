@@ -921,7 +921,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "7.4.2";
+	content: "7.4.5";
 }
 
 .v-widget {
@@ -4275,6 +4275,8 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 	right: 0;
 	border: 1px solid #d4d4d4;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	margin-top: -1px;
 	-webkit-box-shadow: 0 0 9px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 9px rgba(0, 0, 0, 0.2);
@@ -8337,6 +8339,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: relative;
 	background: #fafafa;
 	color: #464646;
+	overflow: hidden;
 }
 
 .valo_base .v-table-header table, .valo_base .v-table-footer table, .valo_base .v-table-table {
@@ -8555,7 +8558,7 @@ div.v-layout.v-horizontal.v-widget {
 .valo_base .v-table-focus-slot-right {
 	border-right: 3px solid #197de1;
 	right: -2px;
-	margin-left: -10px;
+	margin-left: -10px !important;
 }
 
 .valo_base .v-table-focus-slot-left {
@@ -8581,25 +8584,27 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: #fafafa;
 	background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
 	background-image: linear-gradient(to bottom,#fafafa 2%, #efefef 98%);
-	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7;
+	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #e7e7e7;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	position: absolute;
 	z-index: 2;
-	top: -8px;
-	right: -8px;
+	top: 0;
+	right: 0;
+	width: 16px;
 	height: 16px;
 	line-height: 16px;
-	width: 16px;
 	padding: 0;
-	border-radius: 50%;
+	border-top-width: 0;
+	border-right-width: 0;
+	border-radius: 0 0 0 4px;
 	cursor: pointer;
 	text-align: center;
 	opacity: 0;
 	filter: alpha(opacity=0) ;
-	-webkit-transition: opacity 200ms 1s;
-	-moz-transition: opacity 200ms 1s;
-	transition: opacity 200ms 1s;
+	-webkit-transition: opacity 200ms 2s;
+	-moz-transition: opacity 200ms 2s;
+	transition: opacity 200ms 2s;
 }
 
 .valo_base .v-table-column-selector:after {
@@ -8627,11 +8632,11 @@ div.v-layout.v-horizontal.v-widget {
 .valo_base .v-table-column-selector:after {
 	content: "";
 	position: absolute;
-	top: -1px;
-	right: -1px;
-	bottom: -1px;
-	left: -1px;
-	border-radius: inherit;
+	border: none;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 }
 
 .valo_base .v-table-column-selector:active:after {
@@ -8643,25 +8648,12 @@ div.v-layout.v-horizontal.v-widget {
 	content: "\f013";
 }
 
-.valo_base .v-scrollable > .v-table .v-table-column-selector {
-	right: 0;
-	top: 0;
-	border-top: none;
-	border-right: none;
-	border-radius: 0 0 0 50%;
-}
-
-.valo_base .v-scrollable > .v-table .v-table-column-selector:after {
-	top: 0;
-	right: 0;
-}
-
 .valo_base .v-table-header-wrap:hover .v-table-column-selector {
 	opacity: 1;
 	filter: none ;
-	-webkit-transition-delay: 100ms;
-	-moz-transition-delay: 100ms;
-	transition-delay: 100ms;
+	-webkit-transition-delay: 200ms;
+	-moz-transition-delay: 200ms;
+	transition-delay: 200ms;
 }
 
 .valo_base .v-on:before, .valo_base .v-off:before {
@@ -8715,6 +8707,10 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 32px;
 	margin: -16px 0 0 !important;
 	text-align: center;
+}
+
+.valo_base .v-table-drag {
+	overflow: visible;
 }
 
 .valo_base .v-table-drag .v-table-body {
@@ -10011,7 +10007,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .valo_base .v-colorpicker {
-	width: auto !important;
+	width: auto;
 }
 
 .valo_base .v-colorpicker-button-color {
@@ -12380,6 +12376,12 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
+.valo_base .v-window-modalitycurtain {
+	background-image: none;
+	animation: none;
+	background-color: #a0a0a0;
+}
+
 .valo_base .v-menubar {
 	margin-top: 8px;
 	margin-bottom: 8px;
@@ -12434,6 +12436,17 @@ div.v-layout.v-horizontal.v-widget {
 
 .valo_base .v-slot-horzSeparator {
 	margin-left: 16px;
+}
+
+.valo_base .filters-panel .v-textfield {
+	border-top-style: none;
+	border-left-style: none;
+}
+
+.valo_base .filters-panel .v-button, .valo_base .filters-panel datefilterpopup {
+	border-radius: 0px;
+	border-top-style: none;
+	border-left-style: none;
 }
 
 .valo_base .m-selectable:HOVER {
