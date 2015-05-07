@@ -11,6 +11,7 @@ import com.clubeek.ui.Security;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameUser;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
@@ -43,7 +44,6 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
         Security.authorize(Role.ADMINISTRATOR);
 
         // read training list from the database
-        users = null;
         users = RepUser.selectAll(new RepUser.TableColumn[]{RepUser.TableColumn.ID, RepUser.TableColumn.NAME,
             RepUser.TableColumn.PERMISSIONS, RepUser.TableColumn.CLUB_MEMBER_ID});
         for (User user : users) {
@@ -55,11 +55,13 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
         // add table rows
         table.removeAllRows();
         if (users != null) {
+            Container container = table.createDataContainer();
             for (int i = 0; i < users.size(); ++i) {
                 User user = users.get(i);
-                table.addRow(new Object[]{user.getName(), user.getRole().toString(),
+                table.addRow(container, new Object[]{user.getName(), user.getRole().toString(),
                     user.getClubMember() != null ? user.getClubMember().toString() : ""}, i);
             }
+            table.setDataContainer(container);
         }
     }
 
@@ -95,7 +97,8 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
     }
 
     public void deleteUser(int id) {
-        table.deleteRow(users.get(id).getId(), RepUser.getInstance(), this, null);
+        User user = users.get(id);
+        table.deleteRow(user.getId(), id, RepUser.getInstance(), this, null, Columns.USER_NAME, Columns.TEAM_MEMBER);
     }
 
     /* PRIVATE */

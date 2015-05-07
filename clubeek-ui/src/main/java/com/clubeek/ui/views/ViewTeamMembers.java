@@ -14,6 +14,7 @@ import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameSelectMembers;
+import com.vaadin.data.Container;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
@@ -110,15 +111,16 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
         ClubTeam selectedTeam = getSelectedTeam();
         if (selectedTeam != null) {
-            // read team members from database
             teamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
-            
-            // fill table
-            for (int i = 0; i < teamMembers.size(); ++i) {
-                TeamMember teamMember = teamMembers.get(i);
-                ClubMember clubMember = teamMember.getClubMember();
-                table.addRow(new Object[]{clubMember.getName(), clubMember.getSurname(),
-                    clubMember.getBirthdateAsString(), teamMember.getFunctionsAsList().toString()}, new Integer(i));
+            if (teamMembers != null) {
+                Container container = table.createDataContainer();
+                for (int i = 0; i < teamMembers.size(); ++i) {
+                    TeamMember teamMember = teamMembers.get(i);
+                    ClubMember clubMember = teamMember.getClubMember();
+                    table.addRow(container, new Object[]{clubMember.getName(), clubMember.getSurname(),
+                        clubMember.getBirthdateAsString(), teamMember.getFunctionsAsList().toString()}, new Integer(i));
+                }
+                table.setDataContainer(container);
             }
         }
     }
@@ -136,7 +138,7 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
             }
             ModalDialog<List<ClubMember>> dlg = new ModalDialog<>(Mode.EDIT, Messages.getString("selectTeamMembers"), //$NON-NLS-1$
                     new FrameSelectMembers(), clubMembers, new ClickListener() {
-                        
+
                         @Override
                         public void buttonClick(ClickEvent event) {
                             RepTeamMember.update(teamMembers,
@@ -149,7 +151,9 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
     }
 
     private void deleteTeamMember(int id) {
-        table.deleteRow(teamMembers.get(id).getId(), RepTeamMember.getInstance(), this, null);
+        TeamMember teamMember = teamMembers.get(id);
+        table.deleteRow(teamMember.getId(), id, RepTeamMember.getInstance(), this, null, 
+                Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 
 //    private void selectTeamFunctions() {

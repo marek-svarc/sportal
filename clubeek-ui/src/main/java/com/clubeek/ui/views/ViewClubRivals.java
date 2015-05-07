@@ -11,6 +11,7 @@ import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubRival;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
@@ -22,7 +23,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
     public enum Columns {
 
-        NAME, ADDRESS, WEB, GPS;
+        NAME, WEB;
     }
 
     public ViewClubRivals() {
@@ -31,9 +32,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
         ActionTable.UserColumnInfo[] columns = {
             new ActionTable.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
-            new ActionTable.UserColumnInfo(Columns.ADDRESS, String.class, Messages.getString("address")),
-            new ActionTable.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web")),
-            new ActionTable.UserColumnInfo(Columns.GPS, String.class, Messages.getString("gps"))
+            new ActionTable.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web"))
         };
 
         // vytvoreni tabulky a ovladacich tlacitek
@@ -48,20 +47,20 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
         Security.authorize(Role.SPORT_MANAGER);
 
         clubs = RepClubRival.selectAll(null);
+
         table.removeAllRows();
-        for (int i = 0; i < clubs.size(); ++i) {
-            ClubRival club = clubs.get(i);
-            
-            // sestaveni adresy klubu do jednoho retezce
-            String address = Tools.Strings.concatenateText(
-                    new String[]{club.getStreet(), club.getCity(), club.getCode()}, ", "); //$NON-NLS-1$
-            
-            // objekt odkazu na webove stranky klubu
-            Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
-            webLink.setTargetName("_blank"); //$NON-NLS-1$
-            
-            // pridani radky tabulky
-            table.addRow(new Object[]{club.getName(), address, webLink, club.getGPS()}, i);
+        if (clubs != null) {
+            Container container = table.createDataContainer();
+            for (int i = 0; i < clubs.size(); ++i) {
+                ClubRival club = clubs.get(i);
+
+                // link to the club web pages
+                Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
+                webLink.setTargetName("_blank"); //$NON-NLS-1$
+
+                table.addRow(container, new Object[]{club.getName(), webLink}, i);
+            }
+            table.setDataContainer(container);
         }
     }
 
@@ -94,7 +93,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
     }
 
     public void deleteClub(int id) {
-        table.deleteRow(clubs.get(id).getId(), RepClubRival.getInstance(), this, null);
+        table.deleteRow(clubs.get(id).getId(), id, RepClubRival.getInstance(), this, null, Columns.NAME);
     }
 
     /* PRIVATE */

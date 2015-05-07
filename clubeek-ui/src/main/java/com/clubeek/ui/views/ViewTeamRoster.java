@@ -3,28 +3,19 @@ package com.clubeek.ui.views;
 import java.util.List;
 
 import com.clubeek.db.RepTeamMember;
-import com.clubeek.model.ClubMember;
 import com.clubeek.model.TeamMember;
 import com.clubeek.model.TeamMember.TeamFunction;
 import com.clubeek.ui.Tools;
-import com.clubeek.ui.Tools.DateTime.DateStyle;
 import com.clubeek.ui.components.ActionTable;
-import com.clubeek.ui.components.ActionTable.OnActionListener;
 import com.clubeek.ui.components.MemberCard;
 import com.clubeek.util.SimpleEnumSet;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Runo;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class ViewTeamRoster extends VerticalLayout implements View {
@@ -151,8 +142,8 @@ public class ViewTeamRoster extends VerticalLayout implements View {
             for (TeamFunction function : teamFunctions) {
                 sb.append(function.toString()).append(" ");
             }
-            tableMembers.addRow(new Object[]{member.getClubMember().getName(),
-                member.getClubMember().getSurname(), sb.toString()}, member);
+//            tableMembers.addRow(new Object[]{member.getClubMember().getName(),
+//                member.getClubMember().getSurname(), sb.toString()}, member);
         }
 
     }

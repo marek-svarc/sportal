@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.clubeek.db.RepContact;
+import com.clubeek.util.DateTime;
 
 /**
  * Trida zapouzdrujici informace o clenech klubu
@@ -94,7 +95,7 @@ public class ClubMember extends Model {
 	}
 
 	public String getBirthdateAsString() {
-		return getBirthdate() != null ? getBirthdate().toString() : ""; //$NON-NLS-1$
+		return getBirthdate() != null ? DateTime.dateToString(getBirthdate(), DateTime.DateStyle.SHORT_DAY) : "";
 	}
 	
 	public String getStreet() {

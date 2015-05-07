@@ -8,7 +8,8 @@ package com.clubeek.ui.components;
 import com.clubeek.model.Contact;
 import com.clubeek.model.TeamMember;
 import com.clubeek.ui.Tools;
-import com.clubeek.ui.Tools.DateTime.DateStyle;
+import com.clubeek.util.DateTime.DateStyle;
+import com.clubeek.util.DateTime;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
@@ -221,7 +222,7 @@ public class MemberCard extends VerticalLayout {
         detailLayout.addComponent(photoLayout);
        
         // detail info
-        birthDate.setValue("Datum narození: " + Tools.DateTime.dateToString(getDataSource().getClubMember().getBirthdate(), DateStyle.DAY));
+        birthDate.setValue("Datum narození: " + DateTime.dateToString(getDataSource().getClubMember().getBirthdate(), DateStyle.DAY));
         personalNumber.setValue("Rodné číslo: " + getDataSource().getClubMember().getIdPersonal());
         registrationNumber.setValue("Registrační číslo: " + getDataSource().getClubMember().getIdRegistration());
         description.setValue("Charakteristika: ?????");

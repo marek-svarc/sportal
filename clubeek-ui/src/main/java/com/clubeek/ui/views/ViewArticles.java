@@ -11,11 +11,12 @@ import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User.Role;
 import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.Security;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.ui.Tools.DateTime.DateStyle;
+import com.clubeek.util.DateTime.DateStyle;
+import com.clubeek.util.DateTime;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameArticle;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
@@ -40,8 +41,9 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
         ActionTable.UserColumnInfo[] columns = {
             new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
             new ActionTable.UserColumnInfo(Columns.LOCATION, String.class, Messages.getString("ViewArticles.8")),
-            new ActionTable.UserColumnInfo(Columns.LAST_UPDATE, String.class, Messages.getString("lastUpdate")),
-            new ActionTable.UserColumnInfo(Columns.EXPIRATION_DATE, String.class, Messages.getString("expirationDate")),};
+            new ActionTable.UserColumnInfo(Columns.EXPIRATION_DATE, String.class, Messages.getString("expirationDate")),
+            new ActionTable.UserColumnInfo(Columns.LAST_UPDATE, String.class, Messages.getString("lastUpdate"))
+        };
 
         // create and place table
         table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
@@ -51,16 +53,21 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
-
         Security.authorize(Role.EDITOR);
 
         List<Article> articles = RepArticle.selectAll(null);
+
         table.removeAllRows();
-        for (int i = 0; i < articles.size(); ++i) {
-            Article article = articles.get(i);
-            table.addRow(new Object[]{article.getCaption(), GetArticleLocationAsString(article),
-                Tools.DateTime.dateToString(article.getCreationDate(), DateStyle.DAY_AND_TIME),
-                getExpirationInfoAsString(article)}, article.getId());
+        if (articles != null) {
+            Container container = table.createDataContainer();
+            for (int i = 0; i < articles.size(); ++i) {
+                Article article = articles.get(i);
+                table.addRow(container, new Object[]{article.getCaption(),
+                    GetArticleLocationAsString(article), getExpirationInfoAsString(article),
+                    DateTime.dateToString(article.getCreationDate(), DateStyle.SHORT_DAY_AND_TIME)
+                }, article.getId());
+            }
+            table.setDataContainer(container);
         }
     }
 
@@ -96,9 +103,9 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     }
 
     public void deleteArticle(int id) {
-        table.deleteRow(id, RepArticle.getInstance(), this, navigation);
+        table.deleteRow(id, id, RepArticle.getInstance(), this, navigation, Columns.CAPTION);
     }
-    
+
     // Auxiliary
     /** Generuje textovy popis umisteni clanku na strankach */
     public static String GetArticleLocationAsString(Article article) {
@@ -136,7 +143,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     public static String getExpirationInfoAsString(Article article) {
         String expirationStr = ""; //$NON-NLS-1$
         if (article.getExpirationDate() != null) {
-            expirationStr = Tools.DateTime.dateToString(article.getExpirationDate(), DateStyle.DAY);
+            DateTime.dateToString(article.getExpirationDate(), DateStyle.DAY);
         }
         return expirationStr;
     }

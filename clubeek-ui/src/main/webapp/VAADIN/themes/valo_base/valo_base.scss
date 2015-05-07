@@ -60,6 +60,14 @@ $v-error-indicator-color: #ed473b;
 
     /* Zrevidovane komponenty */
 
+    /* MODAL WINDOW */
+    
+    .v-window-modalitycurtain {
+        background-image: none;
+        animation: none;
+        background-color: #a0a0a0;
+    }   
+    
     /* MENU */
 
     .v-menubar {
@@ -129,6 +137,18 @@ $v-error-indicator-color: #ed473b;
         margin-left: 16px;
     }
 
+    // filtering area
+    .filters-panel .v-textfield {
+        border-top-style: none;
+        border-left-style: none;
+    }
+
+    .filters-panel .v-button, .filters-panel datefilterpopup {
+        border-radius: 0px;
+        border-top-style: none;
+        border-left-style: none;
+    }
+    
     /* LAYOUT */
 
     // active layout designed as link

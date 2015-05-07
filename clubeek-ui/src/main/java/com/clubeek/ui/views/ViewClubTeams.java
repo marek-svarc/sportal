@@ -1,6 +1,5 @@
 package com.clubeek.ui.views;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.RepClubTeam;
@@ -12,6 +11,7 @@ import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeam;
+import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
@@ -47,10 +47,14 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
         teams = RepClubTeam.select(false, null);
 
         table.removeAllRows();
-        for (int i = 0; i < teams.size(); ++i) {
-            ClubTeam team = teams.get(i);
-            table.addRow(new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
-                team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
+        if (teams != null) {
+            Container container = table.createDataContainer();
+            for (int i = 0; i < teams.size(); ++i) {
+                ClubTeam team = teams.get(i);
+                table.addRow(container, new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()),
+                    team.getName()), team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
+            }
+            table.setDataContainer(container);
         }
     }
 
@@ -79,7 +83,6 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     }
 
     // Operations
-
     public void addTeam() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"),
                 new FrameTeam(), new ClubTeam(), RepClubTeam.getInstance(), navigation);
@@ -93,7 +96,7 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     }
 
     public void deleteTeam(int id) {
-        table.deleteRow(teams.get(id).getId(), RepClubTeam.getInstance(), this, navigation);
+        table.deleteRow(teams.get(id).getId(), id, RepClubTeam.getInstance(), this, navigation, Columns.CAPTION, Columns.CATEGORY);
     }
 
     public void exchangeTeams(int id, boolean moveUp) {
