@@ -1,3 +1,6 @@
+## Clubeek
+config.properties
+
 ## Maven
 target/
 pom.xml.tag
@@ -21,4 +24,3 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 .nb-gradle/
-clubeek-ui/src/main/java/com/clubeek/db/config.properties
