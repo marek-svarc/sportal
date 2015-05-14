@@ -160,7 +160,7 @@ public class RepClubTeam implements Repository<ClubTeam> {
         String categoryCheck = TableColumn.CATEGORY_ID + (category <= 0 ? " IS NULL" : " = " + Integer.toString(category));
 
         if (onlyActive) {
-            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s AND %s = 1 ORDER BY %s ASC",
+            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s AND %s = true ORDER BY %s ASC",
                     Admin.createSelectParams(columns), tableName, categoryCheck, TableColumn.ACTIVE, TableColumn.SORTING),
                     columns, getInstance());
         } else {
@@ -214,7 +214,7 @@ public class RepClubTeam implements Repository<ClubTeam> {
                     data.setName(result.getString(TableColumn.NAME.name));
                     break;
                 case ACTIVE:
-                    data.setActive(result.getInt(TableColumn.ACTIVE.name) != 0);
+                    data.setActive(result.getBoolean(TableColumn.ACTIVE.name));
                     break;
                 case SORTING:
                     data.setSorting(result.getInt(TableColumn.SORTING.name));

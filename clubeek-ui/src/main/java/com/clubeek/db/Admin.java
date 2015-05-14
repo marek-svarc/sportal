@@ -77,7 +77,7 @@ public class Admin {
         }
 
         public ColumnData(byte[] value) {
-            this.type = java.sql.Types.BLOB;
+            this.type = java.sql.Types.LONGVARBINARY;
             this.data = value;
         }
 

@@ -139,7 +139,7 @@ public class RepTeamMatch implements Repository<TeamMatch> {
      */
     public static List<TeamMatch> selectPublishable(int clubTeamId, TableColumn[] columns) {
         columns = getColumns(columns);
-        return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s = 1) AND (LOCALTIMESTAMP >= %s) ORDER BY %s DESC",
+        return Admin.query(TeamMatch.class, String.format("SELECT %s FROM %s WHERE (%s = %d) AND (%s = true) AND (LOCALTIMESTAMP >= %s) ORDER BY %s DESC",
                 Admin.createSelectParams(columns), tableName, TableColumn.CLUB_TEAM_ID, clubTeamId, TableColumn.PUBLISH,
                 TableColumn.START, TableColumn.START), columns, RepTeamMatch.getInstance());
     }
@@ -195,10 +195,10 @@ public class RepTeamMatch implements Repository<TeamMatch> {
                     data.setScoreNeg(result.getInt(resultsColumnId));
                     break;
                 case HOME_COURT:
-                    data.setHomeCourt(result.getInt(resultsColumnId) != 0);
+                    data.setHomeCourt(result.getBoolean(resultsColumnId));
                     break;
                 case PUBLISH:
-                    data.setPublish(result.getInt(resultsColumnId) != 0);
+                    data.setPublish(result.getBoolean(resultsColumnId));
                     break;
                 case COMMENT:
                     data.setComment(result.getString(resultsColumnId));
