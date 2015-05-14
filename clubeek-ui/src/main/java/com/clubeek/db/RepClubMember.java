@@ -180,7 +180,7 @@ public class RepClubMember implements Repository<ClubMember> {
     public static List<ClubMember> dbSelectByBirthdate(int olderOrEqualTo, int youngerOrEqualTo, TableColumn[] columns) {
         columns = getColumns(columns);
         return Admin.query(ClubMember.class, String.format(
-                "SELECT %s , TRUNC(MONTHS_BETWEEN(SYSDATE, %s) / 12) AS age FROM %s WHERE (age >= %d) AND (age <= %d)",
+                "SELECT %s , TRUNC(MONTHS_BETWEEN(LOCALTIMESTAMP, %s) / 12) AS age FROM %s WHERE (age >= %d) AND (age <= %d)",
                 Admin.createSelectParams(columns), TableColumn.BIRTHDATE, tableName, olderOrEqualTo, youngerOrEqualTo),
                 columns, getInstance());
     }

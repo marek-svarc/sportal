@@ -139,7 +139,7 @@ public class RepClubTeam implements Repository<ClubTeam> {
     public static List<ClubTeam> select(boolean onlyActive, TableColumn[] columns) {
         columns = getColumns(columns);
         if (onlyActive) {
-            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s = 1 ORDER BY %s ASC",
+            return Admin.query(ClubTeam.class, String.format("SELECT %s FROM %s WHERE %s = true ORDER BY %s ASC",
                     Admin.createSelectParams(columns), tableName, TableColumn.ACTIVE, TableColumn.SORTING), columns,
                     getInstance());
         } else {

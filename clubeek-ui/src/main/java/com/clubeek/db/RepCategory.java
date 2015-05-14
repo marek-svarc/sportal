@@ -159,7 +159,7 @@ public class RepCategory implements Repository<Category> {
     public static List<Category> select(boolean active, TableColumn[] columns) {
         columns = getColumns(columns);
         return Admin.query(Category.class, String.format("SELECT %s FROM %s WHERE %s = %s ORDER BY %s ASC",
-                Admin.createSelectParams(columns), tableName, TableColumn.ACTIVE, active ? 1 : 0, TableColumn.SORTING.name),
+                Admin.createSelectParams(columns), tableName, TableColumn.ACTIVE, active ? true : false, TableColumn.SORTING.name),
                 columns, getInstance());
     }
 

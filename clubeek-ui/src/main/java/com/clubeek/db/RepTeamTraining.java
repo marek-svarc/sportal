@@ -18,7 +18,7 @@ public class RepTeamTraining implements Repository<TeamTraining> {
 
         ID("id"),
         START("start"),
-        END("end"),
+        FINISH("finish"),
         PLACE("place"),
         CLUB_TEAM_ID("club_team_id");
 
@@ -54,7 +54,7 @@ public class RepTeamTraining implements Repository<TeamTraining> {
     public static int insert(Date start, Date end, String place, int clubTeamId) {
         // sestaveni sql prikazu
         String sql = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES ( ?, ?, ?, ?)", tableName, TableColumn.START.name,
-                TableColumn.END.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name);
+                TableColumn.FINISH.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name);
         // provedeni transakce
         return Admin.update(sql, new ColumnData[]{new ColumnData(start, false), new ColumnData(end, false),
             new ColumnData(place), new ColumnData(clubTeamId)}, true);
@@ -76,7 +76,7 @@ public class RepTeamTraining implements Repository<TeamTraining> {
     public static void update(int id, Date start, Date end, String place, int clubTeamId) {
         // sestaveni sql prikazu
         String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d", tableName,
-                TableColumn.START.name, TableColumn.END.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name,
+                TableColumn.START.name, TableColumn.FINISH.name, TableColumn.PLACE.name, TableColumn.CLUB_TEAM_ID.name,
                 TableColumn.ID.name, id);
         // provedeni transakce
         Admin.update(sql, new ColumnData[]{new ColumnData(start, false), new ColumnData(end, false), new ColumnData(place),
@@ -136,7 +136,7 @@ public class RepTeamTraining implements Repository<TeamTraining> {
                 case START:
                     data.setStart(new Date(result.getTimestamp(resultsColumnId).getTime()));
                     break;
-                case END:
+                case FINISH:
                     data.setEnd(new Date(result.getTimestamp(resultsColumnId).getTime()));
                     break;
                 case PLACE:

@@ -40,9 +40,9 @@
         </dependency>
         
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>       
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>            
         
         <dependency>
             <groupId>org.vaadin.addons</groupId>
@@ -70,7 +70,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.12</version>
         </dependency>
-		<!-- slf4j to log4j bridge -->
+        <!-- slf4j to log4j bridge -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
