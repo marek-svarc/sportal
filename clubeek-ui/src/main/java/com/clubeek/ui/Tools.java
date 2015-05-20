@@ -131,6 +131,7 @@ public final class Tools {
             TextField tf = new TextField(name);
             tf.setStyleName(ValoTheme.TEXTFIELD_TINY);
             tf.setWidth(100, Unit.PERCENTAGE);
+            tf.setNullRepresentation("");
             Validators.setRequired(tf, required, requiredError);
 
             return tf;
@@ -229,8 +230,8 @@ public final class Tools {
         public static HorizontalLayout createMultipleColumnsForm(int count, Component[] components) {
             HorizontalLayout hlForms = new HorizontalLayout();
             hlForms.setSizeFull();
-            hlForms.setSpacing(false);
-            hlForms.setMargin(false);
+            hlForms.setSpacing(true);
+            hlForms.setMargin(true);
 
             FormLayout[] layouts = new FormLayout[count];
             for (int i = 0; i < count; ++i) {

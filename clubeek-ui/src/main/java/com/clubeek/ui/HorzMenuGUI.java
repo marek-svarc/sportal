@@ -15,6 +15,7 @@ import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.ViewArticle;
 import com.clubeek.ui.views.ViewArticles;
 import com.clubeek.ui.views.ViewCategories;
+import com.clubeek.ui.views.ViewClubMemberCard;
 import com.clubeek.ui.views.ViewClubMembers;
 import com.clubeek.ui.views.ViewClubRivals;
 import com.clubeek.ui.views.ViewClubTeams;
@@ -89,7 +90,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		ARTICLE("article"), //$NON-NLS-1$
 		RIVALS("rivals"), //$NON-NLS-1$
 		SETTINGS("club"), //$NON-NLS-1$
-		USERS("users") //$NON-NLS-1$
+		USERS("users"), //$NON-NLS-1$
+		MEMBER_CARD("memberCard") //$NON-NLS-1$
 		;
 
 		private HorzMenuNavigationViews(String id) {
@@ -103,7 +105,7 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 	// Data
 
 	/** Nadrazene uzivatelske prostredi */
-	private UI mUI;
+	private final UI mUI;
 
 	/** Textove pole pro zadani uzivatelskeho jmena */
 	private TextField tfName = null;
@@ -121,10 +123,10 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 	private Button btSignInOut = null;
 
 	/** Zaznam vsech spoustenych prikazu */
-	private ArrayList<MenuCommandInfo> mbCommands = new ArrayList<>();
+	private final ArrayList<MenuCommandInfo> mbCommands = new ArrayList<>();
 
 	/** Panel pro zobrazovani komponent pohledu */
-	private Panel pnViews;
+	private final Panel pnViews;
 
 	/** Navigace */
 	private Navigator nvMain;
@@ -137,7 +139,7 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 	 * @param viewName
 	 *            identifikator pozadovaneho pohledu
 	 * @param viewParameters
-	 *            parametr zobrazen� pohledu
+	 *            parametr zobrazenďż˝ pohledu
 	 */
 	private void addMenuCommand(MenuItem menuItem, String caption, View[] views, final HorzMenuNavigationViews viewId,
 			final String viewParameters) {
@@ -322,6 +324,9 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		case CLUB_RIVALS:
 			navigateTo(HorzMenuNavigationViews.RIVALS, param);
 			break;
+                case CLUB_MEMBER_CARD:
+			navigateTo(HorzMenuNavigationViews.MEMBER_CARD, param);
+			break;
 		}
 	}
 
@@ -343,7 +348,7 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 			// komponenty pro zobrazeni informaci o uzivateli a odhlaseni
 			String userName = user.getClubMember() != null ? user.getClubMember().getName() + " "
 					+ user.getClubMember().getSurname() : user.getName();
-			vlLogin.addComponents(new Label(String.format("Jste přihlášen jako<br><strong>%s</strong>", userName),
+			vlLogin.addComponents(new Label(String.format("<strong>%s</strong>", userName),
 					ContentMode.HTML), btSignInOut);
 			btSignInOut.setCaption("Odhlásit");
 		}
@@ -375,15 +380,17 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 
 		views[HorzMenuNavigationViews.NEWS.ordinal()] = new ViewNews(this);
 		views[HorzMenuNavigationViews.ARTICLE.ordinal()] = (View) new ViewArticle();
+		views[HorzMenuNavigationViews.MEMBER_CARD.ordinal()] = (View) new ViewClubMemberCard(this);
+                
 		if ((user != null) && Security.checkRole(user.getRole(), User.Role.EDITOR)) {
 			views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
 		}
 		if ((user != null) && Security.checkRole(user.getRole(), User.Role.SPORT_MANAGER)) {
-			views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(),
+			views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this),
 					new ViewTeamMatches(), new ViewTeamTrainings());
 			views[HorzMenuNavigationViews.RIVALS.ordinal()] = (View) new ViewClubRivals();
 		} else {
-			views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster());
+			views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this));
 		}
 		if ((user != null) && Security.checkRole(user.getRole(), User.Role.CLUB_MANAGER)) {
 			views[HorzMenuNavigationViews.SETTINGS.ordinal()] = (View) new LayoutTabSheet(new ViewCategories(this),
@@ -435,5 +442,6 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 
 		// prikazy, ktere nejsou spoustene z menu
 		addHideCommand(Messages.getString("articles"), views, HorzMenuNavigationViews.ARTICLE, null); //$NON-NLS-1$
+		addHideCommand("Karta hráče", views, HorzMenuNavigationViews.MEMBER_CARD, null);
 	}
 }

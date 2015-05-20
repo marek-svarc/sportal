@@ -118,6 +118,20 @@ public class RepTeamMember implements Repository<TeamMember> {
     }
 
     // SQL Select
+    
+    /**
+     * Vraci clena klubu dle unikatniho identifikatoru
+     *
+     * @return data clena klubu
+     *
+     */
+    public static TeamMember selectById(int id, TableColumn[] columns) {
+        columns = getColumns(columns);
+        List<TeamMember> teamMemberList = Admin.query(TeamMember.class, String.format("SELECT %s FROM %s WHERE %s = %d",
+                Admin.createSelectParams(columns), tableName, TableColumn.ID, id), columns, getInstance());
+        return (teamMemberList != null) && (teamMemberList.size() == 1) ? teamMemberList.get(0) : null;
+    }
+    
     /**
      * Vraci seznam clenu jednoho tymu asociovanych se clenem klubu
      *

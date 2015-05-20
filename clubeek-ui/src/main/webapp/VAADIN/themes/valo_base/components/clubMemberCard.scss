@@ -1,0 +1,28 @@
+/* 
+    Created on : 20.5.2015, 16:58:33
+    Author     : Marek Svarc
+*/
+
+@mixin clubMemberCard {
+    
+    .clubMemberCard{
+        font-size: small;
+    }
+    
+    .clubMemberCard .title {
+        text-transform: uppercase;
+        margin: 0px 0px 2px 0px;
+        padding: 0px;
+    }
+    
+    .clubMemberCard table {
+        margin: 0px 0px 2px 0px;
+        padding: 0px;
+    }
+    
+    .clubMemberCard td {
+        padding: 0px 0px 0px 10px;
+        margin: 0px;
+    }
+  
+}

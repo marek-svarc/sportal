@@ -1,7 +1,7 @@
 package com.clubeek.ui.views;
 
 /**
- * Rozhrani popisujici navigaci v aplikaci
+ * Interface that defines navigation in application
  * 
  * @author Marek Svarc
  * 
@@ -15,6 +15,7 @@ public interface Navigation {
 		CLUB_TEAMS("teams"), //$NON-NLS-1$ 
 		CLUB_RIVALS("clubs"), //$NON-NLS-1$ 
 		CLUB_MEMBERS("clubMembers"), //$NON-NLS-1$ 
+		CLUB_MEMBER_CARD("clubMemberInfo"), //$NON-NLS-1$ 
 		TEAM_MEMBERS("temMembers"), //$NON-NLS-1$ 
 		TEAM_NEWS("teamNews"), //$NON-NLS-1$ 
 		TEAM_ROSTER("teamRoster"), //$NON-NLS-1$ 
@@ -27,22 +28,22 @@ public interface Navigation {
 			this.id = id;
 		}
 
-		/** Identifikator pohledu */
+		/** Identifier of the view */
 		public final String id;
 	}
 
 	/**
-	 * Navigace v ramci aplikace
+	 * Show view according to the ViewId
 	 * 
 	 * @param view
-	 *            identifikator pohledu (komponent implementujici rozhrani "view")
-	 * @param id
-	 *            parametr predavany vstupni metode Enter
+	 *            identifier of the view (view is component implementing interface View)
+	 * @param param
+	 *            text parameters pushed to the entrance method Enter
 	 */
 	void navigateTo(ViewId view, String param);
 
 	/**
-	 * Pregeneruje hlavni nabidku aplikace
+	 * Update application menu
 	 */
 	void updateNavigationMenu();
 }

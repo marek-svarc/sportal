@@ -12,10 +12,10 @@ import com.vaadin.ui.VerticalLayout;
  *
  * @author elopin
  */
-public class MemberStatsTab extends VerticalLayout {
+public class ClubMemberStats extends VerticalLayout {
     
-    public MemberStatsTab() {
-        addComponent(new Label("Akce hráče"));
+    public ClubMemberStats() {
+        addComponent(new Label("Statistiky hráče"));
     }
     
 }
