@@ -7,7 +7,6 @@ import com.clubeek.util.DateTime.DateStyle;
 import com.clubeek.util.DateTime;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -38,7 +37,7 @@ public class ClubMemberCard extends VerticalLayout {
     private Image imgPhoto;
 
     /** Prints personal informations */
-    private Label lblMemberDetail;
+    private FormatedLabel lblMemberDetail;
 
     /** Shows statistical informations about member */
     private ClubMemberStats ctrMemberStats;
@@ -79,8 +78,7 @@ public class ClubMemberCard extends VerticalLayout {
         imgPhoto.setHeight(200, Unit.PIXELS);
         layout.addComponent(imgPhoto);
 
-        lblMemberDetail = new Label();
-        lblMemberDetail.setContentMode(ContentMode.HTML);
+        lblMemberDetail = new FormatedLabel();
         layout.addComponent(lblMemberDetail);
 
         layout.setExpandRatio(lblMemberDetail, 1);
@@ -102,53 +100,36 @@ public class ClubMemberCard extends VerticalLayout {
         return sheet;
     }
 
-    private void addBeginTable(StringBuilder text, String title) {
-        text.append(String.format("<span class='title'>%s</span><table>", title));
-    }
-
-    private void addValue(StringBuilder text, String title, String value) {
-        if ((value != null) && !value.isEmpty()) {
-            text.append(String.format("<tr><td><em>%s</em>:</td><td>%s</td></tr>", title, value));
-        }
-    }
-
-    private void addEndTable(StringBuilder text) {
-        text.append("</table>");
-    }
-
     private void refresh() {
         lblMemberName.setValue(clubMember.getMemberFullName());
         Tools.Components.fillImageByPortrait(imgPhoto, clubMember.getPhoto(), Integer.toString(clubMember.getId()));
 
-        StringBuilder text = new StringBuilder();
+        lblMemberDetail.beginWrite();
+        try {
+            lblMemberDetail.writeTableBegin("Osobní údaje");
+            lblMemberDetail.writeTableRow("Datum narození", DateTime.dateToString(clubMember.getBirthdate(), DateStyle.SHORT_DAY));
+            lblMemberDetail.writeTableRow("Rodné číslo", clubMember.getIdPersonal());
+            lblMemberDetail.writeTableRow("Registrační číslo", clubMember.getIdRegistration());
+            lblMemberDetail.writeTableRow("Charakteristika", "Tohle je fakt dlouhej popis fakt fantastickýho hráče, který hraje ve fakt fantastickým týmu. Umí kopnout do balónu a vypike 20 piv.");
+            lblMemberDetail.writeTableEnd();
 
-        text.append("<div class='clubMemberCard'>");
-        
-        addBeginTable(text, "Osobní údaje");
-        addValue(text, "Datum narození", DateTime.dateToString(clubMember.getBirthdate(), DateStyle.SHORT_DAY));
-        addValue(text, "Rodné číslo", clubMember.getIdPersonal());
-        addValue(text, "Registrační číslo", clubMember.getIdRegistration());
-        addValue(text, "Charakteristika", "???");
-        addEndTable(text);
+            lblMemberDetail.writeTableBegin("Adresa");
+            lblMemberDetail.writeTableRow("Ulice", clubMember.getStreet());
+            lblMemberDetail.writeTableRow("Obec", clubMember.getCity());
+            lblMemberDetail.writeTableRow("PSČ", clubMember.getCode());
+            lblMemberDetail.writeTableEnd();
 
-        addBeginTable(text, "Adresa");
-        addValue(text, "Ulice", clubMember.getStreet());
-        addValue(text, "Obec", clubMember.getCity());
-        addValue(text, "PSČ", clubMember.getCode());
-        addEndTable(text);
-
-        if (clubMember.getContacts().size() > 0) {
-            addBeginTable(text, "Kontakty");
-            for (Contact c : clubMember.getContacts()) {
-                text.append(String.format("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>",
-                        c.getType(), c.getDescription(), c.getContact(), c.getNotification().name()));
+            if (clubMember.getContacts().size() > 0) {
+                lblMemberDetail.writeTableBegin("Kontakty");
+                for (Contact c : clubMember.getContacts()) {
+                    lblMemberDetail.writeTableRow(c.getType().toString(), c.getDescription(), c.getContact(), c.getNotification().toString());
+                }
+                lblMemberDetail.writeTableEnd();
             }
-            addEndTable(text);
-        }
 
-        text.append("</div>");
-        
-        lblMemberDetail.setValue(text.toString());
+        } finally {
+            lblMemberDetail.endWrite();
+        }
     }
 
     public ClubMemberCard() {

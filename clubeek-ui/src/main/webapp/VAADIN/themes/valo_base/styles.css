@@ -12772,22 +12772,28 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: bold;
 }
 
-.valo_base .clubMemberCard {
+.valo_base .formatedLabel {
 	font-size: small;
 }
 
-.valo_base .clubMemberCard .title {
+.valo_base .formatedLabel .title {
 	text-transform: uppercase;
 	margin: 0px 0px 2px 0px;
 	padding: 0px;
 }
 
-.valo_base .clubMemberCard table {
+.valo_base .formatedLabel table {
 	margin: 0px 0px 2px 0px;
 	padding: 0px;
 }
 
-.valo_base .clubMemberCard td {
-	padding: 0px 0px 0px 10px;
+.valo_base .formatedLabel td {
+	padding: 0px 0px 0px 5px;
 	margin: 0px;
+	vertical-align: top;
+}
+
+.valo_base .formatedLabel .rowTitle {
+	text-align: right;
+	white-space: nowrap;
 }

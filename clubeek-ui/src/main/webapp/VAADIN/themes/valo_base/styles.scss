@@ -1,11 +1,11 @@
 @import "addons.scss";
 @import "valo_base.scss";
-@import "components/clubMemberCard.scss";
+@import "components/formatedLabel.scss";
 
 /* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
 /* The actual styles should be defined in valo_base.scss */
 .valo_base {
   @include addons;
   @include valo_base;
-  @include clubMemberCard;
+  @include formatedLabel;
 }
