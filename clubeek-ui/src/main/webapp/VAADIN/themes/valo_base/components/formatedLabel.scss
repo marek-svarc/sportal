@@ -1,0 +1,35 @@
+/* 
+    Created on : 21.5.2015, 12:27:42
+    Author     : Marek Svarc
+*/
+
+@mixin formatedLabel {
+
+    .formatedLabel{
+        font-size: small;
+    }
+
+    .formatedLabel .title {
+        text-transform: uppercase;
+        margin: 0px 0px 2px 0px;
+        padding: 0px;
+    }
+    
+    .formatedLabel table {
+        margin: 0px 0px 2px 0px;
+        padding: 0px;
+    }
+
+    .formatedLabel td {
+        padding: 0px 0px 0px 5px;
+        margin: 0px;
+        vertical-align: top;
+    }
+
+    .formatedLabel .rowTitle {
+        text-align: right; 
+        white-space: nowrap;
+    }
+
+}
+
