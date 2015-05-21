@@ -18,6 +18,10 @@ public class ClubRivalCard extends VerticalLayout {
     /** Show club title */
     private final Label lblTitle;
 
+    private void Refresh() {
+        lblTitle.setValue(clubRival.getName());
+    }
+
     public ClubRivalCard(Navigation navigation) {
 
         lblTitle = new Label();
@@ -27,9 +31,10 @@ public class ClubRivalCard extends VerticalLayout {
     }
 
     public void setClubRival(ClubRival clubRival) {
-        this.clubRival = clubRival;
-
-        lblTitle.setValue(clubRival.getName());
+        if (this.clubRival != clubRival) {
+            this.clubRival = clubRival;
+            Refresh();
+        }
     }
 
 }

@@ -17,9 +17,11 @@ import com.clubeek.ui.views.ViewArticles;
 import com.clubeek.ui.views.ViewCategories;
 import com.clubeek.ui.views.ViewClubMemberCard;
 import com.clubeek.ui.views.ViewClubMembers;
+import com.clubeek.ui.views.ViewClubRivalCard;
 import com.clubeek.ui.views.ViewClubRivals;
 import com.clubeek.ui.views.ViewClubTeams;
 import com.clubeek.ui.views.ViewNews;
+import com.clubeek.ui.views.ViewTeamMatchCard;
 import com.clubeek.ui.views.ViewTeamMatches;
 import com.clubeek.ui.views.ViewTeamMembers;
 import com.clubeek.ui.views.ViewTeamRoster;
@@ -91,7 +93,9 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		RIVALS("rivals"), //$NON-NLS-1$
 		SETTINGS("club"), //$NON-NLS-1$
 		USERS("users"), //$NON-NLS-1$
-		MEMBER_CARD("memberCard") //$NON-NLS-1$
+		MEMBER_CARD("memberCard"), //$NON-NLS-1$
+		RIVAL_CARD("rivalCard"), //$NON-NLS-1$
+		MATCH_CARD("matchCard") //$NON-NLS-1$
 		;
 
 		private HorzMenuNavigationViews(String id) {
@@ -327,6 +331,12 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
                 case CLUB_MEMBER_CARD:
 			navigateTo(HorzMenuNavigationViews.MEMBER_CARD, param);
 			break;
+                case CLUB_RIVAL_CARD:
+			navigateTo(HorzMenuNavigationViews.RIVAL_CARD, param);
+			break;
+                case TEAM_MATCH_CARD:
+			navigateTo(HorzMenuNavigationViews.MATCH_CARD, param);
+			break;
 		}
 	}
 
@@ -381,6 +391,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		views[HorzMenuNavigationViews.NEWS.ordinal()] = new ViewNews(this);
 		views[HorzMenuNavigationViews.ARTICLE.ordinal()] = (View) new ViewArticle();
 		views[HorzMenuNavigationViews.MEMBER_CARD.ordinal()] = (View) new ViewClubMemberCard(this);
+		views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = (View) new ViewClubRivalCard(this);
+		views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = (View) new ViewTeamMatchCard(this);
                 
 		if ((user != null) && Security.checkRole(user.getRole(), User.Role.EDITOR)) {
 			views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
@@ -443,5 +455,7 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		// prikazy, ktere nejsou spoustene z menu
 		addHideCommand(Messages.getString("articles"), views, HorzMenuNavigationViews.ARTICLE, null); //$NON-NLS-1$
 		addHideCommand("Karta hráče", views, HorzMenuNavigationViews.MEMBER_CARD, null);
+		addHideCommand("Karta soupeře", views, HorzMenuNavigationViews.RIVAL_CARD, null);
+		addHideCommand("Informace o zápase", views, HorzMenuNavigationViews.MATCH_CARD, null);
 	}
 }

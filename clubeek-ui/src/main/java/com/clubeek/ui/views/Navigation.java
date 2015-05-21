@@ -14,12 +14,14 @@ public interface Navigation {
 		CLUB_CATEGORIES("categories"), //$NON-NLS-1$
 		CLUB_TEAMS("teams"), //$NON-NLS-1$ 
 		CLUB_RIVALS("clubs"), //$NON-NLS-1$ 
+		CLUB_RIVAL_CARD("clubRivalCard"), //$NON-NLS-1$ 
 		CLUB_MEMBERS("clubMembers"), //$NON-NLS-1$ 
-		CLUB_MEMBER_CARD("clubMemberInfo"), //$NON-NLS-1$ 
+		CLUB_MEMBER_CARD("clubMemberCard"), //$NON-NLS-1$ 
 		TEAM_MEMBERS("temMembers"), //$NON-NLS-1$ 
 		TEAM_NEWS("teamNews"), //$NON-NLS-1$ 
 		TEAM_ROSTER("teamRoster"), //$NON-NLS-1$ 
 		TEAM_MATCHES("teamMatches"), //$NON-NLS-1$ 
+		TEAM_MATCH_CARD("teamMatchCard"), //$NON-NLS-1$ 
 		TEAM_TRAININGS("temTrainings"), //$NON-NLS-1$
 		ARTICLES("articles"), //$NON-NLS-1$
 		ARTICLE("article"); //$NON-NLS-1$
