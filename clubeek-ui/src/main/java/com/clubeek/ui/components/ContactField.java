@@ -3,6 +3,7 @@ package com.clubeek.ui.components;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.ui.Tools;
+import com.clubeek.ui.Tools.Validators;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -141,17 +142,19 @@ public class ContactField extends CustomField<List<Contact>> {
         ComboBox cbContactType = new ComboBox(null, Arrays.asList(Contact.ContactType.values()));
         cbContactType.addStyleName(ValoTheme.COMBOBOX_TINY);
         cbContactType.setNullSelectionAllowed(false);
-        cbContactType.setValue(Contact.ContactType.EMAIL);
+        cbContactType.setInputPrompt("Typ");
+        Validators.setRequired(cbContactType, true, null);
 
         TextField tfName = Tools.Components.createTextField(null);
         tfName.setInputPrompt("Popis");
-        TextField tfContact = Tools.Components.createTextField(null);
+        TextField tfContact = Tools.Components.createTextField(null, true, null);
         tfContact.setInputPrompt("Kontakt");
 
         ComboBox cbContactNotify = new ComboBox(null, Arrays.asList(Contact.NotificationType.values()));
         cbContactNotify.addStyleName(ValoTheme.COMBOBOX_TINY);
         cbContactNotify.setNullSelectionAllowed(false);
-        cbContactNotify.setValue(Contact.NotificationType.ONLY_IMPORTANT);
+        cbContactNotify.setInputPrompt("Upozornění");
+        Validators.setRequired(cbContactNotify, true, null);
 
         final BeanFieldGroup<Contact> cbfg = new BeanFieldGroup<>(Contact.class);
         cbfg.setItemDataSource(contact);

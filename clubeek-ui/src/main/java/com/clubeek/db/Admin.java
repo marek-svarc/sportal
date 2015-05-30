@@ -127,7 +127,7 @@ public class Admin {
                                         case java.sql.Types.INTEGER:
                                             statement.setInt(i + 1, (int) parameters[i].data);
                                             break;
-                                        case java.sql.Types.BLOB:
+                                        case java.sql.Types.LONGVARBINARY:
                                             if (parameters[i].data != null) {
                                                 statement.setBytes(i + 1, (byte[]) parameters[i].data);
                                             }

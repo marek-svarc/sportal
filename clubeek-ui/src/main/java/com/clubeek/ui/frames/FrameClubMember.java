@@ -8,9 +8,11 @@ import com.clubeek.ui.ModalInput;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ContactField;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -95,6 +97,7 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
         this.setRows(2);
 
         bfg = new BeanFieldGroup<>(ClubMember.class);
+        bfg.setBuffered(true);
 
         // GENEROVANI KOMPONENT
         // osobni udaje
@@ -191,15 +194,17 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
     @Override
     public void inputToData(ClubMember data) {
         try {
-            if (bfg.isValid()) {
-                bfg.commit();
+            for (Field<?> field : bfg.getFields()) {
+                field.validate();
             }
-
+            bfg.commit();
             if (photoOutStream != null) {
-                data.setPhoto(photoOutStream.toByteArray());
-            }
-        } catch (FieldGroup.CommitException ex) {
+                    data.setPhoto(photoOutStream.toByteArray());
+                }
+
+        } catch (FieldGroup.CommitException | Validator.InvalidValueException ex) {
             Logger.getLogger(FrameClubMember.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Formulář obsahuje chyby!");
         }
     }
 }

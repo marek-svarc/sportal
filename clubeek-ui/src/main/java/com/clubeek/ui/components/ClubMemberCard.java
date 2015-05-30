@@ -5,7 +5,6 @@ import com.clubeek.model.Contact;
 import com.clubeek.ui.Tools;
 import com.clubeek.util.DateTime.DateStyle;
 import com.clubeek.util.DateTime;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
