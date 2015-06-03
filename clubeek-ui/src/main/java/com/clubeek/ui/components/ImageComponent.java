@@ -13,7 +13,10 @@ import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Component for loading images.
@@ -29,6 +32,8 @@ public class ImageComponent extends VerticalLayout {
 
     private String photoFile;
 
+    private byte[] original;
+    
     private ByteArrayOutputStream photoOutStream;
 
     private Image image;
@@ -63,6 +68,12 @@ public class ImageComponent extends VerticalLayout {
                     if (photoOutStream.size() <= imageSize) {
                     Tools.Components.fillImageByPortrait(image, photoOutStream.toByteArray(), photoFile);
                     } else {
+                        photoOutStream.reset();
+                        try {
+                            photoOutStream.write(original);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         throw new RuntimeException("Obrázek je příliš velký. Maximální povolená velikost je " + imageSize + "bajtů.");
                     }
                 }
@@ -106,6 +117,7 @@ public class ImageComponent extends VerticalLayout {
     }
     
     public void setImage(byte[] imageByteArray) {
+        original = imageByteArray;
         Tools.Components.fillImageByPortrait(image, imageByteArray, photoFile);
     }
 
