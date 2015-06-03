@@ -7,6 +7,7 @@ import com.clubeek.model.ClubMember;
 import com.clubeek.ui.ModalInput;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ContactField;
+import com.clubeek.ui.components.ImageComponent;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -68,6 +69,8 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
      * Textové pole pro zadávání poštovního směrovacího čísla
      */
     private TextField tfZipCode;
+    
+    private ImageComponent imageComponent;
 
     /**
      * Zobrazeni fotky
@@ -125,33 +128,37 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
         bfg.bind(tfZipCode, "code");
 
         // fotografie
-        ldPhoto = new Upload();
-        ldPhoto.setReceiver(new Receiver() {
-
-            @Override
-            public OutputStream receiveUpload(String filename, String mimeType) {
-                photoOutStream = new ByteArrayOutputStream(10240);
-                photoFile = filename;
-                return photoOutStream;
-            }
-        });
-
-        ldPhoto.addSucceededListener(new SucceededListener() {
-
-            @Override
-            public void uploadSucceeded(SucceededEvent event) {
-                if (photoOutStream != null) {
-                    Tools.Components.fillImageByPortrait(imPhoto, photoOutStream.toByteArray(), photoFile);
-                }
-            }
-        });
-
-        ldPhoto.setImmediate(true);
-        ldPhoto.setButtonCaption(Messages.getString("loadPhoto")); //$NON-NLS-1$
-        imPhoto = new Image();
-        imPhoto.setImmediate(true);
-        imPhoto.setWidth(100, Unit.PIXELS);
-        imPhoto.setHeight(100, Unit.PIXELS);
+        imageComponent = new ImageComponent();
+        imageComponent.setImageSize(10240);
+        imageComponent.setImageHeight(100);
+        imageComponent.setImageWidth(100);
+//        ldPhoto = new Upload();
+//        ldPhoto.setReceiver(new Receiver() {
+//
+//            @Override
+//            public OutputStream receiveUpload(String filename, String mimeType) {
+//                photoOutStream = new ByteArrayOutputStream(10240);
+//                photoFile = filename;
+//                return photoOutStream;
+//            }
+//        });
+//
+//        ldPhoto.addSucceededListener(new SucceededListener() {
+//
+//            @Override
+//            public void uploadSucceeded(SucceededEvent event) {
+//                if (photoOutStream != null) {
+//                    Tools.Components.fillImageByPortrait(imPhoto, photoOutStream.toByteArray(), photoFile);
+//                }
+//            }
+//        });
+//
+//        ldPhoto.setImmediate(true);
+//        ldPhoto.setButtonCaption(Messages.getString("loadPhoto")); //$NON-NLS-1$
+//        imPhoto = new Image();
+//        imPhoto.setImmediate(true);
+//        imPhoto.setWidth(100, Unit.PIXELS);
+//        imPhoto.setHeight(100, Unit.PIXELS);
 
         // osobni udaje
         Panel pnPersonal = new Panel(Messages.getString("personalData"), Tools.Components.createMultipleColumnsForm(2, //$NON-NLS-1$
@@ -169,14 +176,14 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
         pnContacts.addStyleName(ValoTheme.PANEL_WELL);
         addComponent(pnContacts);
 
-        // fotografie
-        HorizontalLayout laPhoto = new HorizontalLayout();
-        laPhoto.setSizeFull();
-        laPhoto.setSpacing(true);
-        laPhoto.setMargin(true);
-        laPhoto.addComponents(ldPhoto, imPhoto);
+//        // fotografie
+//        HorizontalLayout laPhoto = new HorizontalLayout();
+//        laPhoto.setSizeFull();
+//        laPhoto.setSpacing(true);
+//        laPhoto.setMargin(true);
+//        laPhoto.addComponents(ldPhoto, imPhoto);
 
-        Panel pnPhoto = new Panel(Messages.getString("photos"), laPhoto); //$NON-NLS-1$
+        Panel pnPhoto = new Panel(Messages.getString("photos"), imageComponent); //$NON-NLS-1$
         pnPhoto.addStyleName(ValoTheme.PANEL_WELL);
         addComponent(pnPhoto);
     }
@@ -188,7 +195,9 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
         bfg.setItemDataSource(data);
 
         // fotografie
-        Tools.Components.fillImageByPortrait(imPhoto, data.getPhoto(), Integer.toString(data.getId())); //$NON-NLS-1$
+        //Tools.Components.fillImageByPortrait(imPhoto, data.getPhoto(), Integer.toString(data.getId())); //$NON-NLS-1$
+        imageComponent.setPhotoFile(Integer.toString(data.getId()));
+        imageComponent.setImage(data.getPhoto());
     }
 
     @Override
@@ -198,9 +207,12 @@ public class FrameClubMember extends GridLayout implements ModalInput<ClubMember
                 field.validate();
             }
             bfg.commit();
-            if (photoOutStream != null) {
-                    data.setPhoto(photoOutStream.toByteArray());
-                }
+            if (imageComponent.getImageByteArray() != null) {
+                data.setPhoto(imageComponent.getImageByteArray());
+            }
+//            if (photoOutStream != null) {
+//                    data.setPhoto(photoOutStream.toByteArray());
+//                }
 
         } catch (FieldGroup.CommitException | Validator.InvalidValueException ex) {
             Logger.getLogger(FrameClubMember.class.getName()).log(Level.SEVERE, null, ex);

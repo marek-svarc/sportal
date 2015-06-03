@@ -80,7 +80,7 @@ public class ContactField extends CustomField<List<Contact>> {
     protected void setInternalValue(List<Contact> newValue) {
         super.setInternalValue(newValue);
         if (getValue() != null) {
-            if (getValue().isEmpty()) {
+            if (clubMember.getId() == 0) {
                 addEmptyRow();
             }
             for (Contact c : getValue()) {
