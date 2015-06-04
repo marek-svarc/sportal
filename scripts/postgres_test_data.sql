@@ -165,6 +165,7 @@ END;
 $$
 ;
 
+-- ARTICLES [AKTUALITY]
 insert into article (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
@@ -173,7 +174,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'Ježour – maskot FC Vysočina [aktuality | pouze kategorie]',
 	'Populární maskot Ježour je nedílnou součástí ligových zápasů FC Vysočina už od jara 2007. tento žluto – modro – červený sympatický ježek do Jihlavy přijel 7. března 2007 a na ligovém stadiónu debutoval 16. března 2007 při vítězném duelu proti Hlučínu. Od té doby se zařadil mezi nezdařilejší a nejviditelnější maskoty na české sportovní scéně. Zamilovali si ho děti a za svého jej přijali jak běžní diváci, tak i členové fanouškovského kotle FC Vysočina.',
 	'<div>Ježour při zápasech vítá diváky, roztleskává je, zapojuje se do jejich fandění, baví svým poskakováním a po vítězném utkání společně s hráči a fanoušky sdílí a prožívá jejich euforii. Platí pro něj, že nezkazí žádnou legraci a fanoušky nabíjí dobrou náladou i ve chvílích, kdy se jejich fotbalovému týmu nedaří.</div><div><br></div><div>Potkáte ho ale nejen při domácích zápasech FC Vysočina, neboť se pravidelně účastní klubových akcí pro fanoušky všech věkových kategorií. Všude se s ním můžete vyfotit, pomazlit se nebo si společně s ním zafandit.</div><div><br></div><div>Ježour na Facebooku</div><div>Maskot Ježour si žije tak trochu svým vlastním životem. Pokud chcete vědět, co zrovna dělá, jak se mu daří a co připravuje na další setkání s vámi, můžete se s ním spřátelit na sociální síti Facebook. Pravidelně zde komentuje svůj každodenní život a občas vstupuje do témat a událostí, kde byste jej rozhodně nečekali. Chcete-li s Ježourem přátelit na síti, klikněte <a href="http://fcvysocina.cz/">ZDE</a> a přidejte se do rozrůstající rodiny jeho příznivců.</div><div><br></div><div>Ježour na vaší oslavě</div><div>Nezapomenutelná oslava dětských narozenin i s přítomností Ježoura? Proč ne! Tento zábavný maskot nepokazí žádnou legraci a vaší oslavu, party, firemní večírek nebo třeba svatební veselku pořádně okoření. Se všemi přítomnými se ochotně a netradičně vyfotí, podepíše své kartičky či cokoli jiného, přidá několik čísel ze svého vtipného rejstříku a nezapomene ani na originální dárečky. Pokud byste si Ježoura chtěli pozvat k sobě domů nebo do vaší firmy, prohlédněte si podrobnosti <a href="http://fcvysocina.cz/">ZDE</a>.</div><div><br></div><div>Ježour v akci</div><div>Zajímavé fotky s Ježourem si můžete prohlédnout níže, ovšem <a href="http://fcvysocina.cz/">TADY</a> jich naleznete nepřebernou spoustu!</div><div><br></div><div>Máte vlastní fotky s "Ježourem"? Zasílejte nám je s příslušným komentářem a popisem osoby na e-mail zeman.david@psj.cz a my je rádi zveřejníme na Ježourově facebooku!</div>',
-	current_timestamp,
+	to_timestamp('2014-06-17 11:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
 	1,
 	null,
 	1
@@ -185,7 +186,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'Zapojte se do soutěže "Vezmi FC Vysočina na dovolenou"! [aktuality | pouze kategorie | důležité]',
 	'Zapojte se do letní FOTOSOUTĚŽE! Vezměte dresy, vlajky, suvenýry a další symboly FC Vysočina na dovolenou, na prázdniny či na nefotbalová místa! Na e-mail fuks@psj.cz zasílejte fotografie, na nichž jste vy nebo vaši přátelé v barvách FC Vysočina a nezapomeňte připojit své jméno. Vaší fantazii a výběru místa či lokality rozhodně meze neklademe.',
 	'<p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Fotografie budou průběžně prezentovány ve fotogalerii na oficiálních internetových stránkách klubu. Soutěž potrvá&nbsp;<span style="font-weight: bold;">do 28. srpna 2015</span>! Autoři tří nejlepších snímků budou vybráni ze strany hráčů prvoligového „áčka“ a po zásluze budou odměněni. Ve hře bude šála, klubový dres zn. Adidas a především hlavní cena – bezplatná&nbsp;<a href="http://www.fcvysocina.cz/clanek.asp?id=5046&amp;passw=0f203d894e457eed7d66cb274ebd8727" style="color: rgb(0, 0, 0);">narozeninová oslava s Ježourem v hodnotě 2.399 Kč</a>!</p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;"><span style="font-weight: bold;">Ukažte i v letních měsících, pro jaké barvy bije vaše fanouškovské srdce!</span></p>',
-	current_timestamp,
+	to_timestamp('2015-04-03 14:51:50.769', 'YYYY-MM-DD HH24:MI:SS.MS'),
 	1,
 	null,
 	1
@@ -197,7 +198,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'Fan klub [aktuality | pouze kategorie]',
 	'Fanklub FC VYSOČINA JIHLAVA už je v dnešní době zaběhlou a velmi důležitou součástí našeho klubu. V současné době má podobu amatérského fanklubu, který se pomalu rozrůstá a získává příznivce nejen z řad fanoušků.',
 	'<p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Hlavním cílem je změnit amatérský fanklub ve sdružení a především napomoci atmosféře na domácím stadionu i mimo něj. V současné době pořádáme výjezdy na zápasy „A" týmu a tým samozřejmě podporujeme i během domácích zápasů. Našim velkým společným přáním je postup do I. Gambrinus ligy.</p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;"><strong>Jak je možné stát se členem fanklubu?</strong><br>O registrované členství může požádat každý fanoušek FC Vysočina Jihlava. Sezónní příspěvek činí 200 Kč, v případě, že zažádáte o členství v zimní přestávce, příspěvek činí 100 Kč. Každému poté bude vydána osobní registrační karta, která přináší zajímavé výhody, jako jsou slevy na suvenýry, nižší cena výjezdů, pozvánky na zajímavé akce klubu. O kartu lze požádat na e-mailu fanklub.vysocina@seznam.cz nebo též v prodejně suvenýrů pod novou tribunou. Bližší informace o stanovách fanklubu je možné zaslat elektronickou poštou.</p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;"><strong>Je možné činnost fanklubu podpořit finančně i nad rámec registrovaného členství?</strong><br>Určitě ano. Pro tento účel byl založen bankovní účet s číslem 7648621207/4000. Zde uložené peníze budou použity na investice fanoušků do vlajek a bubnů. Prioritou pak samozřejmě bude financování výjezdů k zápasům na hřištích soupeřů. O výjezdech a akcích fanklubu budou fanoušci pravidelně informováni na hlavních internetových stránkách klubu, v zápasovém rozhlase při domácích zápasech a v dalších dostupných prostředcích.</p>',
-	current_timestamp,
+	to_timestamp('2014-22-03 00:44:21.132', 'YYYY-MM-DD HH24:MI:SS.MS'),
 	1,
 	null,
 	1
@@ -222,7 +223,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'Mládežnická koncepce [aktuality | pouze tým]',
 	'Pohled do fotbalových tabulek a statistik hovoří naprosto jasně. FC Vysočina je jediným reprezentantem regionu v českých špičkových soutěžích. Vždyť druhým nejlepším dospělým týmem kraje je juniorský tým FC Vysočina, který působení ve třetí nejvyšší soutěži MSFL.',
 	'<div>Pohled do fotbalových tabulek a statistik hovoří naprosto jasně. FC Vysočina je jediným reprezentantem regionu v českých špičkových soutěžích. Vždyť druhým nejlepším dospělým týmem kraje je juniorský tým FC Vysočina, který působení ve třetí nejvyšší soutěži MSFL. Obdobná situace pak panuje i v mládežnických soutěžích, kde má FC Vysočina zástupce ve všech nejvyšších ligách včetně elitní extraligy dorostu. Tento stav je pouze obrazem trpělivé a dlouhodobé spolupráce FC Vysočina s dalšími regionálními kluby, které společně sledují cíl v podobě vytvoření silného klubu reprezentujícího celý kraj. Jihlavský klub se tak stává místem koncentrace nejlepších nejen mládežnických hráčů Vysočiny. Toto přirozené centrum tak zastupuje v nejvyšších českých soutěžích takřka dvacet tisíc v kraji Vysočina registrovaných fotbalistů.</div><div><br></div><div>Je jasným faktem, že kopaná na Vysočině nejspíš nikdy nebude ekonomicky schopna vytvořit kvalitní mužstvo z hráčů skoupených ze všech koutů republiky. Z tohoto důvodu klade vedení FC Vysočina dlouhodobě velký důraz na výchovu mládežnických fotbalistů, kteří by měli do budoucna hrát klíčovou roli v dalších ambicích jihlavské kopané. Z řad mládežnických mužstev by však neměli růst pouze hráči pro první mužstvo, ale i pro další oddíly Vysočiny. V neposlední řadě by se talentovaní hráči, kteří by svými fotbalovými schopnosti přerostli rámec regionu, mohli stát i důležitým zdrojem příjmů klubu.</div><div><br></div><div>Za účelem jasného oddělení mládežnického a profesionálního fotbalu zahájilo od 1. července 2011 svoji oficiální činnost občanské sdružení FKM Vysočina Jihlava. To v úzké spolupráci s FC VYSOČINA JIHLAVA, a.s., zastřešuje činnost 15 chlapeckých mládežnických mužstev klubu ve všech věkových kategoriích. Na základní škole Evžena Rošického řadu let stabilně fungují sportovních třídy. Na ty navazuje fotbalovým svazem podporované Sportovní centrum mládeže a též v roce 2010 založená Fotbalová akademie FC Vysočina při jihlavské Střední škole obchodu a služeb. Takto klub zajišťuje i hráčům dorostenecké kategorie kvalitní tréninkové podmínky. Celkově tato fotbalová továrna obnáší takřka 350 chlapců, 30 trenérů a dalších 20 klubových zaměstnanců.</div><div><br></div><div>Velký důraz se v FC Vysočina klade na obecný rozvoj osobnosti hráče, neboť pouze třetina složitého rozvoje mladého fotbalisty se odehrává na hřišti. Přeměna talentu ve výborného hráče se z větší části odehrává mimo něj. Podstatnou roli hraje zázemí v rodině a optimální spolupráce rodičů, trenéra a učitelů ve školách. I proto studijní výsledky hráčů hlídají také trenéři jednotlivých družstev a o účasti na dopolední přípravě rozhodují třídní učitelé hráčů. Důslednost, pečlivost a trpělivost ve škole i na hřišti, spolu s přiměřenou skromností jsou vlastnosti, bez kterých nelze dosáhnout opakovaných vítězství.</div><div><br></div><div>Dlouholetá práce s mládeží nese v FC Vysočina kýžené ovoce. Vedle působení ve špičkových soutěžích to jsou nominace nejlepších hráčů klubu do dorosteneckých a juniorských reprezentací Česka. Vedení klubu je přesvědčeno, že v otázce výchovy fotbalistů kráčí po správné cestě, na jejímž konci bude stabilní působení dospělého týmu FC Vysočina prošpikovaného vlastními odchovanci v nejvyšší soutěži</div>',
-	current_timestamp,
+	to_timestamp('2015-06-03 20:01:50.709', 'YYYY-MM-DD HH24:MI:SS.MS'),
 	2,
 	2,
 	null
@@ -234,7 +235,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'U19: Utkání s Bohemians 1905 nezvládli [aktuality | pouze tým | důležité]',
 	'Starší dorost U19 do utkání proti Bohemians 1905 nevstoupil aktivně, soupeř Vysočinu přehrával a v první půli se zaslouženě ujal vedení 1:0. Ve druhé půli Bohemians svoje vedení o dva góly navýšili a o výsledku tak bylo rozhodnuto. Utkání tak skončilo 3:0 (1:0).',
 	'"Domácí byli důraznější, agresivnější s větší touhou po zisku bodů, v poločase měli zasloužený jednobrankový náskok. Druhá část začala naší aktivitou, bohužel přišla hrubá chyba a soupeř navýšil vedení, poté šel sám Kolčava, neproměnil a tím byl dán ráz utkání, aby to nebylo málo, tak v závěru zápasu udělala naše defenzíva další fatální chybu uvnitř vápna a bylo rozhodnuto, Šerý M. mohl stav korigovat, ale dal těsně nad břevno. Utkání mnoho fotbalovosti nepřineslo, spíše se nakopávalo, ale to nic nemění na zaslouženém vítězství domácího celku. V sobotu nás čeká závěrečné 42. kolo soutěže, v domácím prostředí přivítáme Pardubice, tak věřím, že se rozloučíme kvalitnějším výkonem i výsledkem." řekl po utkání trenér Josef Vrzáček.',
-	current_timestamp,
+	to_timestamp('2015-04-28 14:51:50.769', 'YYYY-MM-DD HH24:MI:SS.MS'),
 	2,
 	2,
 	null
@@ -259,7 +260,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'Poslední kolo v duchu vykutálené zábavy! [aktuality | celý web]',
 	'V sobotu 23. května odehraje FC Vysočina poslední domácí duel tohoto ročníku SYNOT ligy proti Slovanu Liberec. V rámci poločasové přestávky tohoto utkání si díky projektu Crazy Bubbles budou moci vybraní šťastlivci vyzkoušet, jaké to je hrát na prvoligovém trávníku FC Vysočina. Jak tuto možnost získat?',
 	'<span style="font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; font-weight: bold; line-height: 20.3279991149902px; background-color: rgb(255, 255, 255);">V sobotu 23. května odehraje FC Vysočina poslední domácí duel tohoto ročníku SYNOT ligy proti Slovanu Liberec. V rámci poločasové přestávky tohoto utkání si díky projektu Crazy Bubbles budou moci vybraní šťastlivci vyzkoušet, jaké to je hrát na prvoligovém trávníku FC Vysočina. Jak tuto možnost získat?</span><div><span style="font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; font-weight: bold; line-height: 20.3279991149902px; background-color: rgb(255, 255, 255);"><br></span></div><div><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Zúčastni se soutěže, najdi informace, odpověz na otázku a HRAJ! Bubble Football je zábavná forma sportu kombinující prvky fotbalové techniky a fyzikálních zákonů. V sobotu 23. května od rána bude v této disciplíně probíhat kvalifikační turnaj na hřišti s umělým travnatým povrchem v ulici Evžena Rošického, kterého se může zúčastnit úplně každý. Registrovat svůj tým můžeš&nbsp;<span style="font-weight: bold;"><a href="http://www.mistrovstvibublin.cz/objednavka3/" style="color: rgb(0, 0, 0);">ZDE</a></span>. Vítěz turnaje navíc postoupí do republikového finále!<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">V rámci poločasového programu proběhne ukázkové utkání tohoto sportu, kterého můžeš být součástí. Staň se nejvykutálenějším hráčem kola! Více informací o turnaji a celém projektu najdeš na Facebooku&nbsp;<a href="https://www.facebook.com/crazybubblescz?fref=ts" style="color: rgb(0, 0, 0);">Crazy Bubbles CZ</a>&nbsp;a na webu&nbsp;<a href="http://www.mistrovstvibublin.cz/" style="color: rgb(0, 0, 0);">www.mistrovstvibublin.cz</a>.</p></div>',
-	current_timestamp,
+	to_timestamp('2015-08-19 18:59:10.009', 'YYYY-MM-DD HH24:MI:SS.MS'),
 	3,
 	null,
 	null
@@ -271,7 +272,156 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	'Plzeň chceme zaskočit a oddálit její oslavy titulu [aktuality | celý web]',
 	'Od nezapomenutelného vítězství FC Vysočina nad Plzní uběhl půlrok a 13 utkání s SYNOT lize. Jihlavský tým je dávno zachráněný mezi elitou a Viktoria si stále drží pozici lídra. Před týdnem dokonce zvítězila na Letné, tudíž jí tři kola před koncem zbývá k jistotě titulu českého mistra jediné vítězství. Dokáže Vysočina v pondělním přímém přenosu ČT čelit výborné formě Plzně a vyprodanému stadiónu? Oddálí mistrovské oslavy?',
 	'"<span style="font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; font-weight: bold; line-height: 20.3279991149902px; background-color: rgb(255, 255, 255);">Od nezapomenutelného vítězství FC Vysočina nad Plzní uběhl půlrok a 13 utkání s SYNOT lize. Jihlavský tým je dávno zachráněný mezi elitou a Viktoria si stále drží pozici lídra. Před týdnem dokonce zvítězila na Letné, tudíž jí tři kola před koncem zbývá k jistotě titulu českého mistra jediné vítězství. Dokáže Vysočina v pondělním přímém přenosu ČT čelit výborné formě Plzně a vyprodanému stadiónu? Oddálí mistrovské oslavy?</span><div><span style="font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; font-weight: bold; line-height: 20.3279991149902px; background-color: rgb(255, 255, 255);"><br></span></div><div><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Domácí budou v utkání jasným favoritem, ovšem jejich bilance překvapivě není tak příznivá. V historii vzájemných duelů v I. lize, kterou představují pouze 4 sezóny, byl jihlavský tým ve Štruncových sadech vždy nepříjemným soupeřem. Odvezl si odtud jednu těsnou jednobrankovou porážku a dvě remízy. Před rokem se v Doosan aréně zrodila výsledek 1:1, když skórovali Ďuriš a Mešanović. Jak vidí šance FC Vysočina v pondělním duelu asistent trenéra&nbsp;<span style="font-weight: bold;">Roman Kučera</span>? „Přáli bychom si, abychom dokázali navázat na náš podzimní výkon proti Viktorii. Je jasné, že je před obrovsky těžký úkol, neboť se postavíme obrovskému favoritovi, který na hřišti udělá vše pro to, aby po utkání s námi v předstihu oslavil mistrovský titul. Vše bude nepochybně nachystáno na velkou oslavu. My ale v utkání nemáme co ztratit. Hodláme pozorně bránit, využívat každé příležitosti k brejkům a tím narušovat hru domácího týmu. Pokud se nám podaří jít do vedení nebo dokážeme dlouho udržet nerozhodný stav, tak mohou domácí znervóznět. Duel na vyprodaném stadiónu bude pro naše hráče představovat velký svátek a odměnu. Věříme, že budou schopní podat takový výkon, kdy Plzeň potrápí, zaskočí a oddálí jejich oslavy titulu,“ věří v sílu týmu asistent kouče Klusáčka.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Můžete zavzpomínat na strhující listopadový duel proti Plzni, v němž jste Vysočinu vedl jako hlavní trenér? „Rád si vybavuji fantastickou atmosféru na stadiónu a na jedinečné propojení hráčů a diváků. Nepochybně šlo o jeden z největších fotbalových zážitků, jakého jsme kdy byli v našem kraji svědky. Musí nás těšit, že jsme jako jedni z mála dokázali Plzeň v tomto ročníku ligy porazit,“ připomněl Kučera.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Fotbalové kvality Plzně jsou obecně dobře známé. Přesto, zkuste upozornit na největší přednosti hry Viktorie. „Za vše hovoří pohled do ligové tabulky či domácí bilance Plzně – 12 vítězství a jedna prohra proti Mladé Boleslavi. Viktoria se prezentuje ofenzivním nátlakovým fotbalem, zvládá hru v přehuštěném prostoru a zahrává velmi nebezpečné standardní situace. Její hráči jsou zkušení, technicky vyspělí a takticky na výši. Díky sebevědomí a trpělivosti jsou schopní zvrátit i nepříznivě se vyvíjející duely. Velký pozor si musíme dát na její křídelní hru, kde hrozí dvojice Pilař - Rajtoral a Limberský – Kovařík. Jejich akce jsou schopní zakončit nejen Mahmutović, Holenda, Kolář či Tecl. Malou výhodou pro nás může být absence vykartovaných Vaňka a Hořavy, ovšem ani my nebudeme kompletní,“ analyzoval plzeňskou hru Roman Kučera.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Tento týden je hodně atypický z pohledu dlouhého tréninkového cyklu. Jak čekání na pondělní duel vyplňujete? „Aktuální tréninkový mezicyklus je delší, ovšem svojí náplní se neliší od předchozích. Zařazujeme hodně herních prvků a snažíme se o tréninky zábavnou formou, aby hráči trénovali s chutí a psychicky se zvedli po dvou výsledkově nepodařených zápasech a smolných prohrách,“ řekl jihlavský asistent trenéra.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Proti Teplicím jste výrazně pozměnili sestavu, přičemž jste nasadili zálohu, v níž figurovali hned čtyři jednadvacetiletí hráči. Nakolik se jihlavská jedenáctka bude v pondělí lišit? „Nadále nemůžeme počítat se zraněnými Jungrem, Šourkem a Marcinem, navíc osmou žlutou kartu inkasoval Kučera, který nám tak bude chybět ve dvou nadcházejících zápasech. Šanci tak znovu dostanou mladí hráči. Sestava oproti utkání s Teplicemi dozná změn, ale nebudou nijak výrazné. Jasno o složení úvodní jedenáctky budeme mít asi až v sobotu,“ dodal Kučera.</p></div>"',
-	current_timestamp,
+	to_timestamp('2015-04-04 23:11:17.519', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	3,
+	null,
+	null
+	);
+
+-- ARTICLES [AKTUALITY - PLATNOST DO]
+insert into article (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+	-- aktuality | pouze kategorie
+	(
+	1,
+	true,
+	'Jaké změny v létě čeká kádr FC Vysočina? [aktuality | celý web | důležité | platnost do 2015-06-17]',
+	'Před fotbalisty FC Vysočina je poslední duel v tomto ročníku SYNOT ligy a též dlouho očekávaná dovolená. Už v pondělí 26. června se však budou znovu hlásit v tréninkovém procesu, neboť měsíc poté startuje nový ročník SYNOT ligy 2015/16. Jakými změnami jihlavský kádr projde?',
+	'<p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">„S ohledem na fakt, že k 30. červnu končí hostování sparťanských hráčů&nbsp;<span style="font-weight: bold;">Matěje Hybše</span>&nbsp;a<span style="font-weight: bold;">Adama Jánoše</span>, tak se v letním období budeme soustředit na vyřešení postů levého obránce a defenzivního záložníka. Jistě budeme chtít na toto téma jednat i se Spartou, ovšem na pořadu dne to bude až po skončení EURA U21,“ uvedl sportovní manažer Josef Jinoch, jenž zároveň potvrdil přestup dvojice kvalitních prvoligových fotbalistů: „Již dříve jsme avizovali, že od července se změní hostování&nbsp;<span style="font-weight: bold;">Petra Nerada</span>&nbsp;z Bohemians 1905 v přestup. Profesionální kontrakt jsme podepsali též s útočníkem&nbsp;<span style="font-weight: bold;">Pavlem Dvořákem</span>&nbsp;(roč. 1989) z Hradce Králové, jenž v tomto ročníku SYNOT ligy skóroval hned devětkrát a my věříme, že se mu bude dařit i v barvách FC Vysočina. Oba přestupy nyní zbývá administrativně doladit.“</p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Kádr s velkou pravděpodobností opustí zmínění Jánoš a Hybš. Lze očekávat další odchody? „Nelze je vyloučit. Určitá jednání v současné době probíhají, navíc některým hráčům končí smlouvy. Pokud nějaké odchody nastanou, tak jsme připravení na ně adekvátně zareagovat,“ informoval Jinoch, jenž počítá s návratem hráčů z hostování a s přesunem mladíků z juniorky: „V přípravě hodláme otestovat ghanského pravého beka<span style="font-weight: bold;">Daniela Adda</span>, který stihl nastoupit do posledních dvou duelů juniorky. Do „áčka“ minimálně pro letní blok posuneme stopera&nbsp;<span style="font-weight: bold;">Dominika Pedra</span>&nbsp;(roč. 1995), levého beka<span style="font-weight: bold;">Petra Chylu&nbsp;</span>(roč. 1994), záložníka či krajního obránce&nbsp;<span style="font-weight: bold;">Davida Klusáka</span>&nbsp;(roč. 1994) a útočníka&nbsp;<span style="font-weight: bold;">Tomáše Dubu</span>&nbsp;(roč. 1996). V konfrontaci s dospělým fotbalem chceme vidět i dorosteneckého reprezentanta, útočníka&nbsp;<span style="font-weight: bold;">Jiřího Klímu</span>&nbsp;(roč. 1997). Z druholigových hostování se vrátí ze Sokolova útočník&nbsp;<span style="font-weight: bold;">Vojtěch Přeučil</span>&nbsp;(roč. 1990) a z Kolína útočník<span style="font-weight: bold;">Jakub Teplý</span>&nbsp;(roč. 1993) a gólman&nbsp;<span style="font-weight: bold;">Luděk Vejmola</span>&nbsp;(roč. 1994), jehož tréninkovou přípravu nyní omezuje tříselná kýla,“ uzavřel svůj komentář sportovní manažer FC Vysočina.</p>',
+	to_timestamp('2015-05-17 11:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	to_date('2015-06-17', 'YYYY-MM-DD'),
+	3,
+	null,
+	null
+	),
+
+	(
+	1,
+	false,
+	'Jaromír Blažek setrvá v FC Vysočina jako trenér brankářů [aktuality | celý web | platnost do 2016-07-02]',
+	'Jihlavská fotbalová etapa legendárního gólmana Jaromíra Blažka nekončí! Se sportovním vedením FC Vysočina se dohodl na pokračování svého působení v roli trenéra brankářů. Navíc v příštím ročníku hodlá svoji činnost v klubu rozšířit.',
+	'<p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Jaromír Blažek na Vysočinu přišel v lednu 2012, aby pomohl vytouženému postupu do nejvyšší soutěže. Nezůstalo však jen u této mety. Sparťanská ikona jihlavskou branku hájila společně s Janem Hanušem během tří úspěšných prvoligových ročníků, kdy si Blažek připsal 49 startů v dresu FC Vysočina. V počtu vychytaných nul se mezi českými a československými gólmany posunul na druhou příčku za nedostižného Petra Čecha a navíc navýšil rekord Pepiho Bicana, když se stal nejstarším fotbalistou v nejvyšší soutěži. Vedle hráčské role Blažek od léta 2013 plnil roli trenéra gólmanů jihlavského „áčka“, v níž hodlá setrvat i po skončení dlouholeté profesionální kariéry.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">„S vedením klubu jsme domluveni na pokračování spolupráce. Těším se, že navážu na dosavadní práci s gólmany ligového kádru FC Vysočina a budu tak moci prohlubovat svoji trenérskou praxi. Vedle toho budu pomáhat trenérovi Tomáši Jansovi, který má v klubu na starosti přípravu a rozvoj brankářů v žákovském a dorosteneckém věku,“ uvedl Jaromír Blažek, který hodlá pokračovat ve svém trenérském studiu. Poté, co v zimě dokončil studium licence B, se aktuálně přihlásil ke studiu trenérské A licence</p>',
+	to_timestamp('2015-06-17 11:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	to_date('2016-07-02', 'YYYY-MM-DD'),
+	3,
+	null,
+	null
+	),
+
+
+
+	(
+	1,
+	false,
+	'Proběhne nábor do týmů přípravek FC Vysočina [aktuality | celý web | platnost do 2015-05-31]',
+	'Hrej nejpopulárnější sport na světě a staň se jedním z nás! Přijď na tradiční nábor do týmů přípravek FC Vysočina, který se koná ve čtvrtek 21. května od 17:00 hodin na travnaté ploše stadiónu v Jiráskově ulici. Nábor je otevřen pro kluky ročníků 2009 a 2010. Každý účastník na památku obdrží tričko FC Vysočina a též vstupenku na sobotní duel proti Liberci!',
+	'<p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Adepti dresu FC Vysočina by měli dorazit v doprovodu rodičů a měli by sebou mít sportovní oblečení, kopačky (tenisky), míč velikost č.3 nebo č.4 (ideální je č.3) a láhev s pitím.</p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">„Nábor rozhodně nebude nějakou náročnou výběrovou akcí. Kluci a holky si pod vedením našich trenérů mládeže vyzkouší několik jednoduchých cvičení a užijí si pohybových aktivit. Šanci vyzkoušet si v květnu a červnu tréninky v FC Vysočina poté dostanou všichni příchozí zájemci. Tak neváhejte a přijďte," zdůraznil Miroslav Fuks, tiskový mluvčí klubu.</p>',
+	to_timestamp('2015-05-01 11:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	to_date('2015-05-31', 'YYYY-MM-DD'),
+	2,
+	2,
+	null
+	),
+
+	(
+	1,
+	true,
+	'FAČR a KFS Vysočina podporují nábory mladých fotbalistů [aktuality | celý web | důležité | platnost do 2017-05-20]',
+	'V měsíci květnu a září 2015 proběhne po celé České republice další "Měsíc náborů" mladých fotbalistů a fotbalistek ve spolupráci s projektem Můj první gól, Fotbalovou asociací České republiky, Českou televizí, kluby Synot ligy, Fotbalové Národní ligy a krajskými a okresními fotbalovými svazy. Rodiče nyní mají jedinečnou šanci přihlásit své dítě do jakéhokoli fotbalového klubu ve svém okolí a zaregistrovat ho jako člena FAČR. Dnešní tisková konference představila podobu projektu v Kraji Vysočina.',
+	'<p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Krajský fotbalový svaz Kraje Vysočina ji uspořádal ve VIP zázemí stadiónu FC Vysočina, přičemž před přítomnými zástupci médií promluvili a projekt blíže představili&nbsp;<span style="font-weight: bold;">Miroslav Vrzáček</span>, předseda KFS Vysočina,&nbsp;<span style="font-weight: bold;">Stanislav Duben</span>, profesionální trenér mládeže KFS Vysočina a&nbsp;<span style="font-weight: bold;">Tomáš Kučera</span>, regionální patron projektu a opora prvoligového FC Vysočina. Pozvání přijali též&nbsp;<span style="font-weight: bold;">Milan Kastner</span>, vedoucí oddělení mládeže a sportu Kraje Vysočina, a&nbsp;<span style="font-weight: bold;">Tomáš Koukal</span>, vedoucí odboru školství, mládeže a tělovýchovy Statutárního města Jihlavy. V závěru vystoupil ředitel FC Vysočina&nbsp;<span style="font-weight: bold;">Zdeněk Tulis</span>, jenž média informoval o stavu příprav na vznik krajské fotbalové akademie.<br></p><h3 style="color: rgb(50, 51, 82); margin: 8px 0px 4px; font-size: 1.2em; font-family: Arial; padding: 6px 0px 7px; line-height: 1.3em; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(229, 229, 241);">Projekty „Měsíc náborů“ a „Můj první gól“<br></h3><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Projekt „Měsíc náborů“ se pod záštitou Fotbalové asociace České republiky ve fotbalovém prostředí objevuje již poněkolikáté a i díky němu získá členství ve FAČR tisíce nových členů, mladých fotbalistů a fotbalistek. V září roku 2014 proběhla tato akce v 74 klubech po celé republice. Účastnilo se jí 11.300 dětí. Jenom v Kraji Vysočina proběhlo 5 akcí, do kterých se zapojilo skoro 900 dětí. Celkový počet nových fotbalistů (od 5 do 19 let) v době kampaně (září až říjen 2014) činil 9.100.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">V roce 2015 proběhnou akce v měsíci květnu a v září, na něž FAČR přispěje částkou ve výši 4 milionů korun. V každém okrese se uskuteční jeden „Měsíc náborů“ ve vybraném klubu, přičemž konkrétně v Kraji Vysočina půjde o pět akcí. Na Jihlavsku se uskuteční pod patronací FC Vysočina Jihlava (25.5.), na Pelhřimovsku jí bude pořádat FK Pelhřimov (14.5), na Žďársku místní FC Žďas Žďár nad Sázavou (19.5.), na Havlíčkobrodsku se konání chopí FC Slovan Havlíčkův Brod (28.5.) a na Třebíčsku bude garantem náboru HFK Třebíč (15.5.). V měsíci září bude vybráno dalších pět regionálních oddílů vždy po jednom z každého okresu. Celkem tedy v Kraji Vysočina proběhne 10 náborových akcí pod záštitou FAČR.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Díky projektu „Měsíc náborů“ opět získáte skvělou příležitost přihlásit své dítě do jakéhokoli fotbalového klubu ve vašem okolí a zaregistrovat ho jako člena Fotbalové asociace České republiky. Stačí si vybrat pro vás nejvhodnější klub, přivést malého fotbalistu nebo malou fotbalistku na nábor nových dětí a dát jim tím možnost začít oficiálně hrát tento nejrozšířenější, nejpopulárnější a pohybově nejvšestrannější sport na světě. Kluby vám poté vyřídí členství FAČR, díky kterému získává každý člen i mnoho zajímavých možností a výhod.<br></p><p style="margin: 10px 0px; padding: 5px 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14.5199995040894px; line-height: 21.7799987792969px;">Nedílnou součástí projektu je též aktivita „<span style="font-weight: bold;">Můj první gól</span>“, díky kterému měli zaregistrovaní hráči ročníku 2007 možnost požádat o fotbalový balíček (taška na fotbal, lahev, míč, reprezentační dres, podpisové kartičky). Těchto balíčků bylo v roce 2014 distribuováno 5.675 kusů. Stejnou možnost mají malí fotbalisté ročníku 2007 i letos na jaře. Na podzim 2015 se balíček „Můj první gól“ bude týkat výhradně hráčů narozených v roce 2008.</p>',
+	to_timestamp('2015-05-20 10:29:50.988', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	to_date('2017-05-20', 'YYYY-MM-DD'),
+	2,
+	2,
+	null
+	);
+
+-- ARTICLES [NÁSTĚNKA]
+insert into article (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+	-- nástěnka | pouze kategorie
+	(
+	0,
+	true,
+	'Zrušení tréninku [nástěnka | pouze kategorie | důležité]',
+	'Dle hlášeného minimálního počtu hráčů na páteční trénink, trénink v pátek 15.5. nebude. Hráči, kteří mají čas mohou individuálně trénovat fyzičku nebo se mohou zúčastnit na tréninku v Moravanech na hřišti od 17:00 s družstvem přípravky.',
+	'',
+	to_timestamp('2014-05-13 11:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	2,
+	2,
+	null
+	),
+
+	(
+	0,
+	false,
+	'Akce pro školáky [nástěnka | pouze kategorie]',
+	'Ke dni dětí jsme pro vás připravili opékání u táboráku za hřištěm. Pokud přijdete, kontaktujte pana Malzu (ať máme dost špekáčků :-) ).',
+	'',
+	to_timestamp('2015-05-22 19:03:10.600', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	2,
+	2,
+	null
+	),
+
+	(
+	0,
+	false,
+	'U hřiště byly usazeny nové lavičky [nástěnka | celý web]',
+	'Připravil do startu jarní části sezony 2014/2015 malou novinku. Vedle střídačky domácích nechal zabudovat čtyři lavičky, o jejichž zhotovení i zabudování se postaral člen výboru Franta Koudelka.',
+	'<div><div><font face="Tahoma, Verdana, Arial, sans-serif"><span style="font-size: 12.8000001907349px; line-height: 17.9200000762939px;">Věříme, že to bude vítaná novinka a třeba už tuto sobotu 28. 3. 2015 se lavičkám dostane první ostré zatěžkávací zkoušky. Od 10.15 se totiž MUŽI B utkají s Miroticemi. A už příští víkend bude pořádně zatěžkána i hrací plocha.</span></font></div></div>',
+	to_timestamp('2015-02-11 03:29:19.002', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	3,
+	null,
+	null
+	),
+
+	(
+	0,
+	false,
+	'Vánoční besídka [nástěnka | celý web]',
+	'Hráčská schůze s novým výborem pojatá jako vánoční besídka bude v SO 15.12.12 od 18h v HK v Plzeňské restauraci (bývalá Mikulovská vinárna, naproti jsou Novákovy garáže pro orientaci). Zváni jsou i další příznivci, kteří mají ke klubu vztah ač již nejsou aktivními hráči či funkcionáři, ale bez nichž by oddíl nebyl vůbec v krajských soutěžích.',
+	'',
+	to_timestamp('2014-11-30 22:03:17.234', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	3,
+	null,
+	null
+	),
+
+	(
+	0,
+	true,
+	'Akce Z [nástěnka | celý web | důležité]',
+	'Prosíme jak všechny členy, tak i podporovatele klubu, aby přišly dne 28.4. pomoci se zvelebením našeho hřiště. Pracovní pomůcky (rukavice, hrábě, pytle) budou zajištěny',
+	'Včasným příchodem a plným nasazením zasadíme drtivý úder americkým imperialistům.',
+	to_timestamp('2014-01-12 21:43:01.099', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	3,
+	null,
+	null
+	);
+
+-- ARTICLES [NÁSTĚNKA - PLATNOST DO]
+insert into article (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+	-- nástěnka | pouze kategorie
+	(
+	0,
+	true,
+	'Zrušený trénink [nástěnka | pouze kategorie | důležité | platnost do ]',
+	'Dne 13.3. odpadá tréning mládeže z důvodu nemoci trenéra.',
+	'',
+	to_timestamp('2015-03-11 19:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	to_date('2015-03-17', 'YYYY-MM-DD'),
+	2,
+	2,
+	null
+	),
+
+	(
+	0,
+	true,
+	'Příspěvky na charitu [nástěnka | celý web | důležité | platnost do 2017-05-17]',
+	'Prosíme o příspěvky na charitu. Bližší informace podá František Koudelka na telefonu 777 258 456.',
+	'',
+	to_timestamp('2015-05-11 19:22:50.656', 'YYYY-MM-DD HH24:MI:SS.MS'),
+	to_date('2017-05-17', 'YYYY-MM-DD'),
 	3,
 	null,
 	null
