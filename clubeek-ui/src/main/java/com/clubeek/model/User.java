@@ -3,6 +3,8 @@ package com.clubeek.model;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.codec.binary.Hex;
+
 public class User extends Model {
 
 	public enum Role {
@@ -54,7 +56,7 @@ public class User extends Model {
 
 		if (hashProc != null) {
 			hashProc.update((salt + password).getBytes());
-			return new String(hashProc.digest(password.getBytes()));
+			return Hex.encodeHexString(hashProc.digest(password.getBytes()));
 		}
 
 		return null;
