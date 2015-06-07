@@ -5,6 +5,15 @@
 --------------------------------------------------------------------------------
 INSERT INTO club_settings (id, title, comment) VALUES(1, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
 
+-- user name, password (the same as user name)
+-- administrator is the same as admin (admin is shorter to write)
+insert into user_data (name, password, permissions) values
+	('member', 'ddc721d12cbb3aa9850be6b6b801231f2683b221', 0),
+	('editor', '97475902e4ce16c0d1b96bbe1e9ad6bb2d41c54e', 1),
+	('sportManager', 'a4ae0dc42860d467da627ee8313628f8cc4cc600', 2),
+	('clubManager', '76e8fbd3aa79a320cf8e81b436c8feff81612bde', 3),
+	('administrator', 'da175474680e4b688737821fae09ddd3add7401e', 4),
+	('admin', '45f98c2702661d67f53c5c46d0a3f73083c613f5', 4);
 
 insert into category (description, active) values
 	('Fanoušci [kategorie]', true),
@@ -426,3 +435,14 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	null,
 	null
 	);
+
+----------------------------------------------------------------------
+-- Location
+---- 1 aktuality
+---- 0 nástěnka
+
+-- Owner
+---- 3 celý web
+---- 2 pouze tým
+---- 1 pouze kategorie
+---- 0 pouze klub
