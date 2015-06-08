@@ -3,11 +3,11 @@
 -- Test data --
 ---------------------
 --------------------------------------------------------------------------------
-INSERT INTO club_settings (id, title, comment) VALUES(1, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
+INSERT INTO T_CLUB_SETTING (id, title, comment) VALUES(1, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
 
 -- user name, password (the same as user name)
 -- administrator is the same as admin (admin is shorter to write)
-insert into user_data (name, password, permissions) values
+insert into T_USER (name, password, permissions) values
 	('member', 'ddc721d12cbb3aa9850be6b6b801231f2683b221', 0),
 	('editor', '97475902e4ce16c0d1b96bbe1e9ad6bb2d41c54e', 1),
 	('sportManager', 'a4ae0dc42860d467da627ee8313628f8cc4cc600', 2),
@@ -15,21 +15,21 @@ insert into user_data (name, password, permissions) values
 	('administrator', 'da175474680e4b688737821fae09ddd3add7401e', 4),
 	('admin', '45f98c2702661d67f53c5c46d0a3f73083c613f5', 4);
 
-insert into category (description, active) values
+insert into T_CATEGORY (description, active) values
 	('Fanoušci [kategorie]', true),
 	('Historie [kategorie]', true),
 	('Oddíly [kategorie]', true),
 	('Pokus', false);
 
-insert into club_team (name, active, category_id) values
+insert into T_CLUB_TEAM (name, active, category_id) values
 	('Senioři [týmy]', true, 3),
 	('Mládež [týmy]', true, 3),
 	('Dospělí [týmy]', true, 3);
 
-insert into club_team (name, active) values
+insert into T_CLUB_TEAM (name, active) values
 	('Pokus [týmy]', false);
 
-insert into club_member (name, surname, birthdate, street, city, code) values
+insert into T_CLUB_MEMBER (name, surname, birthdate, street, city, code) values
 	('Kryštof', 'Staněk', null, null, null, null),
 	('Marian', 'Pavlík', to_date('1968-04-04', 'YYYY-MM-DD'), 'Dr. Slabihoudka 988', 'Mladá Boleslav', '29301'),
 	('Kristýna', 'Sedláčková', to_date('1953-10-04', 'YYYY-MM-DD'), 'Wattova 172', 'Cheb', '35002'),
@@ -142,40 +142,40 @@ BEGIN
 	for v_record in
 		-- each row in following select id assigned to v_record variable
 		select id from
-			(select id, row_number() over(order by birthdate asc) as rnum from club_member) as subq
+			(select id, row_number() over(order by birthdate asc) as rnum from T_CLUB_MEMBER) as subq
 		where rnum <= 20 and rnum > 5	-- offset
 	loop
 		--insert into team_member
-		insert into team_member (club_member_id, club_team_id) values (v_record.id, 1);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 1);
 	end loop;
 
 	-- junior team members
 	for v_record in
 		-- each row in following select id assigned to v_record variable
 		select id from
-			(select id, birthdate, row_number() over(order by birthdate desc) as rnum from club_member) as subq
+			(select id, birthdate, row_number() over(order by birthdate desc) as rnum from T_CLUB_MEMBER) as subq
 		where rnum <= 35 and birthdate is not null
 	loop
 		--insert into team_member
-		insert into team_member (club_member_id, club_team_id) values (v_record.id, 2);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 2);
 	end loop;
 
 	-- adult team members
 	for v_record in
 		-- each row in following select id assigned to v_record variable
 		select id from
-			(select id, birthdate, row_number() over(order by birthdate desc) as rnum from club_member) as subq
+			(select id, birthdate, row_number() over(order by birthdate desc) as rnum from T_CLUB_MEMBER) as subq
 		where (rnum <= 60 and rnum > 40 and birthdate is not null) or (rnum <= 5 and birthdate is null)
 	loop
 		--insert into team_member
-		insert into team_member (club_member_id, club_team_id) values (v_record.id, 3);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 3);
 	end loop;
 END;
 $$
 ;
 
 -- ARTICLES [AKTUALITY]
-insert into article (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
 	1,
@@ -288,7 +288,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	);
 
 -- ARTICLES [AKTUALITY - PLATNOST DO]
-insert into article (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
 	1,
@@ -345,7 +345,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	);
 
 -- ARTICLES [NÁSTĚNKA]
-insert into article (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- nástěnka | pouze kategorie
 	(
 	0,
@@ -408,7 +408,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	);
 
 -- ARTICLES [NÁSTĚNKA - PLATNOST DO]
-insert into article (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
 	-- nástěnka | pouze kategorie
 	(
 	0,
@@ -437,7 +437,7 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	);
 
 -- CLUB RIVAL
-insert into club_rival (name, web, gps, street, city, code, icon) values
+insert into T_CLUB_RIVAL (name, web, gps, street, city, code, icon) values
 	('Viktoria Plzeň', 'http://www.fcviktoria.cz/', '49°45''0.063"N, 13°23''7.541"E', 'Štruncovy sady', 'Plzeň', '3', null),
 	('Zbrojovka Brno', null, null, null, 'Brno', null, null),
 	('Sparta Praha', 'http://www.sparta.cz/', null, 'Milady Horákové', 'Praha', '1066/98', null),

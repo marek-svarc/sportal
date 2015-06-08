@@ -1,33 +1,34 @@
-﻿------------------------------
+------------------------------
 -- Dropping tables if exist --
 ------------------------------
 
-drop table if exists club_settings;
-drop table if exists contact;
-drop table if exists applicant_for_action;
-drop table if exists applicant_for_team_training;
-drop table if exists applicant_for_team_match;
-drop table if exists user_data;
-drop table if exists participant_of_training;
-drop table if exists participant_of_match;
-drop table if exists action;
-drop table if exists team_training;
+drop table if exists T_CLUB_SETTING;
+drop table if exists T_CONTACT;
+drop table if exists T_APPLICANT_FOR_ACTION;
+drop table if exists T_APPLICANT_FOR_TEAM_TRAINING;
+drop table if exists T_APPLICANT_FOR_TEAM_MATCH;
+drop table if exists T_USER;
+drop table if exists T_PARTICIPANT_OF_TRAINING;
+drop table if exists T_PARTICIPANT_OF_MATCH;
+drop table if exists T_ACTION;
+drop table if exists T_TEAM_TRAINING;
 
 drop view if exists club_member_by_team;
-drop table if exists team_member;
-drop table if exists club_member;
-drop table if exists team_match;
-drop table if exists club_rival;
-drop table if exists article;
-drop table if exists club_team;
-drop table if exists category;
+
+drop table if exists T_TEAM_MEMBER;
+drop table if exists T_CLUB_MEMBER;
+drop table if exists T_TEAM_MATCH;
+drop table if exists T_CLUB_RIVAL;
+drop table if exists T_ARTICLE;
+drop table if exists T_CLUB_TEAM;
+drop table if exists T_CATEGORY;
 
 
 ---------------------
 -- Creating tables --
 ---------------------
 
-CREATE TABLE club_settings
+CREATE TABLE T_CLUB_SETTING
 (
     id 		serial,
     title	varchar(200),
@@ -37,7 +38,7 @@ CREATE TABLE club_settings
     primary key (id)
 );
 
-CREATE TABLE category
+CREATE TABLE T_CATEGORY
 (
     id			serial,
     description		varchar(100)	not null,
@@ -47,7 +48,7 @@ CREATE TABLE category
     primary key (id)
 );
 
-CREATE TABLE club_member
+CREATE TABLE T_CLUB_MEMBER
 (
     id			serial,
     id_personal		varchar(20),
@@ -63,7 +64,7 @@ CREATE TABLE club_member
     primary key (id)
 );
 
-CREATE TABLE club_rival
+CREATE TABLE T_CLUB_RIVAL
 (
     id			serial,
     name		varchar(100)		not null,
@@ -77,7 +78,7 @@ CREATE TABLE club_rival
     primary key (id)
 );
 
-CREATE TABLE club_team
+CREATE TABLE T_CLUB_TEAM
 (
     id			serial,
     name		varchar(100)		not null,
@@ -86,11 +87,11 @@ CREATE TABLE club_team
     category_id		integer	        	default null,
 
     primary key (id),
-    foreign key (category_id) references category (id)
+    foreign key (category_id) references T_CATEGORY (id)
         ON DELETE SET NULL
 );
 
-CREATE TABLE contact
+CREATE TABLE T_CONTACT
 (
     id 			serial,
     contact		varchar(100)		not null,
@@ -100,13 +101,13 @@ CREATE TABLE contact
     club_member_id	integer			not null,
 
     primary key (id),
-    foreign key (club_member_id) references club_member(id)
+    foreign key (club_member_id) references T_CLUB_MEMBER(id)
         ON DELETE CASCADE,
     unique (contact, club_member_id)
 
 );
 
-CREATE TABLE team_member
+CREATE TABLE T_TEAM_MEMBER
 (
     id			serial,
     functions		integer		not null  default 0,
@@ -114,16 +115,16 @@ CREATE TABLE team_member
     club_team_id	integer		not null,
 
     primary key (id),
-    foreign key (club_member_id) references club_member (id)
+    foreign key (club_member_id) references T_CLUB_MEMBER (id)
         ON DELETE CASCADE,
-    foreign key ( club_team_id ) references club_team ( id )
+    foreign key ( club_team_id ) references T_CLUB_TEAM ( id )
         ON DELETE CASCADE,
     unique(club_member_id, club_team_id)
 
 
 );
 
-CREATE TABLE team_training
+CREATE TABLE T_TEAM_TRAINING
 (
     id			serial,
     start		timestamp	not null,
@@ -133,11 +134,11 @@ CREATE TABLE team_training
     club_team_id	integer		not null,
 
     primary key (id),
-    foreign key (club_team_id) references club_team (id)
+    foreign key (club_team_id) references T_CLUB_TEAM (id)
         ON DELETE CASCADE
 );
 
-CREATE TABLE team_match
+CREATE TABLE T_TEAM_MATCH
 (
     id			serial,
     start		timestamp	not null,
@@ -151,14 +152,14 @@ CREATE TABLE team_match
     club_rival_comment	varchar(200),
 
     primary key (id),
-    foreign key (club_rival_id) references club_rival (id)
+    foreign key (club_rival_id) references T_CLUB_RIVAL (id)
         ON DELETE SET NULL,
-    foreign key (club_team_id) references club_team (id)
+    foreign key (club_team_id) references T_CLUB_TEAM (id)
         ON DELETE CASCADE
 
 );
 
-CREATE TABLE action
+CREATE TABLE T_ACTION
 (
     id			serial,
     start		timestamp		not null,
@@ -169,57 +170,57 @@ CREATE TABLE action
     sign_participation	boolean,
     club_team_id	integer,
     category_id		integer,
-    
+
     primary key (id),
-    foreign key ( club_team_id ) references club_team ( id )
+    foreign key ( club_team_id ) references T_CLUB_TEAM ( id )
         ON DELETE CASCADE,
-    foreign key ( category_id ) references category ( id )
+    foreign key ( category_id ) references T_CATEGORY ( id )
         ON DELETE CASCADE,
 
     check ((category_id is not null AND club_team_id is null) OR (club_team_id is not null AND category_id is null) OR (club_team_id is null AND category_id is null))
 
 );
 
-CREATE TABLE applicant_for_action
+CREATE TABLE T_APPLICANT_FOR_ACTION
 (
     attend		boolean	not null default 'false',
     club_member_id	integer		not null,
     action_id		integer		not null,
 
     primary key ( club_member_id, action_id ),
-    foreign key ( club_member_id ) references club_member( id )
+    foreign key ( club_member_id ) references T_CLUB_MEMBER( id )
 	ON DELETE CASCADE,
-    foreign key ( action_id ) references action ( id )
+    foreign key ( action_id ) references T_ACTION ( id )
 	ON DELETE CASCADE
 );
 
-CREATE TABLE applicant_for_team_training
+CREATE TABLE T_APPLICANT_FOR_TEAM_TRAINING
 (
     attend		boolean	not null default 'false',
     club_member_id	integer		not null,
     team_training_id	integer		not null,
 
     primary key ( club_member_id, team_training_id ),
-    foreign key ( club_member_id ) references club_member( id )
+    foreign key ( club_member_id ) references T_CLUB_MEMBER( id )
 	ON DELETE CASCADE,
-    foreign key ( team_training_id ) references team_training ( id )
+    foreign key ( team_training_id ) references T_TEAM_TRAINING ( id )
 	ON DELETE CASCADE
 );
 
-CREATE TABLE applicant_for_team_match
+CREATE TABLE T_APPLICANT_FOR_TEAM_MATCH
 (
     attend		boolean	not null default 'false',
     club_member_id	integer		not null,
     team_match_id	integer		not null,
 
     primary key (club_member_id, team_match_id),
-    foreign key (club_member_id) references club_member(id)
+    foreign key (club_member_id) references T_CLUB_MEMBER(id)
 	ON DELETE CASCADE,
-    foreign key (team_match_id) references team_match (id)
+    foreign key (team_match_id) references T_TEAM_MATCH (id)
 	ON DELETE CASCADE
 );
 
-CREATE TABLE article
+CREATE TABLE T_ARTICLE
 (
     id			serial,
     location		smallint	not null default 1,
@@ -234,14 +235,14 @@ CREATE TABLE article
     category_id		integer,
 
     primary key (id),
-    foreign key (club_team_id) references club_team (id)
+    foreign key (club_team_id) references T_CLUB_TEAM (id)
         ON DELETE CASCADE,
-    foreign key (category_id) references category (id)
+    foreign key (category_id) references T_CATEGORY (id)
         ON DELETE CASCADE,
     check (((owner_type = 1) AND category_id is not null) OR ((owner_type = 2) AND club_team_id is not null) OR (owner_type <> 1 AND owner_type <> 2))
 );
 
-CREATE TABLE user_data
+CREATE TABLE T_USER
 (
     id			serial,
     name		varchar(100)	not null,
@@ -250,14 +251,14 @@ CREATE TABLE user_data
     club_member_id	integer,
 
     primary key (id),
-    foreign key ( club_member_id ) references club_member ( id )
+    foreign key ( club_member_id ) references T_CLUB_MEMBER ( id )
         ON DELETE CASCADE,
     unique (name),
     unique (id, club_member_id)
 
 );
 
-CREATE TABLE participant_of_match
+CREATE TABLE T_PARTICIPANT_OF_MATCH
 (
     points		smallint	not null default 0,
     yellow_cards	smallint	not null default 0,
@@ -266,22 +267,22 @@ CREATE TABLE participant_of_match
     team_match_id	integer		not null,
 
     primary key (club_member_id, team_match_id),
-    foreign key ( club_member_id ) references club_member ( id )
+    foreign key ( club_member_id ) references T_CLUB_MEMBER ( id )
         ON DELETE CASCADE,
-    foreign key ( team_match_id ) references team_match ( id )
+    foreign key ( team_match_id ) references T_TEAM_MATCH ( id )
         ON DELETE CASCADE
 );
 
-CREATE TABLE participant_of_training
+CREATE TABLE T_PARTICIPANT_OF_TRAINING
 (
     club_member_id	integer		not null,
     team_training_id	integer		not null,
 
     primary key (club_member_id, team_training_id),
-    foreign key ( club_member_id ) references club_member ( id )
+    foreign key ( club_member_id ) references T_CLUB_MEMBER ( id )
         ON DELETE CASCADE,
 
-    foreign key ( team_training_id ) references team_training ( id )
+    foreign key ( team_training_id ) references T_TEAM_TRAINING ( id )
         ON DELETE CASCADE
 );
 
@@ -297,7 +298,7 @@ SELECT  cm.id club_member_id,
         cm.city city,
         cm.code code,
         cm.photo photo
-FROM    team_member tm
-	JOIN club_team t ON tm.club_team_id = t.id
-	JOIN club_member cm ON tm.club_member_id = cm.id
+FROM    T_TEAM_MEMBER tm
+	JOIN T_CLUB_TEAM t ON tm.club_team_id = t.id
+	JOIN T_CLUB_MEMBER cm ON tm.club_member_id = cm.id
 ;
