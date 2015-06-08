@@ -436,6 +436,20 @@ insert into article (location, priority, caption, summary, content, creation_dat
 	null
 	);
 
+-- CLUB RIVAL
+insert into club_rival (name, web, gps, street, city, code, icon) values
+	('Viktoria Plzeň', 'http://www.fcviktoria.cz/', '49°45''0.063"N, 13°23''7.541"E', 'Štruncovy sady', 'Plzeň', '3', null),
+	('Zbrojovka Brno', null, null, null, 'Brno', null, null),
+	('Sparta Praha', 'http://www.sparta.cz/', null, 'Milady Horákové', 'Praha', '1066/98', null),
+	('Vysočina Jihlava', 'http://www.fcvysocina.cz/', null, 'Jiráskova', 'Jihlava', '2603/69', null),
+	('Baumit Jablonec', 'http://www.fkjablonec.cz/', null, null, 'Jablonec', null, null),
+	('1. FK Mladá Boleslav', null, null, null, null, null, null),
+	('Dukla Praha', null, null, null, null, null, null),
+	('Slavia Praha', null, null, null, null, null, null),
+	('FC Hradec Králové', 'http://www.fchk.cz/', null, 'Hradec Králové', 'Úprkova', '473', null),
+	('Slovan Liberec', null, null, null, 'Liberec', null, null);
+
+
 ----------------------------------------------------------------------
 -- Location
 ---- 1 aktuality
