@@ -11,7 +11,7 @@ import com.clubeek.model.TeamTraining;
 public class RepTeamTraining implements Repository<TeamTraining> {
 
     /** Nazev tabulky */
-    public static final String tableName = "team_training";
+    public static final String tableName = "t_team_training";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {

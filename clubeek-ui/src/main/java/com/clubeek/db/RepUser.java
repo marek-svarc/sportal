@@ -12,7 +12,7 @@ import com.clubeek.model.User.Role;
 public class RepUser implements Repository<User> {
 
     /** Nazev tabulky */
-	public static final String tableName = "user_data";
+	public static final String tableName = "t_user";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {

@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class RepClubMember implements Repository<ClubMember> {
 
     /** Nazev tabulky */
-    public static final String tableName = "club_member";
+    public static final String tableName = "t_club_member";
 
     /** Nazev pohledu club_member - team_member - team */
     public static final String viewClubMemberByTeam = "club_member_by_team";

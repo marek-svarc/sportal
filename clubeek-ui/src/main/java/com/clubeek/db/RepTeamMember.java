@@ -20,7 +20,7 @@ import com.clubeek.model.TeamMember;
 public class RepTeamMember implements Repository<TeamMember> {
 
     /** Nazev tabulky */
-    public static final String tableName = "team_member";
+    public static final String tableName = "t_team_member";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {

@@ -11,7 +11,7 @@ public class RepClubTeam implements Repository<ClubTeam> {
 
     /* PUBLIC */
     /** Nazev tabulky */
-    public static final String tableName = "club_team";
+    public static final String tableName = "t_club_team";
 
     /** Identifikatory sloupcu tabulky */
     public enum TableColumn {

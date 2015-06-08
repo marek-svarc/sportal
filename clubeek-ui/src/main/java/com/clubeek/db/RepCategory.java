@@ -10,7 +10,7 @@ import com.clubeek.model.Category;
 public class RepCategory implements Repository<Category> {
 
     /** Nazev tabulky */
-    public static final String tableName = "category";
+    public static final String tableName = "t_category";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {

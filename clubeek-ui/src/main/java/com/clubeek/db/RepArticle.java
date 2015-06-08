@@ -13,7 +13,7 @@ import com.clubeek.model.Article.Owner;
 public class RepArticle implements Repository<Article> {
 
     /** Nazev tabulky */
-    public static final String tableName = "article";
+    public static final String tableName = "t_article";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {

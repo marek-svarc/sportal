@@ -9,7 +9,7 @@ import com.clubeek.model.ClubSettings;
 public class RepClubSettings implements Repository<ClubSettings> {
 
     /** Nazev tabulky */
-    public static final String tableName = "club_settings";
+    public static final String tableName = "t_club_setting";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {
@@ -36,7 +36,7 @@ public class RepClubSettings implements Repository<ClubSettings> {
     }
 
     /**
-     * Vraci nastaveni klubu z tabulky "club_settings"
+     * Vraci nastaveni klubu z tabulky "t_club_setting"
      *
      * @return data nastaveni klubu
      *

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class RepTeamMatch implements Repository<TeamMatch> {
 
     /** Nazev tabulky */
-    public static final String tableName = "team_match";
+    public static final String tableName = "t_team_match";
 
     /** Identifikatory sloupcu tabulky */
     public enum TableColumn {

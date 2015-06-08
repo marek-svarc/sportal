@@ -10,7 +10,7 @@ import com.clubeek.model.ClubRival;
 public class RepClubRival implements Repository<ClubRival> {
 
     /** Nazev tabulky */
-    public static final String tableName = "club_rival";
+    public static final String tableName = "t_club_rival";
 
     /** Identifikatory sloupcu tabulky */
     public static enum TableColumn {

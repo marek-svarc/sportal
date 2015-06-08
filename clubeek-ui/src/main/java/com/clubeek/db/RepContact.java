@@ -7,7 +7,7 @@ import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.Contact;
 
 /**
- * Trida poskytujici pristup do databazove tabulky "contact"
+ * Trida poskytujici pristup do databazove tabulky "t_contact"
  *
  * @author Marek Svarc
  *
@@ -15,7 +15,7 @@ import com.clubeek.model.Contact;
 public class RepContact implements Repository<Contact> {
 
     /** Nazev tabulky */
-    public static final String tableName = "contact";
+    public static final String tableName = "t_contact";
 
     /** Identifikatory sloupcu tabulky */
     public enum TableColumn {
