@@ -55,9 +55,12 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
                 ClubRival club = clubs.get(i);
 
                 // link to the club web pages
-                Link webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
-                webLink.setTargetName("_blank"); //$NON-NLS-1$
-
+                Link webLink = null;
+                if (club.getWeb() != null) {
+                	webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
+                    webLink.setTargetName("_blank"); //$NON-NLS-1$
+                }
+                
                 table.addRow(container, new Object[]{club.getName(), webLink}, i);
             }
             table.setDataContainer(container);
