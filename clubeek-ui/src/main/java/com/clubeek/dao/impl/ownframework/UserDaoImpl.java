@@ -40,4 +40,24 @@ public class UserDaoImpl implements UserDao {
                 RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
 	}
 
+    @Override
+    public void updateRow(User object) {
+        RepUser.update(object);
+    }
+
+    @Override
+    public void insertRow(User object) {
+        RepUser.insert(object);        
+    }
+
+    @Override
+    public void deleteRow(int id) {
+        RepUser.delete(id);        
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

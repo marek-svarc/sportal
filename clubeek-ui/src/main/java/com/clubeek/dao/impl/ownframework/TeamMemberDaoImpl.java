@@ -26,5 +26,26 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
         return RepTeamMember.getInstance();
     }
 
+    @Override
+    public void updateRow(TeamMember object) {
+        RepTeamMember.update(object);        
+    }
+
+    @Override
+    public void insertRow(TeamMember object) {
+        RepTeamMember.insert(object);        
+    }
+
+    @Override
+    public void deleteRow(int id) {
+        RepTeamMember.delete(id);        
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 
 }

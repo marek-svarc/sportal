@@ -3,9 +3,10 @@ package com.clubeek.dao;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.RepUser;
+import com.clubeek.model.Article;
 import com.clubeek.model.User;
 
-public interface UserDao {
+public interface UserDao extends Dao<User> {
 
 //	List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
 	public List<User> getAllAdministrators();

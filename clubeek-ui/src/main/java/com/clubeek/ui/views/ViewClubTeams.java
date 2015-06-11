@@ -91,21 +91,21 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
     // Operations
     public void addTeam() {
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"), new FrameTeam(), new ClubTeam(), clubTeamDao.getInstance(), navigation);
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"), new FrameTeam(), new ClubTeam(), clubTeamDao, navigation);
     }
 
     public void editTeam(int id) {
         if (id >= 0) {
-            ModalDialog.show(this, Mode.EDIT, Messages.getString("teamProperties"), new FrameTeam(), teams.get(id), clubTeamDao.getInstance(), navigation);
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("teamProperties"), new FrameTeam(), teams.get(id), clubTeamDao, navigation);
         }
     }
 
     public void deleteTeam(int id) {
-        table.deleteRow(teams.get(id).getId(), id, clubTeamDao.getInstance(), this, navigation, Columns.CAPTION, Columns.CATEGORY);
+        table.deleteRow(teams.get(id).getId(), id, clubTeamDao, this, navigation, Columns.CAPTION, Columns.CATEGORY);
     }
 
     public void exchangeTeams(int id, boolean moveUp) {
-        table.exchangeRows(teams, id, moveUp, clubTeamDao.getInstance(), this, navigation);
+        table.exchangeRows(teams, id, moveUp, clubTeamDao, this, navigation);
     }
 
     /* PRIVATE */

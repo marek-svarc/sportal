@@ -39,4 +39,25 @@ public class ClubMemberDaoImpl implements ClubMemberDao {
         RepClubMember.update(clubMember);        
     }
 
+    @Override
+    public void updateRow(ClubMember object) {
+        RepClubMember.update(object);        
+    }
+
+    @Override
+    public void insertRow(ClubMember object) {
+        RepClubMember.insert(object);        
+    }
+
+    @Override
+    public void deleteRow(int id) {
+        RepClubMember.delete(id);        
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

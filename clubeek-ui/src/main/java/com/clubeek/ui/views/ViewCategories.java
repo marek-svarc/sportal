@@ -93,22 +93,22 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     // operations
     public void addCategory() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("categoryProperties"), new FrameCategory(), new Category(), //$NON-NLS-1$
-                categoryDao.getInstance(), this.navigation);
+                categoryDao, this.navigation);
     }
 
     public void editCategory(int id) {
         Category category = categories.get(id);
         ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
-                categoryDao.getInstance(), this.navigation);
+                categoryDao, this.navigation);
     }
 
     public void deleteCategory(int id) {
         Category category = categories.get(id);
-        table.deleteRow(category.getId(), id, categoryDao.getInstance(), this, navigation, Columns.CAPTION);
+        table.deleteRow(category.getId(), id, categoryDao, this, navigation, Columns.CAPTION);
     }
 
     public void exchangeCategories(int id, boolean moveUp) {
-        table.exchangeRows(categories, id, moveUp, categoryDao.getInstance(), this, navigation);
+        table.exchangeRows(categories, id, moveUp, categoryDao, this, navigation);
     }
 
     /* PRIVATE */

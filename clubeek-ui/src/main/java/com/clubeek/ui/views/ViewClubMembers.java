@@ -99,7 +99,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     public void addMember() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newMember"), new FrameClubMember(), new ClubMember(), //$NON-NLS-1$
 //                RepClubMember.getInstance(), null);
-                clubMemberDao.getInstance(), null);
+                clubMemberDao, null);
     }
 
     public void editMember(int id) {
@@ -122,7 +122,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
 
     public void deleteMember(int id) {
 //        table.deleteRow(members.get(id).getId(), id, RepClubMember.getInstance(), this, null, 
-        table.deleteRow(members.get(id).getId(), id, clubMemberDao.getInstance(), this, null,
+        table.deleteRow(members.get(id).getId(), id, clubMemberDao, this, null,
                 Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 

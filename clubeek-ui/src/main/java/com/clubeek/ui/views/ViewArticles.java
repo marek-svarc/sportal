@@ -107,23 +107,23 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewArticles.9"), new FrameArticle(),
 //                new Article(), RepArticle.getInstance(), navigation);
                 // TODO vitfo, created on 11. 6. 2015 
-                new Article(), articleDao.getRepArticleInstance(), navigation);
+                new Article(), articleDao, navigation);
     }
 
     public void editArticle(int id) {
 //        Article article = RepArticle.selectById(id, null);
-        Article article = articleDao.getArticle(id);
+        Article article = articleDao.getArticleById(id);
         if (article != null) {
 //            ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
 //                    article, RepArticle.getInstance(), navigation);
             ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
-                    article, articleDao.getRepArticleInstance(), navigation);
+                    article, articleDao, navigation);
         }
     }
 
     public void deleteArticle(int id) {
 //        table.deleteRow(id, id, RepArticle.getInstance(), this, navigation, Columns.CAPTION);
-        table.deleteRow(id, id, articleDao.getRepArticleInstance(), this, navigation, Columns.CAPTION);
+        table.deleteRow(id, id, articleDao, this, navigation, Columns.CAPTION);
     }
 
     // Auxiliary

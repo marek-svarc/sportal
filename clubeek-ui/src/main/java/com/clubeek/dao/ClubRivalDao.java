@@ -3,9 +3,10 @@ package com.clubeek.dao;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
+import com.clubeek.model.Article;
 import com.clubeek.model.ClubRival;
 
-public interface ClubRivalDao {
+public interface ClubRivalDao extends Dao<ClubRival> {
 
     public List<ClubRival> getAllClubRivals();
     

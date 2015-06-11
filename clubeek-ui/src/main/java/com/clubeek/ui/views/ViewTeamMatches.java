@@ -1,16 +1,18 @@
 package com.clubeek.ui.views;
 
+import java.util.Date;
 import java.util.List;
 
-import com.clubeek.db.RepTeamMatch;
+import com.clubeek.dao.TeamMatchDao;
+import com.clubeek.dao.impl.ownframework.TeamMatchDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepTeamMatch;
 import com.clubeek.model.TeamMatch;
 import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeamMatch;
 import com.clubeek.util.DateTime;
@@ -20,12 +22,12 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
 
-import java.util.Date;
-
 @SuppressWarnings("serial")
 public class ViewTeamMatches extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
 	private SecurityService securityService = new SecurityServiceImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+	private TeamMatchDao teamMatchDao = new TeamMatchDaoImpl();
 
     public enum Columns {
 
@@ -102,20 +104,20 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
         data.setClubTeamId(teamId);
 
         ModalDialog.show(this, Mode.ADD_MULTI,
-                Messages.getString("match"), new FrameTeamMatch(), data, RepTeamMatch.getInstance(), null);
+                Messages.getString("match"), new FrameTeamMatch(), data, teamMatchDao, null);
     }
 
     public void editMatch(int id) {
         if (id >= 0) {
             TeamMatch game = games.get(id);
             ModalDialog.show(this, Mode.EDIT, Messages.getString("match"), new FrameTeamMatch(),
-                    game, RepTeamMatch.getInstance(), null);
+                    game, teamMatchDao, null);
         }
     }
 
     public void deleteMatch(int id) {
         TeamMatch teamMatch = games.get(id);
-        table.deleteRow(teamMatch.getId(), id, RepTeamMatch.getInstance(), this, null, Columns.MATCH, Columns.DATE_TIME);
+        table.deleteRow(teamMatch.getId(), id, teamMatchDao, this, null, Columns.MATCH, Columns.DATE_TIME);
     }
 
     /* PRIVATE */

@@ -94,17 +94,17 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
     public void addClub() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"), new FrameClubRival(),
-                new ClubRival(), clubRivalDao.getInstance(), null);
+                new ClubRival(), clubRivalDao, null);
     }
 
     public void editClub(int id) {
         ClubRival club = clubs.get(id);
         ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"), new FrameClubRival(), club,
-                clubRivalDao.getInstance(), null);
+                clubRivalDao, null);
     }
 
     public void deleteClub(int id) {
-        table.deleteRow(clubs.get(id).getId(), id, clubRivalDao.getInstance(), this, null, Columns.NAME);
+        table.deleteRow(clubs.get(id).getId(), id, clubRivalDao, this, null, Columns.NAME);
     }
 
     /* PRIVATE */

@@ -28,4 +28,25 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
         return RepClubTeam.getInstance();
     }
 
+    @Override
+    public void updateRow(ClubTeam object) {
+        RepClubTeam.update(object);
+    }
+
+    @Override
+    public void insertRow(ClubTeam object) {
+        RepClubTeam.insert(object);        
+    }
+
+    @Override
+    public void deleteRow(int id) {
+        RepClubTeam.delete(id);        
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

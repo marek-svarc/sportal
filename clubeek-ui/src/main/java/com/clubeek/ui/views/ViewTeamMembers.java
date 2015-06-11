@@ -163,7 +163,7 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
     private void deleteTeamMember(int id) {
         TeamMember teamMember = teamMembers.get(id);
-        table.deleteRow(teamMember.getId(), id, teamMemberDao.getInstance(), this, null, 
+        table.deleteRow(teamMember.getId(), id, teamMemberDao, this, null, 
                 Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 

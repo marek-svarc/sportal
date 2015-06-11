@@ -23,4 +23,25 @@ public class ClubRivalDaoImpl implements ClubRivalDao {
         return RepClubRival.getInstance();
     }
 
+    @Override
+    public void updateRow(ClubRival object) {
+        RepClubRival.update(object);        
+    }
+
+    @Override
+    public void insertRow(ClubRival object) {
+        RepClubRival.insert(object);        
+    }
+
+    @Override
+    public void deleteRow(int id) {
+        RepClubRival.delete(id);        
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

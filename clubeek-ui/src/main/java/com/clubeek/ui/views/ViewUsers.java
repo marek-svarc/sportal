@@ -101,7 +101,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newUser"), new FrameUser(),
 //                data, RepUser.getInstance(), null);
         		// TODO vitfo, created on 11. 6. 2015 
-        		data, userDao.getRepUserInstance(), null);
+        		data, userDao, null);
     }
 
     public void editUser(int id) {
@@ -109,14 +109,14 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             User user = users.get(id);
             ModalDialog.show(this, Mode.EDIT, String.format("%s '%s'", Messages.getString("userProperties"),
 //                    user.getName()), new FrameUser(), user, RepUser.getInstance(), null);
-            		user.getName()), new FrameUser(), user, userDao.getRepUserInstance(), null);
+            		user.getName()), new FrameUser(), user, userDao, null);
         }
     }
 
     public void deleteUser(int id) {
         User user = users.get(id);
 //        table.deleteRow(user.getId(), id, RepUser.getInstance(), this, null, Columns.USER_NAME, Columns.TEAM_MEMBER);
-        table.deleteRow(user.getId(), id, userDao.getRepUserInstance(), this, null, Columns.USER_NAME, Columns.TEAM_MEMBER);
+        table.deleteRow(user.getId(), id, userDao, this, null, Columns.USER_NAME, Columns.TEAM_MEMBER);
     }
 
     /* PRIVATE */

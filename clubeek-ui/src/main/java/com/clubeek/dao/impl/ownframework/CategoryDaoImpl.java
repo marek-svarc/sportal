@@ -29,4 +29,24 @@ public class CategoryDaoImpl implements CategoryDao {
         return RepCategory.getInstance();
     }
 
+    @Override
+    public void updateRow(Category object) {
+        RepCategory.update(object);        
+    }
+
+    @Override
+    public void insertRow(Category object) {
+        RepCategory.insert(object);        
+    }
+
+    @Override
+    public void deleteRow(int id) {
+        RepCategory.delete(id);        
+    }
+
+    @Override
+    public void exchangeRows(int idA, int idB) {
+        RepCategory.exchange(idA, idB);        
+    }
+
 }

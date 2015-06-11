@@ -1,6 +1,6 @@
 package com.clubeek.ui.views;
 
-import com.clubeek.db.RepTeamMatch;
+import com.clubeek.dao.impl.ownframework.rep.RepTeamMatch;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.TeamMatchCard;
 import com.vaadin.navigator.View;
