@@ -1,0 +1,17 @@
+postgres_complete.sql
+---------------------
+Contains complete script for droping tables, creating tables and filling tables with test data.
+It also contains scripts for inserting pictures to the database. The pictures must be in postgres data directory.
+To find out where is data directory, run the following statement:
+show data_directory;
+Place folder with pictures to this directory for picture loading to work.
+
+
+postgres_create_tables.sql - DEPRECATED
+---------------------------------------
+Script for dropping and creating tables. THE SCRIPT MIGHT NOT BE UP TO DATE! If you want to create tables, use the part of postgres_complete.sql that creates tables.
+
+
+postgres_test_data.sql - DEPRECATED
+-----------------------------------
+Script for filling tables with test data. THE SCRIPT MIGHT NOT BE UP TO DATE! The best way is to use postgres_complete.sql to drop, create and fill tables or if you want just to fill tables, use the part of postgres_complete.sql that insets data.
