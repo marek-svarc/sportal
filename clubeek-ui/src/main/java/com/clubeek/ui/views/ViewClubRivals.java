@@ -2,7 +2,9 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepClubRival;
+import com.clubeek.dao.ClubRivalDao;
+import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
 import com.clubeek.model.ClubRival;
 import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
@@ -24,6 +26,8 @@ import com.vaadin.ui.VerticalLayout;
 public class ViewClubRivals extends VerticalLayout implements View, ActionTable.OnActionListener {
     // TODO vitfo, created on 11. 6. 2015
     private SecurityService securityService = new SecurityServiceImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubRivalDao clubRivalDao = new ClubRivalDaoImpl();
 
     public enum Columns {
 
@@ -49,7 +53,8 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
         securityService.authorize(Role.SPORT_MANAGER);
 
-        clubs = RepClubRival.selectAll(null);
+//        clubs = RepClubRival.selectAll(null);
+        clubs = clubRivalDao.getAllClubRivals();
 
         table.removeAllRows();
         if (clubs != null) {
@@ -89,17 +94,17 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
     public void addClub() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"), new FrameClubRival(),
-                new ClubRival(), RepClubRival.getInstance(), null);
+                new ClubRival(), clubRivalDao.getInstance(), null);
     }
 
     public void editClub(int id) {
         ClubRival club = clubs.get(id);
         ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"), new FrameClubRival(), club,
-                RepClubRival.getInstance(), null);
+                clubRivalDao.getInstance(), null);
     }
 
     public void deleteClub(int id) {
-        table.deleteRow(clubs.get(id).getId(), id, RepClubRival.getInstance(), this, null, Columns.NAME);
+        table.deleteRow(clubs.get(id).getId(), id, clubRivalDao.getInstance(), this, null, Columns.NAME);
     }
 
     /* PRIVATE */

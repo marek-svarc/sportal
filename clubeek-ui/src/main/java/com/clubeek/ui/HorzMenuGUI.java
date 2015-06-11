@@ -5,9 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubSettingDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepCategory;
-import com.clubeek.db.RepClubSettings;
+import com.clubeek.dao.impl.ownframework.rep.RepClubSettings;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubSettings;
@@ -64,6 +66,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 	private SecurityService securityService = new SecurityServiceImpl();
 	// TODO vitfo, created on 11. 6. 2015 
     private CategoryDao categoryDao = new CategoryDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubSettingDao clubSettingDao = new ClubSettingsDaoImpl();
 
 	/* PRIVATE */
 
@@ -221,7 +225,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		mUI = ui;
 
 		ClubSettings settings = null;
-                settings = RepClubSettings.select(1, null);
+//                settings = RepClubSettings.select(1, null);
+		settings = clubSettingDao.getClubSettingById(1);
 
 		// Zakladni rozvrzeni stranky
 

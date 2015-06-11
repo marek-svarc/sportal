@@ -4,8 +4,10 @@ import java.sql.ResultSet;
 import java.util.Date;
 import java.util.List;
 
+import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.TeamMatch;
+
 import java.sql.SQLException;
 
 public class RepTeamMatch implements Repository<TeamMatch> {
