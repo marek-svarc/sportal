@@ -2,10 +2,12 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
+import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.UserDao;
+import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
 import com.clubeek.dao.impl.ownframework.rep.RepUser;
-import com.clubeek.db.RepClubMember;
 import com.clubeek.model.User;
 import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
@@ -26,6 +28,8 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 	private SecurityService securityService = new SecurityServiceImpl();
 	// TODO vitfo, created on 11. 6. 2015 
 	private UserDao userDao = new UserDaoImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
 
     public enum Columns {
 
@@ -56,9 +60,10 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 //            RepUser.TableColumn.PERMISSIONS, RepUser.TableColumn.CLUB_MEMBER_ID});
     	users = userDao.getAllUsers();
         for (User user : users) {
-            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), new RepClubMember.TableColumn[]{
-                RepClubMember.TableColumn.ID, RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME,
-                RepClubMember.TableColumn.BIRTHDATE}));
+//            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), new RepClubMember.TableColumn[]{
+//                RepClubMember.TableColumn.ID, RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME,
+//                RepClubMember.TableColumn.BIRTHDATE}));
+            user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
         }
 
         // add table rows

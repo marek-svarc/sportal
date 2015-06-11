@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.clubeek.db.RepCategory;
+import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepCategory;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
@@ -30,6 +32,8 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 @Theme("baseTheme")
 public class FrameArticle extends VerticalLayout implements ModalInput<Article> {
+    // TODO vitfo, created on 11. 6. 2015 
+    private CategoryDao categoryDao = new CategoryDaoImpl();
 
 	/* PRIVATE */
 
@@ -83,7 +87,8 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 
 		List<Category> categories = null;
 		List<ClubTeam> teams = null;
-                categories = RepCategory.selectAll(null);
+//                categories = RepCategory.selectAll(null);
+		        categories = categoryDao.getAllCategories();
                 teams = RepClubTeam.select(false, null);
 
 		// sestaveni seznamu moznych vlastniku clanku

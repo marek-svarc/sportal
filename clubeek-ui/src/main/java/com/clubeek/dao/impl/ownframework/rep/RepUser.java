@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.db.Admin;
-import com.clubeek.db.RepClubMember;
 import com.clubeek.db.RepTeamMember;
 import com.clubeek.db.Repository;
 import com.clubeek.db.Admin.ColumnData;

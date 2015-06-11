@@ -3,23 +3,22 @@ package com.clubeek.ui.views;
 import java.util.List;
 
 import com.clubeek.dao.ArticleDao;
+import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepArticle;
-import com.clubeek.db.RepCategory;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.ModalDialog.Mode;
-import com.clubeek.util.DateTime.DateStyle;
-import com.clubeek.util.DateTime;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameArticle;
+import com.clubeek.util.DateTime;
+import com.clubeek.util.DateTime.DateStyle;
 import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -31,6 +30,8 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
 	private SecurityService securityService = new SecurityServiceImpl();
 	// TODO vitfo, created on 11. 6. 2015 
     private ArticleDao articleDao = new ArticleDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private CategoryDao categoryDao = new CategoryDaoImpl();
 
     /* PUBLIC */
     public enum Columns {
@@ -123,7 +124,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
 
     // Auxiliary
     /** Generuje textovy popis umisteni clanku na strankach */
-    public static String GetArticleLocationAsString(Article article) {
+    public String GetArticleLocationAsString(Article article) {
         String locationStr = article.getLocation().toString();
 
         switch (article.getOwner()) {
@@ -134,8 +135,9 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
                 locationStr += ", " + Messages.getString("ViewArticles.3"); //$NON-NLS-1$ //$NON-NLS-2$
                 break;
             case CATEGORY:
-                Category category = RepCategory.selectById(article.getCategoryId(),
-                        new RepCategory.TableColumn[]{RepCategory.TableColumn.DESCRIPTION});
+//                Category category = RepCategory.selectById(article.getCategoryId(),
+//                        new RepCategory.TableColumn[]{RepCategory.TableColumn.DESCRIPTION});
+                Category category = categoryDao.getCategory(article.getCategoryId());
                 if (category != null) {
                     locationStr += ", " + category.getDescription(); //$NON-NLS-1$
                 }

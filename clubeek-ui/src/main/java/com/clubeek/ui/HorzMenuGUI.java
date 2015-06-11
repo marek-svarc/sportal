@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.clubeek.db.RepCategory;
+import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepCategory;
 import com.clubeek.db.RepClubSettings;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.model.Category;
@@ -60,6 +62,8 @@ import com.vaadin.ui.themes.ValoTheme;
 public class HorzMenuGUI extends VerticalLayout implements Navigation {
 	// TODO vitfo, created on 11. 6. 2015 
 	private SecurityService securityService = new SecurityServiceImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+    private CategoryDao categoryDao = new CategoryDaoImpl();
 
 	/* PRIVATE */
 
@@ -430,7 +434,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 		// odstraneni puvodnich prvku menu
 		mbMainHorz.removeItems();
 
-                List<Category> categoryList = RepCategory.select(true, null);
+//                List<Category> categoryList = RepCategory.select(true, null);
+		        List<Category> categoryList = categoryDao.getActiveCategories();
                 List<ClubTeam> teamList = RepClubTeam.select(true, null);
                 addMenuCommand(null, "Klub", views, HorzMenuNavigationViews.NEWS, null);
                 if (teamList != null)
