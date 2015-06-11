@@ -1,7 +1,7 @@
 package com.clubeek.service.impl;
 
 
-import com.clubeek.db.RepUser;
+import com.clubeek.dao.impl.ownframework.rep.RepUser;
 import com.clubeek.model.User;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.views.Navigation;

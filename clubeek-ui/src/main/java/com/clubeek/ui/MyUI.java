@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebServlet;
 
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
-import com.clubeek.db.RepUser;
+import com.clubeek.dao.impl.ownframework.rep.RepUser;
 import com.clubeek.model.User;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.Navigation.ViewId;

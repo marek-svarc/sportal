@@ -7,7 +7,9 @@ import java.util.List;
 import org.vaadin.risto.stylecalendar.DateOptionsGenerator;
 import org.vaadin.risto.stylecalendar.StyleCalendar;
 
-import com.clubeek.db.RepArticle;
+import com.clubeek.dao.ArticleDao;
+import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepArticle;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.db.RepTeamMatch;
 import com.clubeek.db.RepTeamTraining;
@@ -40,6 +42,8 @@ import com.vaadin.ui.VerticalLayout;
  */
 @SuppressWarnings("serial")
 public class ViewNews extends VerticalLayout implements View {
+    // TODO vitfo, created on 11. 6. 2015 
+    private ArticleDao articleDao = new ArticleDaoImpl();
 
     /* PRIVATE */
     private Navigation navigation;
@@ -175,9 +179,11 @@ public class ViewNews extends VerticalLayout implements View {
 
     private List<Article> getArticles(ClubTeam team, Location location) {
         if (team != null) {
-            return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
+//            return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
+            return articleDao.selectArticles(team.getId(), team.getCategoryId(), location);
         } else {
-            return RepArticle.select(0, 0, location, null);
+//            return RepArticle.select(0, 0, location, null);
+            return articleDao.selectArticles(0, 0, location);
         }
     }
 

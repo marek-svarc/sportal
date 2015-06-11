@@ -3,7 +3,7 @@ package com.clubeek.dao.impl.ownframework;
 import java.util.List;
 
 import com.clubeek.dao.UserDao;
-import com.clubeek.db.RepUser;
+import com.clubeek.dao.impl.ownframework.rep.RepUser;
 import com.clubeek.model.User;
 
 public class UserDaoImpl implements UserDao {

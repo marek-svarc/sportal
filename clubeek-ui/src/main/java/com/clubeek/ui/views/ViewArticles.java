@@ -2,7 +2,9 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepArticle;
+import com.clubeek.dao.ArticleDao;
+import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepArticle;
 import com.clubeek.db.RepCategory;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.model.Article;
@@ -27,6 +29,8 @@ import com.vaadin.ui.VerticalLayout;
 public class ViewArticles extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
 	private SecurityService securityService = new SecurityServiceImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+    private ArticleDao articleDao = new ArticleDaoImpl();
 
     /* PUBLIC */
     public enum Columns {
@@ -59,7 +63,8 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     public void enter(ViewChangeEvent event) {
     	securityService.authorize(Role.EDITOR);
 
-        List<Article> articles = RepArticle.selectAll(null);
+//        List<Article> articles = RepArticle.selectAll(null);
+    	List<Article> articles = articleDao.getAllArticles();
 
         table.removeAllRows();
         if (articles != null) {
@@ -95,19 +100,25 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // operations
     public void addArticle() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewArticles.9"), new FrameArticle(),
-                new Article(), RepArticle.getInstance(), navigation);
+//                new Article(), RepArticle.getInstance(), navigation);
+                // TODO vitfo, created on 11. 6. 2015 
+                new Article(), articleDao.getRepArticleInstance(), navigation);
     }
 
     public void editArticle(int id) {
-        Article article = RepArticle.selectById(id, null);
+//        Article article = RepArticle.selectById(id, null);
+        Article article = articleDao.getArticle(id);
         if (article != null) {
+//            ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
+//                    article, RepArticle.getInstance(), navigation);
             ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
-                    article, RepArticle.getInstance(), navigation);
+                    article, articleDao.getRepArticleInstance(), navigation);
         }
     }
 
     public void deleteArticle(int id) {
-        table.deleteRow(id, id, RepArticle.getInstance(), this, navigation, Columns.CAPTION);
+//        table.deleteRow(id, id, RepArticle.getInstance(), this, navigation, Columns.CAPTION);
+        table.deleteRow(id, id, articleDao.getRepArticleInstance(), this, navigation, Columns.CAPTION);
     }
 
     // Auxiliary
