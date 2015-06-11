@@ -9,8 +9,10 @@ import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.util.DateTime.DateStyle;
 import com.clubeek.util.DateTime;
@@ -23,6 +25,8 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class ViewArticles extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
 
     /* PUBLIC */
     public enum Columns {
@@ -53,7 +57,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
-        Security.authorize(Role.EDITOR);
+    	securityService.authorize(Role.EDITOR);
 
         List<Article> articles = RepArticle.selectAll(null);
 

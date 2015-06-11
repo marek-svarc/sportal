@@ -8,8 +8,10 @@ import com.clubeek.db.RepContact;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -23,6 +25,8 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public final class ViewClubMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
 
     public enum Columns {
 
@@ -66,7 +70,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(Role.CLUB_MANAGER);
 
         members = RepClubMember.selectAll(null);
 

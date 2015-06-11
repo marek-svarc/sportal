@@ -1,8 +1,9 @@
-package com.clubeek.ui;
+package com.clubeek.service.impl;
 
 
 import com.clubeek.db.RepUser;
 import com.clubeek.model.User;
+import com.clubeek.ui.Messages;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.Navigation.ViewId;
 import com.vaadin.server.VaadinSession;

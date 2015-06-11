@@ -3,6 +3,8 @@ package com.clubeek.ui.frames;
 import java.util.Arrays;
 import java.util.List;
 
+import com.clubeek.dao.UserDao;
+import com.clubeek.dao.impl.ownframework.UserDaoImpl;
 import com.clubeek.db.RepClubMember;
 import com.clubeek.db.RepUser;
 import com.clubeek.model.ClubMember;
@@ -24,6 +26,8 @@ import com.vaadin.ui.themes.Runo;
 
 @SuppressWarnings("serial")
 public class FrameUser extends VerticalLayout implements ModalInput<User> {
+	// TODO vitfo, created on 11. 6. 2015 
+	private UserDao userDao = new UserDaoImpl();
 
 	public FrameUser() {
 		this.setWidth(300, Unit.PIXELS);
@@ -127,7 +131,8 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 
 	/** testuje zda zadane uzivatelske jmeno jiz neexistuje */
 	private void testUserName() {
-            if (RepUser.selectByName(tfName.getValue(), false, null) != null)
+//            if (RepUser.selectByName(tfName.getValue(), false, null) != null)
+			if (userDao.getUserByName(tfName.getValue(), false) != null)
                 throw new Validator.EmptyValueException(String.format("Uživatel %s již existuje.", tfName.getValue()));
 	}
 
@@ -135,8 +140,9 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 	private void testClubMember() {
 		if (nsClubMember.getValue() != null) {
 			User user = null;
-                        user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
-                            RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
+//                        user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
+//                            RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
+						user = userDao.getUserByClubMemberId((int) nsClubMember.getValue());
                         if (user != null){
                             user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
                             throw new Validator.EmptyValueException(String.format("Člen klubu '%s' již má přiřazen účet.", user

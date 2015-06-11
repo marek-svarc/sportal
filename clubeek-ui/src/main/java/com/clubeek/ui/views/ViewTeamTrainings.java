@@ -5,8 +5,10 @@ import java.util.List;
 import com.clubeek.db.RepTeamTraining;
 import com.clubeek.model.TeamTraining;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -20,10 +22,13 @@ import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
+
 import java.util.Date;
 
 @SuppressWarnings("serial")
 public final class ViewTeamTrainings extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
 
     public enum Columns {
 
@@ -64,7 +69,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.SPORT_MANAGER);
+    	securityService.authorize(Role.SPORT_MANAGER);
 
         table.removeAllRows();
 

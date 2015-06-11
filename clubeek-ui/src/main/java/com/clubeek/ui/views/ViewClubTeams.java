@@ -5,8 +5,10 @@ import java.util.List;
 import com.clubeek.db.RepClubTeam;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -18,6 +20,8 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class ViewClubTeams extends VerticalLayout implements View, ActionTable.OnActionListener {
+    // TODO vitfo, created on 11. 6. 2015
+    private SecurityService securityService = new SecurityServiceImpl();
 
     public enum Columns {
 
@@ -29,10 +33,8 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
         this.setCaption(Messages.getString("teams")); //$NON-NLS-1$
         this.navigation = navigation;
 
-        ActionTable.UserColumnInfo[] columns = {
-            new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
-            new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category"))
-        };
+        ActionTable.UserColumnInfo[] columns = { new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
+                new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category")) };
 
         table = new ActionTable(ActionTable.Action.getMaximalSet(false, true), columns, this);
         table.addToOwner(this);
@@ -42,7 +44,7 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.SPORT_MANAGER);
+        securityService.authorize(Role.SPORT_MANAGER);
 
         teams = RepClubTeam.select(false, null);
 
@@ -51,8 +53,9 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
             Container container = table.createDataContainer();
             for (int i = 0; i < teams.size(); ++i) {
                 ClubTeam team = teams.get(i);
-                table.addRow(container, new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()),
-                    team.getName()), team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
+                table.addRow(container,
+                        new Object[] { String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
+                                team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned") }, i);
             }
             table.setDataContainer(container);
         }
@@ -60,8 +63,7 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
     // interface ActionTable.OnActionListener
     @Override
-    public boolean doAction(ActionTable.Action action, Object data
-    ) {
+    public boolean doAction(ActionTable.Action action, Object data) {
         switch (action) {
             case SINGLE_ADD:
                 addTeam();
@@ -84,14 +86,12 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
     // Operations
     public void addTeam() {
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"),
-                new FrameTeam(), new ClubTeam(), RepClubTeam.getInstance(), navigation);
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"), new FrameTeam(), new ClubTeam(), RepClubTeam.getInstance(), navigation);
     }
 
     public void editTeam(int id) {
         if (id >= 0) {
-            ModalDialog.show(this, Mode.EDIT, Messages.getString("teamProperties"), new FrameTeam(),
-                    teams.get(id), RepClubTeam.getInstance(), navigation);
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("teamProperties"), new FrameTeam(), teams.get(id), RepClubTeam.getInstance(), navigation);
         }
     }
 

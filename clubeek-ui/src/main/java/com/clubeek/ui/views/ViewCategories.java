@@ -5,8 +5,10 @@ import java.util.List;
 import com.clubeek.db.RepCategory;
 import com.clubeek.model.Category;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -18,6 +20,8 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class ViewCategories extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
 
     /* PUBLIC */
     public enum Columns {
@@ -42,7 +46,7 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(Role.CLUB_MANAGER);
 
         categories = RepCategory.selectAll(null);
 
