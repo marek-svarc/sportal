@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.TeamMatch;
 

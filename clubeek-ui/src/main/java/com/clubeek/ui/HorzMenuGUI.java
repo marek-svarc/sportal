@@ -6,11 +6,13 @@ import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubSettingDao;
+import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepCategory;
 import com.clubeek.dao.impl.ownframework.rep.RepClubSettings;
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubSettings;
 import com.clubeek.model.ClubTeam;
@@ -68,6 +70,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
     private CategoryDao categoryDao = new CategoryDaoImpl();
     // TODO vitfo, created on 11. 6. 2015 
     private ClubSettingDao clubSettingDao = new ClubSettingsDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
 	/* PRIVATE */
 
@@ -441,7 +445,8 @@ public class HorzMenuGUI extends VerticalLayout implements Navigation {
 
 //                List<Category> categoryList = RepCategory.select(true, null);
 		        List<Category> categoryList = categoryDao.getActiveCategories();
-                List<ClubTeam> teamList = RepClubTeam.select(true, null);
+//                List<ClubTeam> teamList = RepClubTeam.select(true, null);
+		        List<ClubTeam> teamList = clubTeamDao.getActiveClubTeams();
                 addMenuCommand(null, "Klub", views, HorzMenuNavigationViews.NEWS, null);
                 if (teamList != null)
                     for (ClubTeam team : teamList)

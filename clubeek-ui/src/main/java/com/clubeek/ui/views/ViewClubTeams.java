@@ -2,7 +2,9 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.ClubTeamDao;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
@@ -22,6 +24,8 @@ import com.vaadin.ui.VerticalLayout;
 public class ViewClubTeams extends VerticalLayout implements View, ActionTable.OnActionListener {
     // TODO vitfo, created on 11. 6. 2015
     private SecurityService securityService = new SecurityServiceImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
     public enum Columns {
 
@@ -46,7 +50,8 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
         securityService.authorize(Role.SPORT_MANAGER);
 
-        teams = RepClubTeam.select(false, null);
+//        teams = RepClubTeam.select(false, null);
+        teams = clubTeamDao.getAllClubTeams();
 
         table.removeAllRows();
         if (teams != null) {
@@ -86,21 +91,21 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
     // Operations
     public void addTeam() {
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"), new FrameTeam(), new ClubTeam(), RepClubTeam.getInstance(), navigation);
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newTeam"), new FrameTeam(), new ClubTeam(), clubTeamDao.getInstance(), navigation);
     }
 
     public void editTeam(int id) {
         if (id >= 0) {
-            ModalDialog.show(this, Mode.EDIT, Messages.getString("teamProperties"), new FrameTeam(), teams.get(id), RepClubTeam.getInstance(), navigation);
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("teamProperties"), new FrameTeam(), teams.get(id), clubTeamDao.getInstance(), navigation);
         }
     }
 
     public void deleteTeam(int id) {
-        table.deleteRow(teams.get(id).getId(), id, RepClubTeam.getInstance(), this, navigation, Columns.CAPTION, Columns.CATEGORY);
+        table.deleteRow(teams.get(id).getId(), id, clubTeamDao.getInstance(), this, navigation, Columns.CAPTION, Columns.CATEGORY);
     }
 
     public void exchangeTeams(int id, boolean moveUp) {
-        table.exchangeRows(teams, id, moveUp, RepClubTeam.getInstance(), this, navigation);
+        table.exchangeRows(teams, id, moveUp, clubTeamDao.getInstance(), this, navigation);
     }
 
     /* PRIVATE */

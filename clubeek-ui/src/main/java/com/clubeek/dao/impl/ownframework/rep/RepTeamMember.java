@@ -1,10 +1,12 @@
-package com.clubeek.db;
+package com.clubeek.dao.impl.ownframework.rep;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.clubeek.db.Admin;
+import com.clubeek.db.Repository;
 import com.clubeek.db.Admin.ColumnData;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.ModelTools;

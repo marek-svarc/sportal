@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepCategory;
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
@@ -34,6 +36,8 @@ import com.vaadin.ui.VerticalLayout;
 public class FrameArticle extends VerticalLayout implements ModalInput<Article> {
     // TODO vitfo, created on 11. 6. 2015 
     private CategoryDao categoryDao = new CategoryDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
 	/* PRIVATE */
 
@@ -89,7 +93,9 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 		List<ClubTeam> teams = null;
 //                categories = RepCategory.selectAll(null);
 		        categories = categoryDao.getAllCategories();
-                teams = RepClubTeam.select(false, null);
+//                teams = RepClubTeam.select(false, null);
+                // TODO vitfo, created on 11. 6. 2015 - proč neaktivní?
+		        teams = clubTeamDao.getAllClubTeams();
 
 		// sestaveni seznamu moznych vlastniku clanku
 

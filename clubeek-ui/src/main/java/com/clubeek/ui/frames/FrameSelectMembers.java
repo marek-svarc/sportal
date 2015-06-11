@@ -6,9 +6,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.clubeek.dao.ClubMemberDao;
+import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.ModelTools;
@@ -30,6 +32,8 @@ import com.vaadin.ui.themes.Runo;
 public class FrameSelectMembers extends VerticalLayout implements ModalInput<List<ClubMember>> {
     // TODO vitfo, created on 11. 6. 2015 
     private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
 	public static enum FilterType {
 		NONE(Messages.getString("doNotFilter")), TEAM(Messages.getString("filterByTeam")), YEAR_OF_BIRTH(Messages.getString("filterByBirthDate")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -72,7 +76,8 @@ public class FrameSelectMembers extends VerticalLayout implements ModalInput<Lis
 				// sestaveni seznamu tymu pro filtrovani dle prirazeni k tymu
 				case TEAM:
 					nsFilterParams.setVisible(true);
-                                        List<ClubTeam> teams = RepClubTeam.select(true, null);
+//                                        List<ClubTeam> teams = RepClubTeam.select(true, null);
+					                    List<ClubTeam> teams = clubTeamDao.getActiveClubTeams();
                                         Tools.Components.initNativeSelect(nsFilterParams, teams);
                                         if (teams.size() > 0)
                                             nsFilterParams.setValue(teams.get(0));

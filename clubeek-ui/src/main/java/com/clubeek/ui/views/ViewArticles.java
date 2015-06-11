@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
@@ -32,6 +34,8 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     private ArticleDao articleDao = new ArticleDaoImpl();
     // TODO vitfo, created on 11. 6. 2015 
     private CategoryDao categoryDao = new CategoryDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
     /* PUBLIC */
     public enum Columns {
@@ -143,8 +147,9 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
                 }
                 break;
             case TEAM:
-                ClubTeam clubTeam = RepClubTeam.selectById(article.getClubTeamId(),
-                        new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.NAME});
+//                ClubTeam clubTeam = RepClubTeam.selectById(article.getClubTeamId(),
+//                        new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.NAME});
+                ClubTeam clubTeam = clubTeamDao.getClubTeamById(article.getClubTeamId());
                 if (clubTeam != null) {
                     locationStr += ", " + clubTeam.getName(); //$NON-NLS-1$
                 }

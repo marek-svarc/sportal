@@ -3,8 +3,12 @@ package com.clubeek.ui.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.clubeek.db.RepClubTeam;
-import com.clubeek.db.RepTeamMember;
+import com.clubeek.dao.ClubTeamDao;
+import com.clubeek.dao.TeamMemberDao;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
+import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
+import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.ModelTools;
@@ -27,6 +31,10 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class ViewTeamMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private TeamMemberDao teamMemberDao = new TeamMemberDaoImpl();
 
     public enum Columns {
 
@@ -71,7 +79,8 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
         List<ClubTeam> teams = null;
         ClubTeam selectedTeam = getSelectedTeam();
 
-        teams = RepClubTeam.select(true, null);
+//        teams = RepClubTeam.select(true, null);
+        teams = clubTeamDao.getActiveClubTeams();
         Tools.Components.initNativeSelect(nsTeams, teams);
 
         // vyber defaultniho aktivniho tymu
@@ -111,7 +120,8 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
         ClubTeam selectedTeam = getSelectedTeam();
         if (selectedTeam != null) {
-            teamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
+//            teamMembers = RepTeamMember.selectByTeamId(selectedTeam.getId(), null);
+            teamMembers = teamMemberDao.getTeamMembersByTeamId(selectedTeam.getId());
             if (teamMembers != null) {
                 Container container = table.createDataContainer();
                 for (int i = 0; i < teamMembers.size(); ++i) {
@@ -141,8 +151,9 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
                         @Override
                         public void buttonClick(ClickEvent event) {
-                            RepTeamMember.update(teamMembers,
-                                    RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
+//                            RepTeamMember.update(teamMembers,
+//                                    RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
+                            teamMemberDao.update(selectedTeam.getId(), teamMembers, clubMembers);
                             updateTeamMembersTable();
                         }
                     });
@@ -152,7 +163,7 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
     private void deleteTeamMember(int id) {
         TeamMember teamMember = teamMembers.get(id);
-        table.deleteRow(teamMember.getId(), id, RepTeamMember.getInstance(), this, null, 
+        table.deleteRow(teamMember.getId(), id, teamMemberDao.getInstance(), this, null, 
                 Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 
