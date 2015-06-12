@@ -2,8 +2,6 @@ package com.clubeek.dao;
 
 import java.util.List;
 
-import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.model.Article;
 import com.clubeek.model.ClubMember;
 
 public interface ClubMemberDao extends Dao<ClubMember> {
@@ -15,9 +13,6 @@ public interface ClubMemberDao extends Dao<ClubMember> {
     public List<ClubMember> getClubMembersByDateOfBirth(int yearMin, int yearMax);
     
     public List<ClubMember> getAllClubMembers();
-    
-    // TODO vitfo, created on 11. 6. 2015 - remove
-    public RepClubMember getInstance();
     
     public void updateClubMember(ClubMember clubMember);
 }

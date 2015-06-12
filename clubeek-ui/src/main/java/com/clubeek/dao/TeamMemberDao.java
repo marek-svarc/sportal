@@ -13,6 +13,4 @@ public interface TeamMemberDao extends Dao<TeamMember> {
     
     // TODO vitfo, created on 11. 6. 2015 - dodělat
     public void update(int clubTeamId, List<TeamMember> teamMembers, List<ClubMember> clubMembers);
-    
-    public RepTeamMember getInstance();
 }
