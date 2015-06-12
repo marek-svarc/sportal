@@ -30,11 +30,6 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public RepUser getRepUserInstance() {
-		return RepUser.getInstance();
-	}
-
-	@Override
 	public User getUserByClubMemberId(int id) {
 		return RepUser.selectByClubMemberId(id, new RepUser.TableColumn[] {
                 RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });

@@ -24,12 +24,6 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
-    // TODO vitfo, created on 11. 6. 2015  - odstranit
-    public RepCategory getInstance() {
-        return RepCategory.getInstance();
-    }
-
-    @Override
     public void updateRow(Category object) {
         RepCategory.update(object);        
     }

@@ -30,11 +30,6 @@ public class ClubMemberDaoImpl implements ClubMemberDao {
     }
 
     @Override
-    public RepClubMember getInstance() {
-        return RepClubMember.getInstance();
-    }
-
-    @Override
     public void updateClubMember(ClubMember clubMember) {
         RepClubMember.update(clubMember);        
     }
