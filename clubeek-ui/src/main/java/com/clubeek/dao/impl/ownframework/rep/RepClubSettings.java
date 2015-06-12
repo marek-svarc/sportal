@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.clubeek.db.Admin;
-import com.clubeek.db.Repository;
 import com.clubeek.model.ClubSettings;
 
 public class RepClubSettings implements Repository<ClubSettings> {

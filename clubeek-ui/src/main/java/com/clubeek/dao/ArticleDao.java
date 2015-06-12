@@ -3,7 +3,7 @@ package com.clubeek.dao;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.RepArticle;
-import com.clubeek.db.Repository;
+import com.clubeek.dao.impl.ownframework.rep.Repository;
 import com.clubeek.model.Article;
 import com.clubeek.model.Article.Location;
 import com.clubeek.model.Unique;

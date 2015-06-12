@@ -1,4 +1,4 @@
-package com.clubeek.db;
+package com.clubeek.dao.impl.ownframework.rep;
 
 import com.clubeek.model.Unique;
 import java.sql.ResultSet;

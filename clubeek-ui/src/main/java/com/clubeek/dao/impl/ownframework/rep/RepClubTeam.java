@@ -3,9 +3,7 @@ package com.clubeek.dao.impl.ownframework.rep;
 import java.sql.ResultSet;
 import java.util.List;
 
-import com.clubeek.db.Admin;
-import com.clubeek.db.Repository;
-import com.clubeek.db.Admin.ColumnData;
+import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
 import com.clubeek.model.ClubTeam;
 
 import java.sql.SQLException;
