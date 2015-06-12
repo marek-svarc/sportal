@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.clubeek.dao.ClubMemberDao;
+import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.ContactDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.db.RepContact;
+import com.clubeek.dao.impl.ownframework.rep.RepContact;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.model.User.Role;
@@ -31,6 +33,8 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
 	private SecurityService securityService = new SecurityServiceImpl();
 	// TODO vitfo, created on 11. 6. 2015 
     private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
+    // TODO vitfo, created on 12. 6. 2015 
+    private ContactDao contactDao = new ContactDaoImpl();
 
     public enum Columns {
 
@@ -113,7 +117,8 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
                     public void buttonClick(ClickEvent event) {
 //                        RepClubMember.update(data);
                         clubMemberDao.updateClubMember(data);
-                        RepContact.update(oldContacts, data.getContacts());
+//                        RepContact.update(oldContacts, data.getContacts());
+                        contactDao.updateContacts(oldContacts, data.getContacts());
                         enter(null);
                     }
                 });
