@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.clubeek.db.RepCategory;
-import com.clubeek.db.RepClubSettings;
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubSettingDao;
+import com.clubeek.dao.ClubTeamDao;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubSettings;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User;
 import com.clubeek.ui.LayoutTabSheet;
 import com.clubeek.ui.Messages;
-import com.clubeek.ui.Security;
-import com.clubeek.ui.Tools;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.ViewArticle;
 import com.clubeek.ui.views.ViewArticles;
@@ -35,9 +38,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
@@ -80,6 +81,18 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     /** Nadrazene uzivatelske prostredi */
     private final UI ui;
 
+    // TODO vitfo, created on 11. 6. 2015 
+    private final SecurityService securityService = new SecurityServiceImpl();
+
+    // TODO vitfo, created on 11. 6. 2015 
+    private final CategoryDao categoryDao = new CategoryDaoImpl();
+
+    // TODO vitfo, created on 11. 6. 2015 
+    private final ClubSettingDao clubSettingDao = new ClubSettingsDaoImpl();
+
+    // TODO vitfo, created on 11. 6. 2015 
+    private final ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+
     private ClubSettings clubSettings;
 
     /** Navigation menu in application */
@@ -99,7 +112,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
     /** Run OAuth - Facebook autentication */
     private Button buttonOAuthFacebook = null;
-    
+
     /** Zaznam vsech spoustenych prikazu */
     private final ArrayList<MenuCommandInfo> commands = new ArrayList<>();
 
@@ -241,7 +254,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     protected Button getButtonOAuthFacebook() {
         return buttonOAuthFacebook;
     }
-    
+
     /** Enables to change default manu item caption */
     protected String GetMenuItemCaption(User user, HorzMenuNavigationViews viewId, String caption) {
         return caption;
@@ -264,16 +277,16 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                User user = Security.getUser();
+                User user = securityService.getUser();
                 if (user == null) {
-                    Security.login(navigation, fieldName.getValue(), fieldPassword.getValue());
+                    securityService.login(navigation, fieldName.getValue(), fieldPassword.getValue());
                     fieldPassword.setValue("");
                 } else {
-                    Security.logout(navigation);
+                    securityService.logout(navigation);
                 }
             }
         });
-        
+
         buttonOAuthFacebook = new Button(null, new Button.ClickListener() {
 
             @Override
@@ -317,21 +330,21 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = (View) new ViewClubRivalCard(this);
         views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = (View) new ViewTeamMatchCard(this);
 
-        if ((user != null) && Security.checkRole(user.getRole(), User.Role.EDITOR)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.EDITOR)) {
             views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
         }
-        if ((user != null) && Security.checkRole(user.getRole(), User.Role.SPORT_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.SPORT_MANAGER)) {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this),
                     new ViewTeamMatches(), new ViewTeamTrainings());
             views[HorzMenuNavigationViews.RIVALS.ordinal()] = (View) new ViewClubRivals();
         } else {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this));
         }
-        if ((user != null) && Security.checkRole(user.getRole(), User.Role.CLUB_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.CLUB_MANAGER)) {
             views[HorzMenuNavigationViews.SETTINGS.ordinal()] = (View) new LayoutTabSheet(new ViewCategories(this),
                     new ViewClubTeams(this), new ViewClubMembers(), new ViewTeamMembers());
         }
-        if ((user != null) && Security.checkRole(user.getRole(), User.Role.ADMINISTRATOR)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.ADMINISTRATOR)) {
             views[HorzMenuNavigationViews.USERS.ordinal()] = (View) new ViewUsers();
         }
 
@@ -349,8 +362,8 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         // odstraneni puvodnich prvku menu
         horzMenu.removeItems();
 
-        List<Category> categoryList = RepCategory.select(true, null);
-        List<ClubTeam> teamList = RepClubTeam.select(true, null);
+        List<Category> categoryList = categoryDao.getActiveCategories();
+        List<ClubTeam> teamList = clubTeamDao.getActiveClubTeams();
         addMenuCommand(user, null, "Klub", views, HorzMenuNavigationViews.NEWS, null);
         if (teamList != null) {
             for (ClubTeam team : teamList) {
@@ -373,7 +386,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         }
 
         // menu nastaveni
-        if ((user != null) && (Security.checkRole(user.getRole(), User.Role.EDITOR))) {
+        if ((user != null) && (securityService.checkRole(user.getRole(), User.Role.EDITOR))) {
             menuItem = horzMenu.addItem(Messages.getString("settings"), null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("articles"), views, HorzMenuNavigationViews.ARTICLES, null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("rivalsCatalogue"), views, HorzMenuNavigationViews.RIVALS, null); //$NON-NLS-1$
@@ -392,7 +405,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     /* PUBLIC */
     public HorzMenuBase(UI ui) {
         this.ui = ui;
-        this.clubSettings = RepClubSettings.select(1, null);
+        this.clubSettings = clubSettingDao.getClubSettingById(1);
 
         // controls initialization
         horzMenu = new MenuBar();
@@ -454,6 +467,6 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
     @Override
     public void updateNavigationMenu() {
-        updateUiControls(Security.getUser());
+        updateUiControls(securityService.getUser());
     }
 }
