@@ -1,10 +1,11 @@
-package com.clubeek.db;
+package com.clubeek.dao.impl.ownframework.rep;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.clubeek.db.Admin.ColumnData;
+import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
+import com.clubeek.dao.impl.ownframework.rep.RepTeamMember.TableColumn;
 import com.clubeek.model.TeamMember;
 import com.clubeek.model.User;
 import com.clubeek.model.User.Role;

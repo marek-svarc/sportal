@@ -3,10 +3,18 @@ package com.clubeek.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.clubeek.db.RepClubMember;
-import com.clubeek.db.RepClubTeam;
+import com.clubeek.dao.ClubMemberDao;
+import com.clubeek.dao.ClubTeamDao;
+import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
+import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 
 public class TeamMember extends Model {
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
 	public enum TeamFunction {
 		PLAYER(Messages.getString("player")), CAPTAIN(Messages.getString("captain")), TEAM_LEADERSHIP(Messages.getString("teamManager")), COACH_ASSISTANT(Messages.getString("assistant")), COACH(Messages.getString("coach")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -93,7 +101,8 @@ public class TeamMember extends Model {
 
 	public ClubTeam getClubTeam() {
 		if (clubTeam == null)
-			clubTeam = RepClubTeam.selectById(clubTeamId, null);
+//			clubTeam = RepClubTeam.selectById(clubTeamId, null);
+		    clubTeam = clubTeamDao.getClubTeamById(clubTeamId);
 		return clubTeam;
 	}
 
@@ -118,7 +127,9 @@ public class TeamMember extends Model {
 	 */
 	public ClubMember getClubMember() {
 		if (clubMember == null)
-			clubMember = RepClubMember.selectById(getClubMemberId(), null);
+//			clubMember = RepClubMember.selectById(getClubMemberId(), null);
+		    // TODO vitfo, created on 11. 6. 2015 - remove from POJO
+		    clubMember = clubMemberDao.getClubMember(getClubMemberId());
 		return clubMember;
 	}
 

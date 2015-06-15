@@ -2,11 +2,15 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepTeamTraining;
+import com.clubeek.dao.TeamTrainingDao;
+import com.clubeek.dao.impl.ownframework.TeamTrainingDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
 import com.clubeek.model.TeamTraining;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -20,10 +24,15 @@ import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
+
 import java.util.Date;
 
 @SuppressWarnings("serial")
 public final class ViewTeamTrainings extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+	private TeamTrainingDao teamTrainingDao = new TeamTrainingDaoImpl();
 
     public enum Columns {
 
@@ -64,7 +73,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.SPORT_MANAGER);
+    	securityService.authorize(Role.SPORT_MANAGER);
 
         table.removeAllRows();
 
@@ -107,7 +116,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
         data.setClubTeamId(teamId);
 
         ModalDialog.show(this, Mode.ADD_MULTI, Messages.getString("training"), new FrameTeamTraining(),
-                data, RepTeamTraining.getInstance(), null);
+                data, teamTrainingDao, null);
     }
 
     public void editTraining(int id) {
@@ -117,14 +126,14 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
                 Notification.show(Messages.getString("canNotModifyTreining"), Type.HUMANIZED_MESSAGE);
             } else {
                 ModalDialog.show(this, Mode.EDIT, Messages.getString("training"), new FrameTeamTraining(),
-                        training, RepTeamTraining.getInstance(), null);
+                        training, teamTrainingDao, null);
             }
         }
     }
 
     public void deleteTraining(int id) {
         TeamTraining training = trainings.get(id);
-        table.deleteRow(training.getId(), id, RepTeamTraining.getInstance(), this, null, Columns.DATE_TIME, Columns.PLACE);
+        table.deleteRow(training.getId(), id, teamTrainingDao, this, null, Columns.DATE_TIME, Columns.PLACE);
     }
 
     /* PRIVATE */

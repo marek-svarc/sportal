@@ -1,8 +1,14 @@
 package com.clubeek.ui.components;
 
 import java.util.List;
+import java.util.Locale;
 
-import com.clubeek.db.Repository;
+import org.tepi.filtertable.FilterDecorator;
+import org.tepi.filtertable.FilterGenerator;
+import org.tepi.filtertable.FilterTable;
+import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
+
+import com.clubeek.dao.Dao;
 import com.clubeek.model.Unique;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.Tools;
@@ -25,11 +31,6 @@ import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import java.util.Locale;
-import org.tepi.filtertable.FilterDecorator;
-import org.tepi.filtertable.FilterGenerator;
-import org.tepi.filtertable.FilterTable;
-import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
 
 /**
  * Component that contains of table with buttons for single action and buttons
@@ -447,7 +448,7 @@ public final class ActionTable {
      * @param navigation Navigation to update navigation in application
      * @param columns Columns used to create information string about the deleting item
      */
-    public <T extends Unique> void deleteRow(final int dataId, int rowId, final Repository<T> dataAdmin, final Component parent,
+    public <T extends Unique> void deleteRow(final int dataId, int rowId, final Dao<T> dataAdmin, final Component parent,
             final Navigation navigation, Object... columns) {
         if (dataId > 0) {
             ConfirmDialog.addConfirmDialog(parent.getCaption(), String.format("<strong>%s</strong><br><em>( %s )</em><br>",
@@ -464,7 +465,7 @@ public final class ActionTable {
     }
 
     public <T extends Unique> void exchangeRows(List<T> data, int id, boolean moveUp,
-            final Repository<T> dataAdmin, final Component parent, final Navigation navigation) {
+            final Dao<T> dataAdmin, final Component parent, final Navigation navigation) {
         int idNext = id + (moveUp ? -1 : 1);
         if ((id >= 0) && (id < data.size()) && (idNext >= 0) && (idNext < data.size())) {
             dataAdmin.exchangeRows(data.get(id).getId(), data.get(idNext).getId());

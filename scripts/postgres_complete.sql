@@ -1,4 +1,4 @@
-﻿------------------------------
+------------------------------
 -- Dropping tables if exist --
 ------------------------------
 
@@ -794,6 +794,21 @@ begin
 			row.id = 2 or
 			row.id = 6 or
 			row.id = 7 or
+			row.id = 12 or
+			row.id = 18 or
+			row.id = 24 or
+			row.id = 26 or
+			row.id = 32 or
+			row.id = 36 or
+			row.id = 40 or
+			row.id = 45 or
+			row.id = 46 or
+			row.id = 48 or
+			row.id = 52 or
+			row.id = 56 or
+			row.id = 60 or
+			row.id = 65 or
+			row.id = 69 or
 			row.id = 74 or
 			row.id = 88
 		then
@@ -803,8 +818,23 @@ begin
 			row.id = 5 or
 			row.id = 11 or
 			row.id = 17 or
+			row.id = 20 or
+			row.id = 22 or
+			row.id = 23 or
+			row.id = 33 or
+			row.id = 35 or
 			row.id = 39 or
-			row.id = 95
+			row.id = 44 or
+			row.id = 49 or
+			row.id = 51 or
+			row.id = 57 or
+			row.id = 78 or
+			row.id = 80 or
+			row.id = 87 or
+			row.id = 89 or
+			row.id = 90 or
+			row.id = 95 or
+			row.id = 96
 		then
 			update T_CLUB_MEMBER set photo = (select bytea_import('clubeek_pictures/woman.png')) where id = row.id;
 		end if;

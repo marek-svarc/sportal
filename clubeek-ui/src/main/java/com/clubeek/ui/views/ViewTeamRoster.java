@@ -2,7 +2,9 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepTeamMember;
+import com.clubeek.dao.TeamMemberDao;
+import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
 import com.clubeek.model.TeamMember;
 import com.clubeek.model.TeamMember.TeamFunction;
 import com.clubeek.ui.Tools;
@@ -25,6 +27,8 @@ import com.vaadin.ui.themes.ValoTheme;
 @SuppressWarnings("serial")
 @PreserveOnRefresh
 public class ViewTeamRoster extends VerticalLayout implements View {
+    // TODO vitfo, created on 11. 6. 2015 
+    private TeamMemberDao teamMemberDao = new TeamMemberDaoImpl();
 
     private final String cssTeamMembersList = "teamMembersList"; //$NON-NLS-1$
 
@@ -105,7 +109,8 @@ public class ViewTeamRoster extends VerticalLayout implements View {
 
         if (teamId >= 0) {
             // load all team members
-            List<TeamMember> members = RepTeamMember.selectByTeamId(teamId, null);
+//            List<TeamMember> members = RepTeamMember.selectByTeamId(teamId, null);
+            List<TeamMember> members = teamMemberDao.getTeamMembersByTeamId(teamId);
             // divide members to groups for layouts
             if (members != null) {
                 addMembers(members, new TeamFunction[]{TeamFunction.COACH, TeamFunction.COACH_ASSISTANT,

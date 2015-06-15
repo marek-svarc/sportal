@@ -3,8 +3,12 @@ package com.clubeek.ui.frames;
 import java.util.Arrays;
 import java.util.List;
 
-import com.clubeek.db.RepClubMember;
-import com.clubeek.db.RepUser;
+import com.clubeek.dao.ClubMemberDao;
+import com.clubeek.dao.UserDao;
+import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.UserDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
+import com.clubeek.dao.impl.ownframework.rep.RepUser;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.User;
 import com.clubeek.ui.ModalInput;
@@ -24,6 +28,10 @@ import com.vaadin.ui.themes.Runo;
 
 @SuppressWarnings("serial")
 public class FrameUser extends VerticalLayout implements ModalInput<User> {
+	// TODO vitfo, created on 11. 6. 2015 
+	private UserDao userDao = new UserDaoImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
 
 	public FrameUser() {
 		this.setWidth(300, Unit.PIXELS);
@@ -52,8 +60,11 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 
 		if (insert) {
 			List<ClubMember> clubMembers = null;
-                        clubMembers = RepClubMember.selectAll(new RepClubMember.TableColumn[] { RepClubMember.TableColumn.ID,
-                            RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME, RepClubMember.TableColumn.BIRTHDATE });
+//                        clubMembers = RepClubMember.selectAll(new RepClubMember.TableColumn[] { RepClubMember.TableColumn.ID,
+//                            RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME, RepClubMember.TableColumn.BIRTHDATE });
+			    // TODO vitfo, created on 11. 6. 2015 - zkontrolovat, zda funguje bez zadání sloupců
+			    clubMembers = clubMemberDao.getAllClubMembers();
+			    
 			Tools.Components.initNativeSelect(nsClubMember, clubMembers, true);
 
 			nsRole.setValue(data.getRole());
@@ -127,7 +138,8 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 
 	/** testuje zda zadane uzivatelske jmeno jiz neexistuje */
 	private void testUserName() {
-            if (RepUser.selectByName(tfName.getValue(), false, null) != null)
+//            if (RepUser.selectByName(tfName.getValue(), false, null) != null)
+			if (userDao.getUserByName(tfName.getValue(), false) != null)
                 throw new Validator.EmptyValueException(String.format("Uživatel %s již existuje.", tfName.getValue()));
 	}
 
@@ -135,10 +147,12 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 	private void testClubMember() {
 		if (nsClubMember.getValue() != null) {
 			User user = null;
-                        user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
-                            RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
+//                        user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
+//                            RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
+						user = userDao.getUserByClubMemberId((int) nsClubMember.getValue());
                         if (user != null){
-                            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
+//                            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
+                            user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
                             throw new Validator.EmptyValueException(String.format("Člen klubu '%s' již má přiřazen účet.", user
                                     .getClubMember().toString()));
 				}

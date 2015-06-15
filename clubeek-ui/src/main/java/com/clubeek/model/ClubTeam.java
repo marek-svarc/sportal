@@ -1,9 +1,13 @@
 package com.clubeek.model;
 
 
-import com.clubeek.db.RepCategory;
+import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepCategory;
 
 public class ClubTeam extends Model {
+    // TODO vitfo, created on 11. 6. 2015 
+    private CategoryDao categoryDao = new CategoryDaoImpl();
 
 	/* PRIVATE */
 
@@ -64,7 +68,9 @@ public class ClubTeam extends Model {
          */
 	public Category getCategory() {
 		if (category == null)
-			category = RepCategory.selectById(categoryId, null);
+//			category = RepCategory.selectById(categoryId, null);
+		    // TODO vitfo, created on 11. 6. 2015 - model POJO cannot have such functionality
+		    category = categoryDao.getCategory(categoryId);
 		return category;
 	}
 

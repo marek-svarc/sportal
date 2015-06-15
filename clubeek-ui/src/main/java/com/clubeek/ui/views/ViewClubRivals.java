@@ -2,11 +2,15 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepClubRival;
+import com.clubeek.dao.ClubRivalDao;
+import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
 import com.clubeek.model.ClubRival;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -20,6 +24,10 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class ViewClubRivals extends VerticalLayout implements View, ActionTable.OnActionListener {
+    // TODO vitfo, created on 11. 6. 2015
+    private SecurityService securityService = new SecurityServiceImpl();
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubRivalDao clubRivalDao = new ClubRivalDaoImpl();
 
     public enum Columns {
 
@@ -31,9 +39,8 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
         this.setCaption(Messages.getString("ViewClubRivals.0")); //$NON-NLS-1$
 
         ActionTable.UserColumnInfo[] columns = {
-            new ActionTable.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
-            new ActionTable.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web"))
-        };
+                new ActionTable.UserColumnInfo(Columns.NAME, String.class, Messages.getString("name")),
+                new ActionTable.UserColumnInfo(Columns.WEB, Link.class, Messages.getString("web")) };
 
         // vytvoreni tabulky a ovladacich tlacitek
         table = new ActionTable(ActionTable.Action.getStandardSet(false, true), columns, this);
@@ -44,9 +51,10 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.SPORT_MANAGER);
+        securityService.authorize(Role.SPORT_MANAGER);
 
-        clubs = RepClubRival.selectAll(null);
+//        clubs = RepClubRival.selectAll(null);
+        clubs = clubRivalDao.getAllClubRivals();
 
         table.removeAllRows();
         if (clubs != null) {
@@ -57,11 +65,11 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
                 // link to the club web pages
                 Link webLink = null;
                 if (club.getWeb() != null) {
-                	webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
+                    webLink = new Link(club.getWeb(), new ExternalResource(club.getWeb()));
                     webLink.setTargetName("_blank"); //$NON-NLS-1$
                 }
-                
-                table.addRow(container, new Object[]{club.getName(), webLink}, i);
+
+                table.addRow(container, new Object[] { club.getName(), webLink }, i);
             }
             table.setDataContainer(container);
         }
@@ -85,18 +93,18 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
     }
 
     public void addClub() {
-        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"),
-                new FrameClubRival(), new ClubRival(), RepClubRival.getInstance(), null);
+        ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewClubRivals.2"), new FrameClubRival(),
+                new ClubRival(), clubRivalDao, null);
     }
 
     public void editClub(int id) {
         ClubRival club = clubs.get(id);
-        ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"),
-                new FrameClubRival(), club, RepClubRival.getInstance(), null);
+        ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewClubRivals.3"), new FrameClubRival(), club,
+                clubRivalDao, null);
     }
 
     public void deleteClub(int id) {
-        table.deleteRow(clubs.get(id).getId(), id, RepClubRival.getInstance(), this, null, Columns.NAME);
+        table.deleteRow(clubs.get(id).getId(), id, clubRivalDao, this, null, Columns.NAME);
     }
 
     /* PRIVATE */

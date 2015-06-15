@@ -2,7 +2,9 @@ package com.clubeek.ui.frames;
 
 import java.util.List;
 
-import com.clubeek.db.RepCategory;
+import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepCategory;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.ui.ModalInput;
@@ -23,6 +25,8 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 @Theme("baseTheme")
 public class FrameTeam extends VerticalLayout implements ModalInput<ClubTeam> {
+    // TODO vitfo, created on 11. 6. 2015 
+    private CategoryDao categoryDao = new CategoryDaoImpl();
 
 	public FrameTeam() {
 		
@@ -43,7 +47,8 @@ public class FrameTeam extends VerticalLayout implements ModalInput<ClubTeam> {
 
 		// nacteni vsech dostupnych kategorii
 		List<Category> categoryList = null;
-                categoryList = RepCategory.selectAll(null);
+//                categoryList = RepCategory.selectAll(null);
+		        categoryList = categoryDao.getAllCategories();
 
 		// zadavani kategorie tymu
 		if ((categoryList != null) && (categoryList.size() > 0)) {

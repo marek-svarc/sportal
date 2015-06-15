@@ -1,4 +1,4 @@
-package com.clubeek.db;
+package com.clubeek.dao.impl.ownframework.rep;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -265,7 +265,7 @@ public class Admin {
 
     /* PRIVATE */
     /** Cesta ke konfiguracnimu souboru */
-    private static final String CONFIG_NAME = "com.clubeek.db.config"; //$NON-NLS-1$
+    private static final String CONFIG_NAME = "com.clubeek.dao.impl.ownframework.rep.config"; //$NON-NLS-1$
 
     /** Klic pro nacteni typu databazovaho ovladace z konfiguracniho souboru */
     private static final String CONFIG_KEY_DRIVER = "DATABASE_DRIVER"; //$NON-NLS-1$
