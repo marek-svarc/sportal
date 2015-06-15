@@ -19,11 +19,6 @@ public class ClubRivalDaoImpl implements ClubRivalDao {
     }
 
     @Override
-    public RepClubRival getInstance() {
-        return RepClubRival.getInstance();
-    }
-
-    @Override
     public void updateRow(ClubRival object) {
         RepClubRival.update(object);        
     }

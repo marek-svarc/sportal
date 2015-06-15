@@ -13,7 +13,4 @@ public interface ClubTeamDao extends Dao<ClubTeam> {
     public List<ClubTeam> getActiveClubTeams();
     
     public List<ClubTeam> getAllClubTeams();
-    
-    // TODO vitfo, created on 11. 6. 2015 - remove
-    public RepClubTeam getInstance();
 }

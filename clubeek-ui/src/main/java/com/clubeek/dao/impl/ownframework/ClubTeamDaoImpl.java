@@ -24,11 +24,6 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
     }
 
     @Override
-    public RepClubTeam getInstance() {
-        return RepClubTeam.getInstance();
-    }
-
-    @Override
     public void updateRow(ClubTeam object) {
         RepClubTeam.update(object);
     }

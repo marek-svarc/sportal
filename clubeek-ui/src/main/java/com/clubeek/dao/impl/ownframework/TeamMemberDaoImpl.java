@@ -22,11 +22,6 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     }
 
     @Override
-    public RepTeamMember getInstance() {
-        return RepTeamMember.getInstance();
-    }
-
-    @Override
     public void updateRow(TeamMember object) {
         RepTeamMember.update(object);        
     }
