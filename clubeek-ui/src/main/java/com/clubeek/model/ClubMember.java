@@ -3,7 +3,9 @@ package com.clubeek.model;
 import java.util.Date;
 import java.util.List;
 
-import com.clubeek.db.RepContact;
+import com.clubeek.dao.ContactDao;
+import com.clubeek.dao.impl.ownframework.ContactDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepContact;
 import com.clubeek.util.DateTime;
 
 /**
@@ -12,6 +14,8 @@ import com.clubeek.util.DateTime;
  * @author Marek Svarc
  */
 public class ClubMember extends Model {
+    // TODO vitfo, created on 12. 6. 2015 
+    private ContactDao contactDao = new ContactDaoImpl();
 
 	/* PRIVATE */
 
@@ -124,7 +128,8 @@ public class ClubMember extends Model {
 	
 	public List<Contact> getContacts() {
 		if (contacts == null)
-			contacts = RepContact.selectByClubMemberId(getId(), null);
+//			contacts = RepContact.selectByClubMemberId(getId(), null);
+		    contacts = contactDao.getContactsByClubMemberId(getId());
 		
 		return contacts;
 	}

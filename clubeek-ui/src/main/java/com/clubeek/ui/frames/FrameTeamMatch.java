@@ -3,7 +3,9 @@ package com.clubeek.ui.frames;
 import java.util.Calendar;
 import java.util.List;
 
-import com.clubeek.db.RepClubRival;
+import com.clubeek.dao.ClubRivalDao;
+import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
 import com.clubeek.model.ClubRival;
 import com.clubeek.model.TeamMatch;
 import com.clubeek.ui.ModalInput;
@@ -21,6 +23,8 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class FrameTeamMatch extends VerticalLayout implements ModalInput<TeamMatch> {
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubRivalDao clubRivalDao = new ClubRivalDaoImpl();
 
 	public FrameTeamMatch() {
 
@@ -71,7 +75,8 @@ public class FrameTeamMatch extends VerticalLayout implements ModalInput<TeamMat
 		// souper
 
 		clubs = null;
-                clubs = RepClubRival.selectAll(null);
+//                clubs = RepClubRival.selectAll(null);
+		clubs = clubRivalDao.getAllClubRivals();
 
 		nsRival.addItem(-1);
 		nsRival.setItemCaption(-1, Messages.getString("notAssigned")); //$NON-NLS-1$

@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.clubeek.db.RepUser;
+import com.clubeek.dao.UserDao;
+import com.clubeek.dao.impl.ownframework.UserDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepUser;
 import com.clubeek.model.User;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.Navigation.ViewId;
@@ -20,6 +22,8 @@ import com.vaadin.ui.UI;
 @Theme("valo_base")
 @Widgetset("com.clubeek.MyAppWidgetset")
 public class MyUI extends UI {
+	// TODO vitfo, created on 11. 6. 2015 
+	private UserDao userDao = new UserDaoImpl();
 
     @WebServlet(urlPatterns = "/*", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
@@ -42,13 +46,15 @@ public class MyUI extends UI {
             }
         });
 
-        List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
+//        List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
+        List<User> admins = userDao.getAllAdministrators();
         if ((admins == null) || (admins.size() <= 0)) {
             User user = new User();
             user.setName("admin");
             user.setPassword("admin");
             user.setRole(User.Role.ADMINISTRATOR);
-            RepUser.insert(user);
+//            RepUser.insert(user);
+            userDao.insertUser(user);
         }
 
         // pouziti prostredi s horizontalnim navigacnim menu

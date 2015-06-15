@@ -2,11 +2,15 @@ package com.clubeek.ui.views;
 
 import java.util.List;
 
-import com.clubeek.db.RepCategory;
+import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepCategory;
 import com.clubeek.model.Category;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -18,6 +22,10 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class ViewCategories extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+    private CategoryDao categoryDao = new CategoryDaoImpl();
 
     /* PUBLIC */
     public enum Columns {
@@ -42,9 +50,10 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(Role.CLUB_MANAGER);
 
-        categories = RepCategory.selectAll(null);
+//        categories = RepCategory.selectAll(null);
+    	categories = categoryDao.getAllCategories();
 
         table.removeAllRows();
         if (categories != null) {
@@ -84,22 +93,22 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     // operations
     public void addCategory() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("categoryProperties"), new FrameCategory(), new Category(), //$NON-NLS-1$
-                RepCategory.getInstance(), this.navigation);
+                categoryDao, this.navigation);
     }
 
     public void editCategory(int id) {
         Category category = categories.get(id);
         ModalDialog.show(this, Mode.EDIT, Messages.getString("categoryProperties"), new FrameCategory(), category, //$NON-NLS-1$
-                RepCategory.getInstance(), this.navigation);
+                categoryDao, this.navigation);
     }
 
     public void deleteCategory(int id) {
         Category category = categories.get(id);
-        table.deleteRow(category.getId(), id, RepCategory.getInstance(), this, navigation, Columns.CAPTION);
+        table.deleteRow(category.getId(), id, categoryDao, this, navigation, Columns.CAPTION);
     }
 
     public void exchangeCategories(int id, boolean moveUp) {
-        table.exchangeRows(categories, id, moveUp, RepCategory.getInstance(), this, navigation);
+        table.exchangeRows(categories, id, moveUp, categoryDao, this, navigation);
     }
 
     /* PRIVATE */

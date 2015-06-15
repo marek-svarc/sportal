@@ -3,13 +3,19 @@ package com.clubeek.ui.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.clubeek.db.RepClubMember;
-import com.clubeek.db.RepContact;
+import com.clubeek.dao.ClubMemberDao;
+import com.clubeek.dao.ContactDao;
+import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
+import com.clubeek.dao.impl.ownframework.ContactDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
+import com.clubeek.dao.impl.ownframework.rep.RepContact;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.model.User.Role;
+import com.clubeek.service.SecurityService;
+import com.clubeek.service.impl.Security;
+import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Security;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -23,6 +29,12 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public final class ViewClubMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015 
+	private SecurityService securityService = new SecurityServiceImpl();
+	// TODO vitfo, created on 11. 6. 2015 
+    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
+    // TODO vitfo, created on 12. 6. 2015 
+    private ContactDao contactDao = new ContactDaoImpl();
 
     public enum Columns {
 
@@ -66,9 +78,10 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     @Override
     public void enter(ViewChangeEvent event) {
 
-        Security.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(Role.CLUB_MANAGER);
 
-        members = RepClubMember.selectAll(null);
+//        members = RepClubMember.selectAll(null);
+    	members = clubMemberDao.getAllClubMembers();
 
         if (members != null) {
             table.removeAllRows();
@@ -89,7 +102,8 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     // operations
     public void addMember() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("newMember"), new FrameClubMember(), new ClubMember(), //$NON-NLS-1$
-                RepClubMember.getInstance(), null);
+//                RepClubMember.getInstance(), null);
+                clubMemberDao, null);
     }
 
     public void editMember(int id) {
@@ -101,8 +115,10 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
 
                     @Override
                     public void buttonClick(ClickEvent event) {
-                        RepClubMember.update(data);
-                        RepContact.update(oldContacts, data.getContacts());
+//                        RepClubMember.update(data);
+                        clubMemberDao.updateClubMember(data);
+//                        RepContact.update(oldContacts, data.getContacts());
+                        contactDao.updateContacts(oldContacts, data.getContacts());
                         enter(null);
                     }
                 });
@@ -110,7 +126,8 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     }
 
     public void deleteMember(int id) {
-        table.deleteRow(members.get(id).getId(), id, RepClubMember.getInstance(), this, null, 
+//        table.deleteRow(members.get(id).getId(), id, RepClubMember.getInstance(), this, null, 
+        table.deleteRow(members.get(id).getId(), id, clubMemberDao, this, null,
                 Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 

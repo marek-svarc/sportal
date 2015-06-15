@@ -1,6 +1,8 @@
 package com.clubeek.ui.views;
 
-import com.clubeek.db.RepArticle;
+import com.clubeek.dao.ArticleDao;
+import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepArticle;
 import com.clubeek.model.Article;
 import com.clubeek.ui.Tools;
 import com.clubeek.util.DateTime.DateStyle;
@@ -16,6 +18,8 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 @Theme("baseTheme")
 public class ViewArticle extends VerticalLayout implements View {
+    // TODO vitfo, created on 11. 6. 2015 
+    private ArticleDao articleDao = new ArticleDaoImpl();
 
     /* PRIVATE */
     /** Label pro vypis nadpisu clanku */
@@ -59,8 +63,9 @@ public class ViewArticle extends VerticalLayout implements View {
         }
 
         if (articleId > 0) {
-            Article article = RepArticle.selectById(articleId, new RepArticle.TableColumn[]{RepArticle.TableColumn.CAPTION,
-                RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE});
+//            Article article = RepArticle.selectById(articleId, new RepArticle.TableColumn[]{RepArticle.TableColumn.CAPTION,
+//                RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE});
+            Article article = articleDao.getArticleById(articleId);
             laCaption.setValue(article.getCaption());
             laCreationDate.setValue(String.format("%s %s", Messages.getString("ViewArticle.6"),
                     DateTime.dateToString(article.getCreationDate(), DateStyle.SHORT_DAY)));

@@ -1,6 +1,8 @@
 package com.clubeek.ui.views;
 
-import com.clubeek.db.RepClubRival;
+import com.clubeek.dao.ClubRivalDao;
+import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
+import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ClubRivalCard;
 import com.vaadin.navigator.View;
@@ -13,6 +15,8 @@ import com.vaadin.ui.VerticalLayout;
  * @author Marek Svarc
  */
 public class ViewClubRivalCard extends VerticalLayout implements View {
+    // TODO vitfo, created on 11. 6. 2015 
+    private ClubRivalDao clubRivalDao = new ClubRivalDaoImpl();
 
     /** Component that shows club member informations */
     private final ClubRivalCard card;
@@ -33,7 +37,8 @@ public class ViewClubRivalCard extends VerticalLayout implements View {
         }
 
         if (clubRivalId > 0) {
-            card.setClubRival(RepClubRival.selectById(clubRivalId, null));
+//            card.setClubRival(RepClubRival.selectById(clubRivalId, null));
+            card.setClubRival(clubRivalDao.getClubRivalById(clubRivalId));
         }else{
             card.setClubRival(null);
         }

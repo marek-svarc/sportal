@@ -1,7 +1,7 @@
 package com.clubeek.ui;
 
 
-import com.clubeek.db.Repository;
+import com.clubeek.dao.Dao;
 import com.clubeek.model.Unique;
 import com.clubeek.ui.views.Navigation;
 import com.vaadin.annotations.Theme;
@@ -122,7 +122,7 @@ public class ModalDialog<T> extends Window {
 	}
 
 	public static <T extends Unique> void show(final Component owner, final Mode mode, String caption, final ModalInput<T> frame,
-			final T data, final Repository<T> dataAdmin, final Navigation navigation) {
+			final T data, final Dao<T> dataAdmin, final Navigation navigation) {
 
 		final ModalDialog<T> dlg = new ModalDialog<T>(mode, caption, frame, data, new Button.ClickListener() {
 
