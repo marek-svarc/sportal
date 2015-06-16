@@ -1,5 +1,6 @@
 package com.clubeek.ui;
 
+import com.clubeek.ui.main.HorzMenuBase;
 import java.util.List;
 
 import javax.servlet.annotation.WebListener;
@@ -13,6 +14,8 @@ import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
 import com.clubeek.model.User;
+import com.clubeek.ui.main.HorzMenuAbsOnTop;
+import com.clubeek.ui.main.HorzMenuStandard;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.Navigation.ViewId;
 import com.vaadin.annotations.Theme;
@@ -74,6 +77,6 @@ public class MyUI extends UI {
         }
 
         // pouziti prostredi s horizontalnim navigacnim menu
-        setContent(new HorzMenuGUI(this));
+        setContent(new HorzMenuAbsOnTop(this));
     }
 }

@@ -1,5 +1,6 @@
 @import "addons.scss";
 @import "valo_base.scss";
+@import "main/horzMenuAbsOnTop.scss";
 @import "components/formatedLabel.scss";
 
 /* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
@@ -7,5 +8,6 @@
 .valo_base {
   @include addons;
   @include valo_base;
+  @include horzMenuAbsOnTop;
   @include formatedLabel;
 }
