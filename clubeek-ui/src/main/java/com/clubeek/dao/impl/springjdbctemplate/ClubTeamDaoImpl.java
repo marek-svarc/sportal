@@ -43,8 +43,10 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
     @Override
     public void insertRow(ClubTeam object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("insert into t_club_team (name, active, sorting, category_id) values "
-                + "(:name, :active, :sorting, :categoryId)", source);
+        template.update("insert into t_club_team "
+                + "( name,  active,  sorting,  category_id) values "
+                + "(:name, :active, :sorting, :categoryId)"
+                , source);
     }
 
     @Override

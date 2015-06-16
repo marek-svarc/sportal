@@ -2,16 +2,20 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
 
 import com.clubeek.dao.ArticleDao;
-import com.clubeek.dao.impl.ownframework.rep.RepArticle;
+import com.clubeek.dao.CategoryDao;
 import com.clubeek.model.Article;
+import com.clubeek.model.Category;
+import com.clubeek.model.Article.Owner;
 
 /**
  * Class that tests {@link ArticleDaoImpl}.
@@ -26,27 +30,120 @@ import com.clubeek.model.Article;
 public class ArticleDaoImplTest {
     @Autowired
     ArticleDao articleDao;
+    @Autowired
+    CategoryDao categoryDao;
     
-    @Test
-    public void getAllArticlesTest() {
-        // Comparing results of new and old implementations.
-        int rowsNew = articleDao.getAllArticles().size();
-        int rowsOld = RepArticle.selectAll(null).size();
-        
-        assertTrue("The row number shoud equal", rowsNew == rowsOld);
+    /**
+     * Deletes all articles before each test.
+     */
+    @Before
+    public void beforeEach() {
+        deleteAllArticles(articleDao);
     }
     
+    /**
+     * Delete, insert, update.
+     */
     @Test
-    public void selectArticlesTest() {
-        // Comparing results of new and old implementations.
-        int rowsNew = articleDao.selectArticles(0, 0, Article.Location.NEWS).size();
-        int rowsOld = RepArticle.select(0, 0, Article.Location.NEWS, null).size();
+    public void test() {
+        insertArticle(articleDao, false);
         
-        assertTrue("The row number shoud equal", rowsNew == rowsOld);
+        // get all articles
+        int numOfArticles = articleDao.getAllArticles().size();
+        assertTrue(numOfArticles > 0);
         
-        int rowsNew02 = articleDao.selectArticles(0, 0, Article.Location.BULLETIN_BOARD).size();
-        int rowsOld02 = RepArticle.select(0, 0, Article.Location.BULLETIN_BOARD, null).size();
+        // update one article
+        Article a = articleDao.getAllArticles().get(0);
+        int id = a.getId();
+        a.setCaption("My caption");
+        a.setSummary("My summary");
+        a.setContent("My content");
+        a.setOwner(Owner.TEAM);
+        articleDao.updateRow(a);
         
-        assertTrue("The row number shoud equal", rowsNew02 == rowsOld02);
+        Article idArt = articleDao.getArticleById(id);
+        assertTrue("Content shoud be 'My content'", idArt.getContent().equals("My content"));
+        assertTrue("Summary shoud be 'My summary'", idArt.getSummary().equals("My summary"));
+        assertTrue("Caption shoud be 'My caption'", idArt.getCaption().equals("My caption"));
+    }
+    
+//    @Test
+//    public void testUpdateRow() {
+//        fail("Not yet implemented");
+//    }
+//
+//    @Test
+//    public void testInsertRow() {
+//        fail("Not yet implemented");
+//    }
+//
+//    @Test
+//    public void testDeleteRow() {
+//        fail("Not yet implemented");
+//    }
+//
+//    @Test
+//    public void testExchangeRows() {
+//        fail("Not yet implemented");
+//    }
+//
+//    @Test
+//    public void testGetArticleById() {
+//        fail("Not yet implemented");
+//    }
+//
+//    @Test
+//    public void testGetAllArticles() {
+//        fail("Not yet implemented");
+//    }
+//
+//    @Test
+//    public void testSelectArticles() {
+//        fail("Not yet implemented");
+//    }
+//    
+//    @Test
+//    public void getAllArticlesTest() {
+//        // Comparing results of new and old implementations.
+////        int rowsNew = articleDao.getAllArticles().size();
+////        int rowsOld = RepArticle.selectAll(null).size();
+////        
+////        assertTrue("The row number shoud equal", rowsNew == rowsOld);
+//    }
+//    
+//    @Test
+//    public void selectArticlesTest() {
+//        // Comparing results of new and old implementations.
+////        int rowsNew = articleDao.selectArticles(0, 0, Article.Location.NEWS).size();
+////        int rowsOld = RepArticle.select(0, 0, Article.Location.NEWS, null).size();
+////        
+////        assertTrue("The row number shoud equal", rowsNew == rowsOld);
+////        
+////        int rowsNew02 = articleDao.selectArticles(0, 0, Article.Location.BULLETIN_BOARD).size();
+////        int rowsOld02 = RepArticle.select(0, 0, Article.Location.BULLETIN_BOARD, null).size();
+////        
+////        assertTrue("The row number shoud equal", rowsNew02 == rowsOld02);
+//    }
+    
+    public static void insertArticle(ArticleDao articleDao, boolean priority) {
+        Article a = new Article();
+        a.setCaption("Caption");
+        a.setContent("Content");
+        a.setSummary("Summary");
+        a.setCreationDate(new Date());
+        if (priority) {
+            a.setPriority(priority);
+        }
+//        insertCategory("My category");
+//        int categoryId = categoryDao.getAllCategories().get(0).getId();
+//        a.setCategoryId(categoryId);
+        
+        articleDao.insertRow(a);
+    }
+    
+    public static void deleteAllArticles(ArticleDao articleDao) {
+        for (Article a : articleDao.getAllArticles()) {
+            articleDao.deleteRow(a.getId());
+        }
     }
 }
