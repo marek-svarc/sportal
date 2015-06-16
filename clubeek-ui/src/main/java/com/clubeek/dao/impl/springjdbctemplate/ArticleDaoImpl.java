@@ -9,13 +9,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.ArticleDao;
-import com.clubeek.dao.impl.ownframework.rep.Admin;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle.TableColumn;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ArticleMapper;
 import com.clubeek.model.Article;
 import com.clubeek.model.Article.Location;
 import com.clubeek.model.Article.Owner;
 
+/**
+ * Implementation of @link {@link ArticleDao} interface.
+ *
+ * @author vitfo
+ */
 @Repository
 public class ArticleDaoImpl implements ArticleDao {
 
