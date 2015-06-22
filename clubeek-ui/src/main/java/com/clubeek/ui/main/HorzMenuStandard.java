@@ -111,7 +111,7 @@ public class HorzMenuStandard extends HorzMenuBase {
         } else {
             // controls to show user informations and sign out
             String userName = user.getClubMember() != null ? user.getClubMember().getName() + " "
-                    + user.getClubMember().getSurname() : user.getName();
+                    + user.getClubMember().getSurname() : user.getUsername();
             vlLogin.addComponents(new Label(String.format("<strong>%s</strong>", userName),
                     ContentMode.HTML), getButtonSignInOut());
             getButtonSignInOut().setCaption("Odhlásit");

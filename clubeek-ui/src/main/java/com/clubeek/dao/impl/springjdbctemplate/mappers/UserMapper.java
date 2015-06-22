@@ -16,7 +16,7 @@ public class UserMapper implements RowMapper<User> {
         
         u.setId(rs.getInt("id"));
         // TODO vitfo, created on 16. 6. 2015 - change name to username
-        u.setName(rs.getString("name"));
+        u.setUsername(rs.getString("username"));
         u.setPassword(rs.getString("password"));
         u.setUserRoleType(UserRoleType.values()[rs.getInt("user_role_type")]);
         u.setClubMemberId(rs.getInt("club_member_id"));

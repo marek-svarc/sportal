@@ -66,7 +66,7 @@ public class MyUI extends UI {
         List<User> admins = userDao.getAllAdministrators();
         if ((admins == null) || (admins.size() <= 0)) {
             User user = new User();
-            user.setName("admin");
+            user.setUsername("admin");
             user.setPassword("admin");
             user.setUserRoleType(UserRoleType.ADMINISTRATOR);
 //            RepUser.insert(user);

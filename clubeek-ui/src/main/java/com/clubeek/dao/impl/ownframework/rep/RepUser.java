@@ -46,7 +46,7 @@ public class RepUser implements Repository<User> {
      * @param user informace o uzivateli
      */
     public static void insert(User user) {
-        insert(user.getName(), user.GetHashPassword(), user.getUserRoleType(), user.getClubMemberId());
+        insert(user.getUsername(), user.GetHashPassword(), user.getUserRoleType(), user.getClubMemberId());
     }
 
     /**
@@ -199,7 +199,7 @@ public class RepUser implements Repository<User> {
                     data.setId(result.getInt(resultsColumnId));
                     break;
                 case NAME:
-                    data.setName(result.getString(resultsColumnId));
+                    data.setUsername(result.getString(resultsColumnId));
                     break;
                 case PASSWORD:
                     data.setPassword(result.getString(resultsColumnId));

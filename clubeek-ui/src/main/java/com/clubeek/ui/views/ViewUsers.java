@@ -69,7 +69,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             Container container = table.createDataContainer();
             for (int i = 0; i < users.size(); ++i) {
                 User user = users.get(i);
-                table.addRow(container, new Object[]{user.getName(), user.getUserRoleType().toString(),
+                table.addRow(container, new Object[]{user.getUsername(), user.getUserRoleType().toString(),
                     user.getClubMember() != null ? user.getClubMember().toString() : ""}, i);
             }
             table.setDataContainer(container);
@@ -106,7 +106,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             User user = users.get(id);
             ModalDialog.show(this, Mode.EDIT, String.format("%s '%s'", Messages.getString("userProperties"),
 //                    user.getName()), new FrameUser(), user, RepUser.getInstance(), null);
-            		user.getName()), new FrameUser(), user, userDao, null);
+            		user.getUsername()), new FrameUser(), user, userDao, null);
         }
     }
 

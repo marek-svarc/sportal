@@ -245,7 +245,7 @@ CREATE TABLE T_ARTICLE
 CREATE TABLE T_USER
 (
     id			serial,
-    name		varchar(100)	not null,
+    username		varchar(100)	not null,
     password		varchar(100)	not null,
     user_role_type	integer		not null default 0,
     club_member_id	integer,
@@ -253,7 +253,7 @@ CREATE TABLE T_USER
     primary key (id),
     foreign key ( club_member_id ) references T_CLUB_MEMBER ( id )
         ON DELETE CASCADE,
-    unique (name),
+    unique (username),
     unique (id, club_member_id)
 
 );
@@ -319,7 +319,7 @@ INSERT INTO T_CLUB_SETTING (id, title, comment) VALUES
 
 -- user name, password (the same as user name)
 -- administrator is the same as admin (admin is shorter to write)
-insert into T_USER (name, password, user_role_type) values
+insert into T_USER (username, password, user_role_type) values
 	('member', 'ddc721d12cbb3aa9850be6b6b801231f2683b221', 0),
 	('editor', '97475902e4ce16c0d1b96bbe1e9ad6bb2d41c54e', 1),
 	('sportManager', 'a4ae0dc42860d467da627ee8313628f8cc4cc600', 2),

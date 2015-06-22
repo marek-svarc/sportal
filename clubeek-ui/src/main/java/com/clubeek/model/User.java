@@ -29,7 +29,7 @@ public class User extends Model {
 	/* PRIVATE */
 
 	/** Uzivatelske jmeno */
-	private String name = ""; //$NON-NLS-1$
+	private String username = ""; //$NON-NLS-1$
 
 	/** Heslo */
 	private String password = ""; //$NON-NLS-1$
@@ -66,17 +66,17 @@ public class User extends Model {
 
 	/** Zakoduje heslo podle pravidel pouzivaji trida User */
 	public String hashPassword(String password) {
-		return hashPassword(password, getName());
+		return hashPassword(password, getUsername());
 	}
 
 	/** Vraci uzivatelske jmeno */
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
 
 	/** Nastavi uzivatelske jmeno */
-	public void setName(String name) {
-		this.name = name;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/** Vraci uzivatelskou roli */
@@ -96,7 +96,7 @@ public class User extends Model {
 
 	/** Vraci zaheshovane heslo */
 	public String GetHashPassword() {
-		return getPassword() != null ? hashPassword(getPassword(), getName()) : null;
+		return getPassword() != null ? hashPassword(getPassword(), getUsername()) : null;
 	}
 
 	/** Nastavi uzivatelske heslo */

@@ -106,7 +106,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			if (clubMemberId != null) {
 				data.setClubMemberId((int) clubMemberId);
 			}
-			data.setName(tfName.getValue());
+			data.setUsername(tfName.getValue());
 			data.setPassword(tfNewPassword1.getValue());
 
 		} else {
