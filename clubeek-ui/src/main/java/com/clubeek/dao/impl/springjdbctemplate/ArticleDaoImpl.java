@@ -2,10 +2,6 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.ArticleDao;
@@ -21,21 +17,11 @@ import com.clubeek.model.Article;
  * @author vitfo
  */
 @Repository
-public class ArticleDaoImpl implements ArticleDao {
-
-    private JdbcTemplate template;
-
-    @Autowired
-    public void init(DataSource dataSource) {
-        this.template = new JdbcTemplate(dataSource);
-    }
+public class ArticleDaoImpl extends DaoImpl implements ArticleDao {
 
     @Override
     public void updateRow(Article object) {
-//        SqlParameterSource params = new BeanPropertySqlParameterSource(object);
-//        Cannot use params (and NamedParameterJdbcTemplate) because of enums in object and their ordinal() method that is called.
-        
-        template.update("update t_article set "
+        template.getJdbcOperations().update("update t_article set "
                 + "location_type = ?, "
                 + "priority = ?, "
                 + "caption = ?, "
@@ -62,7 +48,7 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public void insertRow(Article object) {
-        template.update("insert into t_article ("
+        template.getJdbcOperations().update("insert into t_article ("
                 + "location_type, "
                 + "priority, "
                 + "caption, "
@@ -90,7 +76,7 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public void deleteRow(int id) {
-        template.update("delete from t_article where id = ?", new Integer[]{id});
+        template.getJdbcOperations().update("delete from t_article where id = ?", new Integer[]{id});
     }
 
     @Override
@@ -100,7 +86,7 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public Article getArticleById(int id) {
-        return template.queryForObject("select * from t_article where id = ?", new Integer[]{id}, new ArticleMapper());
+        return template.getJdbcOperations().queryForObject("select * from t_article where id = ?", new Integer[]{id}, new ArticleMapper());
     }
 
     @Override
@@ -113,7 +99,9 @@ public class ArticleDaoImpl implements ArticleDao {
         String str = String.format("SELECT * FROM t_article WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
                 sqlOwnerCondition(clubTeamId, categoryId),
                 sqlLocationCondition(location), 
-                sqlExpiredDateCondition(), "priority", "creation_date");
+                sqlExpiredDateCondition(), 
+                "priority", 
+                "creation_date");
         return template.query(str, new ArticleMapper());
     }
     
@@ -132,6 +120,6 @@ public class ArticleDaoImpl implements ArticleDao {
     }
     
     private static String sqlLocationCondition(LocationType location) {
-        return String.format("(%s = %d)", "location", location.ordinal());
+        return String.format("(%s = %d)", "location_type", location.ordinal());
     }
 }

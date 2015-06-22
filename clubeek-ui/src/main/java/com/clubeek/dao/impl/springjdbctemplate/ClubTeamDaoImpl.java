@@ -19,14 +19,7 @@ import com.clubeek.model.ClubTeam;
  * @author vitfo
  */
 @Repository
-public class ClubTeamDaoImpl implements ClubTeamDao {
-    
-    private NamedParameterJdbcTemplate template;
-
-    @Autowired
-    public void init(DataSource dataSource) {
-        this.template = new NamedParameterJdbcTemplate(dataSource);
-    }
+public class ClubTeamDaoImpl extends DaoImpl implements ClubTeamDao {
 
     @Override
     public void updateRow(ClubTeam object) {
@@ -35,7 +28,7 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
                 + "name = :name, "
                 + "active = :active, "
                 + "sorting = :sorting, "
-                + "category_id = :category_id "
+                + "category_id = :categoryId "
                 + "where id = :id"
                 , source);        
     }

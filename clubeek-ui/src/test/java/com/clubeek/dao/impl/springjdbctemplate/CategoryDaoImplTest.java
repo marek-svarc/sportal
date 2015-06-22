@@ -1,12 +1,13 @@
 package com.clubeek.dao.impl.springjdbctemplate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.model.Category;
 
+/**
+* Class that tests {@link CategoryDaoImpl}.
+* 
+* @author vitfo
+*
+*/
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("test-config.xml")
 public class CategoryDaoImplTest {
@@ -27,8 +34,8 @@ public class CategoryDaoImplTest {
      * Deletes all categories before each test.
      */
     @Before
-    public void deleleAll() {
-        deleteAllCategories(categoryDao);
+    public void deleleCategoriesAll() {
+        deleteAll(categoryDao);
     }
 
     /**
@@ -109,7 +116,7 @@ public class CategoryDaoImplTest {
         int numOfActive = categoryDao.getActiveCategories().size();
         assertTrue(numOfActive == 3);
         
-        deleteAllCategories(categoryDao);
+        deleteAll(categoryDao);
     }
 
     @Test
@@ -120,7 +127,7 @@ public class CategoryDaoImplTest {
         System.out.println("Working: " + numOfCategories);
         assertTrue(numOfCategories == 12);
         
-        deleteAllCategories(categoryDao);
+        deleteAll(categoryDao);
     }
 
     /**
@@ -130,7 +137,7 @@ public class CategoryDaoImplTest {
      * @param numOfActive - number of active categories
      * @param numOfNotActive - number of not active categories
      */
-    public static void insertCategories(CategoryDao categoryDao, int numOfActive, int numOfNotActive) {
+    public void insertCategories(CategoryDao categoryDao, int numOfActive, int numOfNotActive) {
         List<Category> categories = new ArrayList<Category>();
         for (int i = 0; i < numOfActive; i++) {
             Category c = new Category();
@@ -152,7 +159,7 @@ public class CategoryDaoImplTest {
      * 
      * @param categoryDao - implementation of @link {@link CategoryDao}.
      */
-    public static void deleteAllCategories(CategoryDao categoryDao) {
+    public void deleteAll(CategoryDao categoryDao) {
         List<Category> categories = categoryDao.getAllCategories();
         for (Category c : categories) {
             categoryDao.deleteRow(c.getId());
@@ -166,7 +173,7 @@ public class CategoryDaoImplTest {
      * @param description - description of category
      * @param active - if the category should be active or not
      */
-    public static void insertCategory(CategoryDao categoryDao, String description, boolean active) {
+    public void insertCategory(CategoryDao categoryDao, String description, boolean active) {
         Category category = new Category();
         category.setActive(active);
         category.setDescription(description);
