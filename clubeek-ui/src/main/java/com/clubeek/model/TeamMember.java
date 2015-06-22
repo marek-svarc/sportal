@@ -1,5 +1,6 @@
 package com.clubeek.model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +8,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
+import com.clubeek.enums.TeamFunction;
 
 public class TeamMember extends Model {
     // TODO vitfo, created on 11. 6. 2015 
@@ -16,35 +16,35 @@ public class TeamMember extends Model {
     // TODO vitfo, created on 11. 6. 2015 
     private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
-	public enum TeamFunction {
-		PLAYER(Messages.getString("player")), CAPTAIN(Messages.getString("captain")), TEAM_LEADERSHIP(Messages.getString("teamManager")), COACH_ASSISTANT(Messages.getString("assistant")), COACH(Messages.getString("coach")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-
-		/** Vraci hodnotu flagu pro binarni skladani */
-		public int toFlag() {
-			return 1 << ordinal();
-		}
-
-		/**
-		 * Kontroluje zda parametr "flags" obsahuje
-		 * 
-		 * @param flags
-		 * @return
-		 */
-		public boolean isFlag(int flags) {
-			return (toFlag() & flags) != 0;
-		}
-
-		@Override
-		public String toString() {
-			return this.text;
-		}
-
-		private TeamFunction(String text) {
-			this.text = text;
-		}
-
-		private String text;
-	}
+//	public enum TeamFunction {
+//		PLAYER(Messages.getString("player")), CAPTAIN(Messages.getString("captain")), TEAM_LEADERSHIP(Messages.getString("teamManager")), COACH_ASSISTANT(Messages.getString("assistant")), COACH(Messages.getString("coach")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+//
+//		/** Vraci hodnotu flagu pro binarni skladani */
+//		public int toFlag() {
+//			return 1 << ordinal();
+//		}
+//
+//		/**
+//		 * Kontroluje zda parametr "flags" obsahuje
+//		 * 
+//		 * @param flags
+//		 * @return
+//		 */
+//		public boolean isFlag(int flags) {
+//			return (toFlag() & flags) != 0;
+//		}
+//
+//		@Override
+//		public String toString() {
+//			return this.text;
+//		}
+//
+//		private TeamFunction(String text) {
+//			this.text = text;
+//		}
+//
+//		private String text;
+//	}
 
 	/* PRIVATE */
 

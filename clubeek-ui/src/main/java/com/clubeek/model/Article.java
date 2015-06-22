@@ -2,6 +2,9 @@ package com.clubeek.model;
 
 import java.util.Date;
 
+import com.clubeek.enums.Location;
+import com.clubeek.enums.Owner;
+
 /**
  * Trida obsahujici informace o jednom clanku.
  * 
@@ -10,41 +13,41 @@ import java.util.Date;
  */
 public class Article extends Model implements Publishable {
 
-	/** Typy umisteni clanku na jedne strance */
-	public enum Location {
-		BULLETIN_BOARD, NEWS;
-
-		@Override
-		public String toString() {
-			switch (Location.values()[this.ordinal()]) {
-			case BULLETIN_BOARD:
-				return Messages.getString("bulletinBoard"); //$NON-NLS-1$
-			case NEWS:
-				return Messages.getString("news"); //$NON-NLS-1$
-			}
-			return ""; //$NON-NLS-1$
-		}
-	}
-
-	/** Typy umisteni clanku na celem webu */
-	public enum Owner {
-		CLUB, CATEGORY, TEAM, CLUB_ALL;
-
-		@Override
-		public String toString() {
-			switch (Owner.values()[this.ordinal()]) {
-			case CLUB_ALL:
-				return Messages.getString("wholeWeb"); //$NON-NLS-1$
-			case CLUB:
-				return Messages.getString("onlyClub"); //$NON-NLS-1$
-			case CATEGORY:
-				return Messages.getString("onlyCategory"); //$NON-NLS-1$
-			case TEAM:
-				return Messages.getString("onlyTeam"); //$NON-NLS-1$
-			}
-			return ""; //$NON-NLS-1$
-		}
-	}
+//	/** Typy umisteni clanku na jedne strance */
+//	public enum Location {
+//		BULLETIN_BOARD, NEWS;
+//
+//		@Override
+//		public String toString() {
+//			switch (Location.values()[this.ordinal()]) {
+//			case BULLETIN_BOARD:
+//				return Messages.getString("bulletinBoard"); //$NON-NLS-1$
+//			case NEWS:
+//				return Messages.getString("news"); //$NON-NLS-1$
+//			}
+//			return ""; //$NON-NLS-1$
+//		}
+//	}
+//
+//	/** Typy umisteni clanku na celem webu */
+//	public enum Owner {
+//		CLUB, CATEGORY, TEAM, CLUB_ALL;
+//
+//		@Override
+//		public String toString() {
+//			switch (Owner.values()[this.ordinal()]) {
+//			case CLUB_ALL:
+//				return Messages.getString("wholeWeb"); //$NON-NLS-1$
+//			case CLUB:
+//				return Messages.getString("onlyClub"); //$NON-NLS-1$
+//			case CATEGORY:
+//				return Messages.getString("onlyCategory"); //$NON-NLS-1$
+//			case TEAM:
+//				return Messages.getString("onlyTeam"); //$NON-NLS-1$
+//			}
+//			return ""; //$NON-NLS-1$
+//		}
+//	}
 
 	// Hodnoty vlastnosti
 
@@ -73,10 +76,10 @@ public class Article extends Model implements Publishable {
 	private Owner owner = Owner.CLUB_ALL;
 
 	/** Index kategorie pro kterou je clanek urcen */
-	private int categoryId = 0;
+	private int categoryId;
 
 	/** Index tymu pro ktery je clanek urcen */
-	private int clubTeamId = 0;
+	private int clubTeamId;
 
 	// Konstruktor
 

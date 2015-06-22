@@ -10,14 +10,15 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
+import com.clubeek.enums.Role;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubSettings;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User;
-import com.clubeek.ui.LayoutTabSheet;
-import com.clubeek.ui.Messages;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
+import com.clubeek.ui.LayoutTabSheet;
+import com.clubeek.ui.Messages;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.ViewArticle;
 import com.clubeek.ui.views.ViewArticles;
@@ -330,21 +331,21 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = (View) new ViewClubRivalCard(this);
         views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = (View) new ViewTeamMatchCard(this);
 
-        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.EDITOR)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), Role.EDITOR)) {
             views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.SPORT_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), Role.SPORT_MANAGER)) {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this),
                     new ViewTeamMatches(), new ViewTeamTrainings());
             views[HorzMenuNavigationViews.RIVALS.ordinal()] = (View) new ViewClubRivals();
         } else {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this));
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.CLUB_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), Role.CLUB_MANAGER)) {
             views[HorzMenuNavigationViews.SETTINGS.ordinal()] = (View) new LayoutTabSheet(new ViewCategories(this),
                     new ViewClubTeams(this), new ViewClubMembers(), new ViewTeamMembers());
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), User.Role.ADMINISTRATOR)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), Role.ADMINISTRATOR)) {
             views[HorzMenuNavigationViews.USERS.ordinal()] = (View) new ViewUsers();
         }
 
@@ -386,7 +387,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         }
 
         // menu nastaveni
-        if ((user != null) && (securityService.checkRole(user.getRole(), User.Role.EDITOR))) {
+        if ((user != null) && (securityService.checkRole(user.getRole(), Role.EDITOR))) {
             menuItem = horzMenu.addItem(Messages.getString("settings"), null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("articles"), views, HorzMenuNavigationViews.ARTICLES, null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("rivalsCatalogue"), views, HorzMenuNavigationViews.RIVALS, null); //$NON-NLS-1$

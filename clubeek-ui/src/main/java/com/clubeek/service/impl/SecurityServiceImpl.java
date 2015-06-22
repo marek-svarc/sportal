@@ -1,7 +1,7 @@
 package com.clubeek.service.impl;
 
+import com.clubeek.enums.Role;
 import com.clubeek.model.User;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
 import com.clubeek.ui.views.Navigation;
 

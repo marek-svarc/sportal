@@ -1,5 +1,7 @@
 package com.clubeek.model;
 
+import com.clubeek.enums.ContactType;
+
 public class Contact extends Model implements Cloneable {
 
 	/* PRIVATE */
@@ -24,20 +26,20 @@ public class Contact extends Model implements Cloneable {
 	// Datove typy
 
 	/** Popisuje typ kontaktu */
-	public enum ContactType {
-		EMAIL, PHONE;
-
-		public String toString() {
-			switch (ordinal()) {
-			case 0:
-				return Messages.getString("email"); //$NON-NLS-1$
-			case 1:
-				return Messages.getString("phone"); //$NON-NLS-1$
-			default:
-				return ""; //$NON-NLS-1$
-			}
-		};
-	}
+//	public enum ContactType {
+//		EMAIL, PHONE;
+//
+//		public String toString() {
+//			switch (ordinal()) {
+//			case 0:
+//				return Messages.getString("email"); //$NON-NLS-1$
+//			case 1:
+//				return Messages.getString("phone"); //$NON-NLS-1$
+//			default:
+//				return ""; //$NON-NLS-1$
+//			}
+//		};
+//	}
 
 	/** Zpusob oznamovani zprav */
 	public enum NotificationType {

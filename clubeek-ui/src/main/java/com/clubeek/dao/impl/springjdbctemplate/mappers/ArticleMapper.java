@@ -5,8 +5,9 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.clubeek.enums.Location;
+import com.clubeek.enums.Owner;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Owner;
 
 /**
  * Mapper for {@link Article} model object.
@@ -20,7 +21,7 @@ public class ArticleMapper implements RowMapper<Article> {
         Article a = new Article();
         
         a.setId(rs.getInt("id"));
-        a.setLocation(Article.Location.values()[rs.getInt("location")]);
+        a.setLocation(Location.values()[rs.getInt("location")]);
         a.setPriority(rs.getBoolean("priority"));
         a.setCaption(rs.getString("caption"));
         a.setSummary(rs.getString("summary"));

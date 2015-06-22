@@ -4,14 +4,11 @@ import java.util.List;
 
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
+import com.clubeek.enums.Role;
 import com.clubeek.model.ClubRival;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubRival;

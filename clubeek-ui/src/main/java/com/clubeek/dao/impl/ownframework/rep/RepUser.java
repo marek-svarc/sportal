@@ -5,10 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
-import com.clubeek.dao.impl.ownframework.rep.RepTeamMember.TableColumn;
+import com.clubeek.enums.Role;
 import com.clubeek.model.TeamMember;
 import com.clubeek.model.User;
-import com.clubeek.model.User.Role;
 
 public class RepUser implements Repository<User> {
 
@@ -157,7 +156,7 @@ public class RepUser implements Repository<User> {
     public static List<User> selectAllAdministrators(TableColumn[] columns) {
         columns = getColumns(columns);
         return Admin.query(User.class, String.format("SELECT %s FROM %s WHERE %s = %s", Admin.createSelectParams(columns),
-                tableName, TableColumn.PERMISSIONS, User.Role.ADMINISTRATOR.ordinal()), columns, getInstance());
+                tableName, TableColumn.PERMISSIONS, Role.ADMINISTRATOR.ordinal()), columns, getInstance());
     }
 
     /**

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.clubeek.enums.TeamFunction;
 import com.clubeek.model.TeamMember;
-import com.clubeek.model.TeamMember.TeamFunction;
 import com.clubeek.ui.ModalInput;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.VerticalLayout;

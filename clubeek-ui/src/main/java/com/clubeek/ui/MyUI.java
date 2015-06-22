@@ -1,21 +1,18 @@
 package com.clubeek.ui;
 
-import com.clubeek.ui.main.HorzMenuBase;
 import java.util.List;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ContextLoaderListener;
 
-import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
+import com.clubeek.enums.Role;
 import com.clubeek.model.User;
 import com.clubeek.ui.main.HorzMenuAbsOnTop;
-import com.clubeek.ui.main.HorzMenuStandard;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.Navigation.ViewId;
 import com.vaadin.annotations.Theme;
@@ -71,7 +68,7 @@ public class MyUI extends UI {
             User user = new User();
             user.setName("admin");
             user.setPassword("admin");
-            user.setRole(User.Role.ADMINISTRATOR);
+            user.setRole(Role.ADMINISTRATOR);
 //            RepUser.insert(user);
             userDao.insertUser(user);
         }

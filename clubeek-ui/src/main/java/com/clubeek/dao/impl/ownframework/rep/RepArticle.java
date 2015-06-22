@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
+import com.clubeek.enums.Location;
+import com.clubeek.enums.Owner;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Location;
-import com.clubeek.model.Article.Owner;
 
 public class RepArticle implements Repository<Article> {
 
@@ -70,7 +70,7 @@ public class RepArticle implements Repository<Article> {
      * @param creationDate Datum vytvoreni/posledni zmeny clanku
      * @param expirationDate Datum znepristupneni clanku
      */
-    public static void insert(Article.Location location, boolean priority, String caption, String summary, String content,
+    public static void insert(Location location, boolean priority, String caption, String summary, String content,
             Date creationDate, Date expirationDate, Owner owner, int clubTeamId, int categoryId) {
         // sestaveni sql prikazu
         String sql = String.format(
@@ -110,7 +110,7 @@ public class RepArticle implements Repository<Article> {
      * @param expirationDate Datum znepristupneni clanku
      *
      */
-    public static void update(int id, Article.Location location, boolean priority, String caption, String summary,
+    public static void update(int id, Location location, boolean priority, String caption, String summary,
             String content, Date creationDate, Date expirationDate, Owner owner, int clubTeamId, int categoryId) {
         // sestaveni sql prikazu
         String sql = String
@@ -209,7 +209,7 @@ public class RepArticle implements Repository<Article> {
                     data.setId(result.getInt(resultsColumnId));
                     break;
                 case LOCATION:
-                    data.setLocation(Article.Location.values()[result.getInt(resultsColumnId)]);
+                    data.setLocation(Location.values()[result.getInt(resultsColumnId)]);
                     break;
                 case PRIORITY:
                     data.setPriority(result.getBoolean(resultsColumnId));

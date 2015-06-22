@@ -1,18 +1,18 @@
 package com.clubeek.ui.views;
 
+import java.util.Date;
 import java.util.List;
 
 import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.dao.impl.ownframework.TeamTrainingDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
+import com.clubeek.enums.Role;
 import com.clubeek.model.TeamTraining;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeamTraining;
 import com.clubeek.util.DateTime;
@@ -24,8 +24,6 @@ import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
-
-import java.util.Date;
 
 @SuppressWarnings("serial")
 public final class ViewTeamTrainings extends VerticalLayout implements View, ActionTable.OnActionListener {

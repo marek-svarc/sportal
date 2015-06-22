@@ -4,15 +4,13 @@ import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepCategory;
+import com.clubeek.enums.Role;
 import com.clubeek.model.Category;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameCategory;
 import com.vaadin.data.Container;

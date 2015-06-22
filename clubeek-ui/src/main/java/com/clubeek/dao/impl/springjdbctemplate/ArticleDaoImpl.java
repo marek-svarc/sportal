@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle.TableColumn;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ArticleMapper;
+import com.clubeek.enums.Location;
+import com.clubeek.enums.Owner;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Location;
-import com.clubeek.model.Article.Owner;
 
 /**
  * Implementation of @link {@link ArticleDao} interface.
@@ -35,7 +35,7 @@ public class ArticleDaoImpl implements ArticleDao {
 //        SqlParameterSource params = new BeanPropertySqlParameterSource(object);
 //        Cannot use params (and NamedParameterJdbcTemplate) because of enums in object and their ordinal() method that is called.
         
-        template.update("update t_article set"
+        template.update("update t_article set "
                 + "location = ?, "
                 + "priority = ?, "
                 + "caption = ?, "

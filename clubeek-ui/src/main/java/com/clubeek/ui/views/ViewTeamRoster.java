@@ -4,9 +4,8 @@ import java.util.List;
 
 import com.clubeek.dao.TeamMemberDao;
 import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
+import com.clubeek.enums.TeamFunction;
 import com.clubeek.model.TeamMember;
-import com.clubeek.model.TeamMember.TeamFunction;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.TeamMemberPanel;
 import com.vaadin.annotations.PreserveOnRefresh;

@@ -1,13 +1,11 @@
 package com.clubeek.dao.impl.ownframework;
 
-import java.sql.ResultSet;
 import java.util.List;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle;
+import com.clubeek.enums.Location;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Location;
-import com.clubeek.model.Unique;
 
 public class ArticleDaoImpl implements ArticleDao {
 
