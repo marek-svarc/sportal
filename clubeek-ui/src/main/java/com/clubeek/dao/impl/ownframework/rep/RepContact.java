@@ -51,7 +51,7 @@ public class RepContact implements Repository<Contact> {
      * @param contact data jednoho kontaktu, ktera budou vlozena do databaze
      */
     public static void insert(Contact contact) {
-        insert(contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
+        insert(contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
                 contact.getClubMemberId());
     }
 
@@ -92,7 +92,7 @@ public class RepContact implements Repository<Contact> {
      * @param contact data kontaktu
      */
     public static void update(Contact contact) {
-        update(contact.getId(), contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
+        update(contact.getId(), contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
                 contact.getClubMemberId());
     }
 
@@ -155,7 +155,7 @@ public class RepContact implements Repository<Contact> {
                     data.setId(result.getInt(TableColumn.ID.name));
                     break;
                 case TYPE:
-                    data.setType(ContactType.values()[result.getInt(TableColumn.TYPE.name)]);
+                    data.setContactType(ContactType.values()[result.getInt(TableColumn.TYPE.name)]);
                     break;
                 case DESCRIPTION:
                     data.setDescription(result.getString(TableColumn.DESCRIPTION.name));

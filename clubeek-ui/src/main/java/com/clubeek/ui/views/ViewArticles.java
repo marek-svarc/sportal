@@ -128,9 +128,9 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // Auxiliary
     /** Generuje textovy popis umisteni clanku na strankach */
     public String GetArticleLocationAsString(Article article) {
-        String locationStr = article.getLocation().toString();
+        String locationStr = article.getLocationType().toString();
 
-        switch (article.getOwner()) {
+        switch (article.getOwnerType()) {
             case CLUB_ALL:
                 locationStr += ", " + Messages.getString("ViewArticles.1"); //$NON-NLS-1$ //$NON-NLS-2$
                 break;

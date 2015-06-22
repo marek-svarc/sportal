@@ -1,4 +1,4 @@
-------------------------------
+﻿------------------------------
 -- Dropping tables if exist --
 ------------------------------
 
@@ -96,7 +96,7 @@ CREATE TABLE T_CONTACT
     id 			serial,
     contact		varchar(100)		not null,
     description		varchar(100),
-    type		smallint		not null,
+    contact_type		smallint		not null,
     notification	smallint		not null,
     club_member_id	integer			not null,
 
@@ -223,7 +223,7 @@ CREATE TABLE T_APPLICANT_FOR_TEAM_MATCH
 CREATE TABLE T_ARTICLE
 (
     id			serial,
-    location		smallint	not null default 1,
+    location_type		smallint	not null default 1,
     priority		boolean		not null default 'false',
     caption		varchar(2000)	not null,
     summary		TEXT,
@@ -247,7 +247,7 @@ CREATE TABLE T_USER
     id			serial,
     name		varchar(100)	not null,
     password		varchar(100)	not null,
-    permissions		integer		not null default 0,
+    user_role_type	integer		not null default 0,
     club_member_id	integer,
 
     primary key (id),
@@ -319,7 +319,7 @@ INSERT INTO T_CLUB_SETTING (id, title, comment) VALUES
 
 -- user name, password (the same as user name)
 -- administrator is the same as admin (admin is shorter to write)
-insert into T_USER (name, password, permissions) values
+insert into T_USER (name, password, user_role_type) values
 	('member', 'ddc721d12cbb3aa9850be6b6b801231f2683b221', 0),
 	('editor', '97475902e4ce16c0d1b96bbe1e9ad6bb2d41c54e', 1),
 	('sportManager', 'a4ae0dc42860d467da627ee8313628f8cc4cc600', 2),
@@ -487,7 +487,7 @@ $$
 ;
 
 -- ARTICLES [AKTUALITY]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
 	1,
@@ -600,7 +600,7 @@ insert into T_ARTICLE (location, priority, caption, summary, content, creation_d
 	);
 
 -- ARTICLES [AKTUALITY - PLATNOST DO]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
 	1,
@@ -657,7 +657,7 @@ insert into T_ARTICLE (location, priority, caption, summary, content, creation_d
 	);
 
 -- ARTICLES [NÁSTĚNKA]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- nástěnka | pouze kategorie
 	(
 	0,
@@ -720,7 +720,7 @@ insert into T_ARTICLE (location, priority, caption, summary, content, creation_d
 	);
 
 -- ARTICLES [NÁSTĚNKA - PLATNOST DO]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
 	-- nástěnka | pouze kategorie
 	(
 	0,
@@ -847,11 +847,11 @@ $$;
 
 
 ----------------------------------------------------------------------
--- Location
+-- Location type
 ---- 1 aktuality
 ---- 0 nástěnka
 
--- Owner
+-- Owner type
 ---- 3 celý web
 ---- 2 pouze tým
 ---- 1 pouze kategorie

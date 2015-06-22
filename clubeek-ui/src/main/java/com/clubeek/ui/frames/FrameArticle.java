@@ -161,8 +161,8 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 		tfCaption.setValue(data.getCaption());
 		taSummary.setValue(data.getSummary());
 		taContent.setValue(data.getContent());
-		nsLocation.setValue(data.getLocation());
-		nsOwner.setValue(data.getOwner());
+		nsLocation.setValue(data.getLocationType());
+		nsOwner.setValue(data.getOwnerType());
 		Tools.Components.initSelection(nsCategories, data.getCategoryId());
 		Tools.Components.initSelection(nsTeams, data.getClubTeamId());
 		cbPriority.setValue(data.getPriority());
@@ -179,9 +179,9 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 			data.setContent(taContent.getValue());
 		else
 			data.setContent(null);
-		data.setLocation((LocationType) nsLocation.getValue());
-		data.setOwner((OwnerType) nsOwner.getValue());
-		switch (data.getOwner()) {
+		data.setLocationType((LocationType) nsLocation.getValue());
+		data.setOwnerType((OwnerType) nsOwner.getValue());
+		switch (data.getOwnerType()) {
 		case CLUB:
 		case CLUB_ALL:
 			data.setCategoryId(0);

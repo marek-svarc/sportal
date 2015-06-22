@@ -69,7 +69,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             Container container = table.createDataContainer();
             for (int i = 0; i < users.size(); ++i) {
                 User user = users.get(i);
-                table.addRow(container, new Object[]{user.getName(), user.getRole().toString(),
+                table.addRow(container, new Object[]{user.getName(), user.getUserRoleType().toString(),
                     user.getClubMember() != null ? user.getClubMember().toString() : ""}, i);
             }
             table.setDataContainer(container);

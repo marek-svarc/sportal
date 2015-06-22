@@ -47,14 +47,14 @@ public class ArticleDaoImpl implements ArticleDao {
                 + "club_team_id = ?, "
                 + "category_id = ?"
                 , new Object[] {
-                        object.getLocation().ordinal(),
+                        object.getLocationType().ordinal(),
                         object.getPriority(),
                         object.getCaption(),
                         object.getSummary(),
                         object.getContent(),
                         object.getCreationDate(),
                         object.getExpirationDate(),
-                        object.getOwner().ordinal(),
+                        object.getOwnerType().ordinal(),
                         object.getClubTeamId(),
                         object.getCategoryId()
                 });
@@ -75,14 +75,14 @@ public class ArticleDaoImpl implements ArticleDao {
                 + "category_id"
                 + ") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                 new Object[] {
-                        object.getLocation().ordinal(),
+                        object.getLocationType().ordinal(),
                         object.getPriority(),
                         object.getCaption(),
                         object.getSummary(),
                         object.getContent(),
                         object.getCreationDate(),
                         object.getExpirationDate(),
-                        object.getOwner().ordinal(),
+                        object.getOwnerType().ordinal(),
                         object.getClubTeamId(),
                         object.getCategoryId()
                 });

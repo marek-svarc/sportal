@@ -92,7 +92,7 @@ public class RepClubMember implements Repository<ClubMember> {
             new ColumnData(city), new ColumnData(code), new ColumnData(photo)}, true);
         // vlozeni kontaktu do tabulky "contact"
         for (Contact contact : contacts) {
-            RepContact.insert(contact.getType(), contact.getDescription(), contact.getContact(), contact.getNotification(), id);
+            RepContact.insert(contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotification(), id);
         }
         return id;
     }

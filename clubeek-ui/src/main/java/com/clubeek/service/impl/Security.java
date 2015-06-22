@@ -63,7 +63,7 @@ final public class Security {
 		// kontrola existence uzivate
 		User user = getUser();
 		// autorizace
-		return ((user != null) && (user.getRole().ordinal() >= role.ordinal()));
+		return ((user != null) && (user.getUserRoleType().ordinal() >= role.ordinal()));
 	}
 
 	/**

@@ -35,7 +35,7 @@ public class User extends Model {
 	private String password = ""; //$NON-NLS-1$
 
 	/** Uzivatelska role */
-	private UserRoleType role = UserRoleType.EMPTY;
+	private UserRoleType userRoleType = UserRoleType.EMPTY;
 
 	/** identifikator asociovaneho clena klubu */
 	private int clubMemberId;
@@ -80,13 +80,13 @@ public class User extends Model {
 	}
 
 	/** Vraci uzivatelskou roli */
-	public UserRoleType getRole() {
-		return role;
+	public UserRoleType getUserRoleType() {
+		return userRoleType;
 	}
 
 	/** Nastavi uzivatelskou roli */
-	public void setRole(UserRoleType role) {
-		this.role = role;
+	public void setUserRoleType(UserRoleType userRoleType) {
+		this.userRoleType = userRoleType;
 	}
 
 	/** Vraci uzivatelske heslo */

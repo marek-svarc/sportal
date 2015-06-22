@@ -66,7 +66,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			    
 			Tools.Components.initNativeSelect(nsClubMember, clubMembers, true);
 
-			nsRole.setValue(data.getRole());
+			nsRole.setValue(data.getUserRoleType());
 			tfNewPassword1.setRequired(true);
 			tfNewPassword2.setRequired(true);
 
@@ -74,7 +74,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 					createComponentsPanel("Přihlašovací údaje", tfName, tfNewPassword1, tfNewPassword2));
 		} else {
 
-			nsRole.setValue(data.getRole());
+			nsRole.setValue(data.getUserRoleType());
 			this.addComponent(new FormLayout(nsRole));
 			this.addComponent(cbChangePassword);
 			FormLayout flPassword = new FormLayout(tfNewPassword1, tfNewPassword2);
@@ -101,7 +101,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			testClubMember();
 
 			// prirazeni dat
-			data.setRole((UserRoleType) nsRole.getValue());
+			data.setUserRoleType((UserRoleType) nsRole.getValue());
 			Object clubMemberId = nsClubMember.getValue();
 			if (clubMemberId != null) {
 				data.setClubMemberId((int) clubMemberId);
@@ -110,7 +110,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			data.setPassword(tfNewPassword1.getValue());
 
 		} else {
-			data.setRole((UserRoleType) nsRole.getValue());
+			data.setUserRoleType((UserRoleType) nsRole.getValue());
 			if (cbChangePassword.getValue()) {
 				
 				// kontroly vstupu

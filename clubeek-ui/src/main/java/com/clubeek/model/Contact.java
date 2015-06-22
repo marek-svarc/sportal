@@ -7,7 +7,7 @@ public class Contact extends Model implements Cloneable {
 	/* PRIVATE */
 
 	/** Typ kontaktu */
-	private ContactType type;
+	private ContactType contactType;
 
 	/** Popis kontaktu */
 	private String description;
@@ -61,12 +61,12 @@ public class Contact extends Model implements Cloneable {
 
 	// Vlastnosti
 
-	public ContactType getType() {
-		return type;
+	public ContactType getContactType() {
+		return contactType;
 	}
 
-	public void setType(ContactType type) {
-		this.type = type;
+	public void setContactType(ContactType contactType) {
+		this.contactType = contactType;
 	}
 
 	public String getDescription() {
@@ -105,7 +105,7 @@ public class Contact extends Model implements Cloneable {
 	public boolean equals(Object obj) {
 		if (obj instanceof Contact) {
 			Contact with = (Contact) obj;
-			return (getId() == with.getId()) && (type == with.type) && description.equals(with.description)
+			return (getId() == with.getId()) && (contactType == with.contactType) && description.equals(with.description)
 					&& (contact.equals(with.contact)) && (notifiction == with.notifiction) && (clubMemberId == with.clubMemberId);
 		} else {
 			return false;

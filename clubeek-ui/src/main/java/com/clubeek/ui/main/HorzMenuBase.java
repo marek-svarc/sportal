@@ -331,21 +331,21 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = (View) new ViewClubRivalCard(this);
         views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = (View) new ViewTeamMatchCard(this);
 
-        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.EDITOR)) {
+        if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.EDITOR)) {
             views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.SPORT_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.SPORT_MANAGER)) {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this),
                     new ViewTeamMatches(), new ViewTeamTrainings());
             views[HorzMenuNavigationViews.RIVALS.ordinal()] = (View) new ViewClubRivals();
         } else {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this));
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.CLUB_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.CLUB_MANAGER)) {
             views[HorzMenuNavigationViews.SETTINGS.ordinal()] = (View) new LayoutTabSheet(new ViewCategories(this),
                     new ViewClubTeams(this), new ViewClubMembers(), new ViewTeamMembers());
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.ADMINISTRATOR)) {
+        if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.ADMINISTRATOR)) {
             views[HorzMenuNavigationViews.USERS.ordinal()] = (View) new ViewUsers();
         }
 
@@ -387,7 +387,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         }
 
         // menu nastaveni
-        if ((user != null) && (securityService.checkRole(user.getRole(), UserRoleType.EDITOR))) {
+        if ((user != null) && (securityService.checkRole(user.getUserRoleType(), UserRoleType.EDITOR))) {
             menuItem = horzMenu.addItem(Messages.getString("settings"), null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("articles"), views, HorzMenuNavigationViews.ARTICLES, null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("rivalsCatalogue"), views, HorzMenuNavigationViews.RIVALS, null); //$NON-NLS-1$

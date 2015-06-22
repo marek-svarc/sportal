@@ -121,7 +121,7 @@ public class ClubMemberCard extends VerticalLayout {
             if (clubMember.getContacts().size() > 0) {
                 lblMemberDetail.writeTableBegin("Kontakty");
                 for (Contact c : clubMember.getContacts()) {
-                    lblMemberDetail.writeTableRow(c.getType().toString(), c.getDescription(), c.getContact(), c.getNotification().toString());
+                    lblMemberDetail.writeTableRow(c.getContactType().toString(), c.getDescription(), c.getContact(), c.getNotification().toString());
                 }
                 lblMemberDetail.writeTableEnd();
             }

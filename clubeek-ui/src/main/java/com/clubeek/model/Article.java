@@ -52,7 +52,7 @@ public class Article extends Model implements Publishable {
 	// Hodnoty vlastnosti
 
 	/** Typ umisteni clanku na jedne strance */
-	private LocationType location = LocationType.NEWS;
+	private LocationType locationType = LocationType.NEWS;
 
 	/** priznak zda ma clanek vysokou prioritu */
 	private Boolean priority = false;
@@ -73,7 +73,7 @@ public class Article extends Model implements Publishable {
 	private Date expirationDate = null;
 
 	/** Definuje umisteni na celem webu */
-	private OwnerType owner = OwnerType.CLUB_ALL;
+	private OwnerType ownerType = OwnerType.CLUB_ALL;
 
 	/** Index kategorie pro kterou je clanek urcen */
 	private int categoryId;
@@ -88,23 +88,23 @@ public class Article extends Model implements Publishable {
 	}
 
 	/** Nastavi typ umisteni clanku na webu */
-	public void setOwner(OwnerType owner) {
-		this.owner = owner;
+	public void setOwnerType(OwnerType ownerType) {
+		this.ownerType = ownerType;
 	}
 
 	/** Vraci typ umisteni clanku na webu */
-	public OwnerType getOwner() {
-		return owner;
+	public OwnerType getOwnerType() {
+		return ownerType;
 	}
 
 	/** Vraci typ umisteni clanku na jedne strance */
-	public LocationType getLocation() {
-		return location;
+	public LocationType getLocationType() {
+		return locationType;
 	}
 
 	/** Nastavi typ umisteni clanku na jedne strance */
-	public void setLocation(LocationType location) {
-		this.location = location;
+	public void setLocationType(LocationType locationType) {
+		this.locationType = locationType;
 	}
 
 	/** Vraci priznak zda ma clanek vysokou prioritu */

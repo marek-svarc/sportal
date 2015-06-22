@@ -55,8 +55,8 @@ public class RepArticle implements Repository<Article> {
      *
      */
     public static void insert(Article article) {
-        insert(article.getLocation(), article.getPriority(), article.getCaption(), article.getSummary(), article.getContent(),
-                article.getCreationDate(), article.getExpirationDate(), article.getOwner(), article.getClubTeamId(),
+        insert(article.getLocationType(), article.getPriority(), article.getCaption(), article.getSummary(), article.getContent(),
+                article.getCreationDate(), article.getExpirationDate(), article.getOwnerType(), article.getClubTeamId(),
                 article.getCategoryId());
     }
 
@@ -93,8 +93,8 @@ public class RepArticle implements Repository<Article> {
      * @param article data, ktera budou zapsana do databaze
      */
     public static void update(Article article) {
-        update(article.getId(), article.getLocation(), article.getPriority(), article.getCaption(), article.getSummary(),
-                article.getContent(), article.getCreationDate(), article.getExpirationDate(), article.getOwner(),
+        update(article.getId(), article.getLocationType(), article.getPriority(), article.getCaption(), article.getSummary(),
+                article.getContent(), article.getCreationDate(), article.getExpirationDate(), article.getOwnerType(),
                 article.getClubTeamId(), article.getCategoryId());
     }
 
@@ -209,7 +209,7 @@ public class RepArticle implements Repository<Article> {
                     data.setId(result.getInt(resultsColumnId));
                     break;
                 case LOCATION:
-                    data.setLocation(LocationType.values()[result.getInt(resultsColumnId)]);
+                    data.setLocationType(LocationType.values()[result.getInt(resultsColumnId)]);
                     break;
                 case PRIORITY:
                     data.setPriority(result.getBoolean(resultsColumnId));
@@ -230,7 +230,7 @@ public class RepArticle implements Repository<Article> {
                     data.setExpirationDate(result.getDate(resultsColumnId));
                     break;
                 case OWNER_TYPE:
-                    data.setOwner(OwnerType.values()[result.getInt(resultsColumnId)]);
+                    data.setOwnerType(OwnerType.values()[result.getInt(resultsColumnId)]);
                     break;
                 case CLUB_TEAM_ID:
                     data.setClubTeamId(result.getInt(resultsColumnId));

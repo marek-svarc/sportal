@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 
 public class UserMapper implements RowMapper<User> {
@@ -17,8 +18,7 @@ public class UserMapper implements RowMapper<User> {
         // TODO vitfo, created on 16. 6. 2015 - change name to username
         u.setName(rs.getString("name"));
         u.setPassword(rs.getString("password"));
-        // TODO vitfo, created on 16. 6. 2015 - enum
-//        u.setRole(role);
+        u.setUserRoleType(UserRoleType.values()[rs.getInt("user_role_type")]);
         u.setClubMemberId(rs.getInt("club_member_id"));
         
         return u;

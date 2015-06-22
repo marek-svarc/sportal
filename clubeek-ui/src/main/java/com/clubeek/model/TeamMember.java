@@ -157,7 +157,7 @@ public class TeamMember extends Model {
 	}
 
 	/** Funkce testuje zda je s clenem Trida asociovana dana funkce */
-	public boolean isFunction(TeamFunctionType function) {
-		return function.isFlag(this.functions);
+	public boolean isFunction(TeamFunctionType teamFunctionType) {
+		return teamFunctionType.isFlag(this.functions);
 	}
 }

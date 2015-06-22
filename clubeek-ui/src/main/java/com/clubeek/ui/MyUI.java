@@ -68,7 +68,7 @@ public class MyUI extends UI {
             User user = new User();
             user.setName("admin");
             user.setPassword("admin");
-            user.setRole(UserRoleType.ADMINISTRATOR);
+            user.setUserRoleType(UserRoleType.ADMINISTRATOR);
 //            RepUser.insert(user);
             userDao.insertUser(user);
         }

@@ -46,7 +46,7 @@ public class RepUser implements Repository<User> {
      * @param user informace o uzivateli
      */
     public static void insert(User user) {
-        insert(user.getName(), user.GetHashPassword(), user.getRole(), user.getClubMemberId());
+        insert(user.getName(), user.GetHashPassword(), user.getUserRoleType(), user.getClubMemberId());
     }
 
     /**
@@ -72,7 +72,7 @@ public class RepUser implements Repository<User> {
      * @param user data uzivatele
      */
     public static void update(User user) {
-        update(user.getId(), user.getRole(), user.GetHashPassword());
+        update(user.getId(), user.getUserRoleType(), user.GetHashPassword());
     }
 
     /**
@@ -205,7 +205,7 @@ public class RepUser implements Repository<User> {
                     data.setPassword(result.getString(resultsColumnId));
                     break;
                 case PERMISSIONS:
-                    data.setRole(UserRoleType.values()[result.getInt(resultsColumnId)]);
+                    data.setUserRoleType(UserRoleType.values()[result.getInt(resultsColumnId)]);
                     break;
                 case CLUB_MEMBER_ID:
                     data.setClubMemberId(result.getInt(resultsColumnId));
