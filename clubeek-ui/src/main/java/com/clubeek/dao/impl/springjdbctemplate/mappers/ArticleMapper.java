@@ -21,7 +21,7 @@ public class ArticleMapper implements RowMapper<Article> {
         Article a = new Article();
         
         a.setId(rs.getInt("id"));
-        a.setLocationType(LocationType.values()[rs.getInt("location")]);
+        a.setLocationType(LocationType.values()[rs.getInt("location_type")]);
         a.setPriority(rs.getBoolean("priority"));
         a.setCaption(rs.getString("caption"));
         a.setSummary(rs.getString("summary"));

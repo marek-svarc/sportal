@@ -36,7 +36,7 @@ public class ArticleDaoImpl implements ArticleDao {
 //        Cannot use params (and NamedParameterJdbcTemplate) because of enums in object and their ordinal() method that is called.
         
         template.update("update t_article set "
-                + "location = ?, "
+                + "location_type = ?, "
                 + "priority = ?, "
                 + "caption = ?, "
                 + "summary = ?, "
@@ -63,7 +63,7 @@ public class ArticleDaoImpl implements ArticleDao {
     @Override
     public void insertRow(Article object) {
         template.update("insert into t_article ("
-                + "location, "
+                + "location_type, "
                 + "priority, "
                 + "caption, "
                 + "summary, "
