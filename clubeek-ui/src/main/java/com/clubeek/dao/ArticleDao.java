@@ -2,7 +2,7 @@ package com.clubeek.dao;
 
 import java.util.List;
 
-import com.clubeek.enums.Location;
+import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
 
 public interface ArticleDao extends Dao<Article> {
@@ -11,5 +11,5 @@ public interface ArticleDao extends Dao<Article> {
     
     public List<Article> getAllArticles();
     
-    public List<Article> selectArticles(int clubTeamId, int categoryId, Location location);
+    public List<Article> selectArticles(int clubTeamId, int categoryId, LocationType location);
 }

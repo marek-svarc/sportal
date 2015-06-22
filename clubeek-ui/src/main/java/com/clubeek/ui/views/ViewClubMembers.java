@@ -7,7 +7,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.ContactDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.service.SecurityService;
@@ -75,7 +75,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(UserRoleType.CLUB_MANAGER);
 
 //        members = RepClubMember.selectAll(null);
     	members = clubMemberDao.getAllClubMembers();

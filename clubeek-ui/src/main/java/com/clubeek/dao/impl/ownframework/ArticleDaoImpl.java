@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle;
-import com.clubeek.enums.Location;
+import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
 
 public class ArticleDaoImpl implements ArticleDao {
@@ -29,7 +29,7 @@ public class ArticleDaoImpl implements ArticleDao {
 //     }
 
     @Override
-    public List<Article> selectArticles(int clubTeamId, int categoryId, Location location) {
+    public List<Article> selectArticles(int clubTeamId, int categoryId, LocationType location) {
         return RepArticle.select(clubTeamId, categoryId, location, null);
     }
 

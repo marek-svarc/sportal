@@ -8,7 +8,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.enums.TeamFunction;
+import com.clubeek.enums.TeamFunctionType;
 
 public class TeamMember extends Model {
     // TODO vitfo, created on 11. 6. 2015 
@@ -69,14 +69,14 @@ public class TeamMember extends Model {
 		this.setId(0);
 		this.setClubTeamId(0);
 		this.setClubMemberId(0);
-		this.setFunctions(TeamFunction.PLAYER.toFlag());
+		this.setFunctions(TeamFunctionType.PLAYER.toFlag());
 	}
 
 	public TeamMember(int temId, int clubMemberId) {
 		this.setId(0);
 		this.setClubTeamId(temId);
 		this.setClubMemberId(clubMemberId);
-		this.setFunctions(TeamFunction.PLAYER.toFlag());
+		this.setFunctions(TeamFunctionType.PLAYER.toFlag());
 	}
 
 	public static List<TeamMember> createTeamMembers(int clubTeamId, List<ClubMember> clubMembers) {
@@ -144,11 +144,11 @@ public class TeamMember extends Model {
 	}
 
 	/** Vraci seznam vsech funkci sociovanych se clenem Trida */
-	public List<TeamFunction> getFunctionsAsList() {
-		TeamFunction[] allFunctions = TeamFunction.values();
+	public List<TeamFunctionType> getFunctionsAsList() {
+		TeamFunctionType[] allFunctions = TeamFunctionType.values();
 
-		List<TeamFunction> myFunctions = new ArrayList<>();
-		for (TeamFunction teamFunction : allFunctions) {
+		List<TeamFunctionType> myFunctions = new ArrayList<>();
+		for (TeamFunctionType teamFunction : allFunctions) {
 			if (isFunction(teamFunction))
 				myFunctions.add(teamFunction);
 		}
@@ -157,7 +157,7 @@ public class TeamMember extends Model {
 	}
 
 	/** Funkce testuje zda je s clenem Trida asociovana dana funkce */
-	public boolean isFunction(TeamFunction function) {
+	public boolean isFunction(TeamFunctionType function) {
 		return function.isFlag(this.functions);
 	}
 }

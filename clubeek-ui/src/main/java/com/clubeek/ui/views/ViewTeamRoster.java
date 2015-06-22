@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.clubeek.dao.TeamMemberDao;
 import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
-import com.clubeek.enums.TeamFunction;
+import com.clubeek.enums.TeamFunctionType;
 import com.clubeek.model.TeamMember;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.TeamMemberPanel;
@@ -59,10 +59,10 @@ public class ViewTeamRoster extends VerticalLayout implements View {
      * @param teamFunctions array of team positions specific for layout
      * @param layout layout for member info panels
      */
-    private void addMembers(List<TeamMember> members, TeamFunction[] teamFunctions, CssLayout layout) {
+    private void addMembers(List<TeamMember> members, TeamFunctionType[] teamFunctions, CssLayout layout) {
 
         layout.removeAllComponents();
-        for (TeamFunction f : teamFunctions) {
+        for (TeamFunctionType f : teamFunctions) {
             for (final TeamMember m : members) {
                 if (m.isFunction(f) && (m.getClubMember() != null)) {
 
@@ -112,9 +112,9 @@ public class ViewTeamRoster extends VerticalLayout implements View {
             List<TeamMember> members = teamMemberDao.getTeamMembersByTeamId(teamId);
             // divide members to groups for layouts
             if (members != null) {
-                addMembers(members, new TeamFunction[]{TeamFunction.COACH, TeamFunction.COACH_ASSISTANT,
-                    TeamFunction.TEAM_LEADERSHIP}, layoutManagement);
-                addMembers(members, new TeamFunction[]{TeamFunction.PLAYER}, layoutPlayers);
+                addMembers(members, new TeamFunctionType[]{TeamFunctionType.COACH, TeamFunctionType.COACH_ASSISTANT,
+                    TeamFunctionType.TEAM_LEADERSHIP}, layoutManagement);
+                addMembers(members, new TeamFunctionType[]{TeamFunctionType.PLAYER}, layoutPlayers);
             }
         }
     }

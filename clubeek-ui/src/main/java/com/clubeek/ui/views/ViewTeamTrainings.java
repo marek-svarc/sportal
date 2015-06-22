@@ -6,7 +6,7 @@ import java.util.List;
 import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.dao.impl.ownframework.TeamTrainingDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.TeamTraining;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
@@ -71,7 +71,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.SPORT_MANAGER);
+    	securityService.authorize(UserRoleType.SPORT_MANAGER);
 
         table.removeAllRows();
 

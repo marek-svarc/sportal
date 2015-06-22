@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle.TableColumn;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ArticleMapper;
-import com.clubeek.enums.Location;
-import com.clubeek.enums.Owner;
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
 
 /**
@@ -109,7 +109,7 @@ public class ArticleDaoImpl implements ArticleDao {
     }
 
     @Override
-    public List<Article> selectArticles(int clubTeamId, int categoryId, Location location) {
+    public List<Article> selectArticles(int clubTeamId, int categoryId, LocationType location) {
         String str = String.format("SELECT * FROM t_article WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
                 sqlOwnerCondition(clubTeamId, categoryId),
                 sqlLocationCondition(location), 
@@ -120,10 +120,10 @@ public class ArticleDaoImpl implements ArticleDao {
     private String sqlOwnerCondition(int clubTeamId, int categoryId) {
         if ((clubTeamId > 0) || (categoryId > 0)) {
             return String.format("((%s = %d) OR (%s = %d) OR (%s = %d))", TableColumn.CLUB_TEAM_ID, clubTeamId,
-                    "category_id", categoryId, "owner_type", Owner.CLUB_ALL.ordinal());
+                    "category_id", categoryId, "owner_type", OwnerType.CLUB_ALL.ordinal());
         } else {
-            return String.format("((%s = %d) OR (%s = %d))", "owner_type", Owner.CLUB_ALL.ordinal(),
-                    "owner_type", Owner.CLUB.ordinal());
+            return String.format("((%s = %d) OR (%s = %d))", "owner_type", OwnerType.CLUB_ALL.ordinal(),
+                    "owner_type", OwnerType.CLUB.ordinal());
         }
     }
 
@@ -131,7 +131,7 @@ public class ArticleDaoImpl implements ArticleDao {
         return String.format("((%s is null) OR (LOCALTIMESTAMP <= %s))", "expiration_date", "expiration_date");
     }
     
-    private static String sqlLocationCondition(Location location) {
+    private static String sqlLocationCondition(LocationType location) {
         return String.format("(%s = %d)", "location", location.ordinal());
     }
 }

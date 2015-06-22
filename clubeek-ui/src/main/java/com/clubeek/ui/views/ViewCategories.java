@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Category;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
@@ -48,7 +48,7 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(UserRoleType.CLUB_MANAGER);
 
 //        categories = RepCategory.selectAll(null);
     	categories = categoryDao.getAllCategories();

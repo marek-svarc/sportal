@@ -2,7 +2,7 @@ package com.clubeek.enums;
 
 import com.clubeek.model.Messages;
 
-public enum TeamFunction {
+public enum TeamFunctionType {
 
     PLAYER(Messages.getString("player")), CAPTAIN(Messages.getString("captain")), TEAM_LEADERSHIP(Messages.getString("teamManager")), COACH_ASSISTANT(Messages.getString("assistant")), COACH(Messages.getString("coach")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
@@ -26,7 +26,7 @@ public enum TeamFunction {
         return this.text;
     }
 
-    private TeamFunction(String text) {
+    private TeamFunctionType(String text) {
         this.text = text;
     }
 

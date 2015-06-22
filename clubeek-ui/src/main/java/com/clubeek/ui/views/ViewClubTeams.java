@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
@@ -46,7 +46,7 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     @Override
     public void enter(ViewChangeEvent event) {
 
-        securityService.authorize(Role.SPORT_MANAGER);
+        securityService.authorize(UserRoleType.SPORT_MANAGER);
 
 //        teams = RepClubTeam.select(false, null);
         teams = clubTeamDao.getAllClubTeams();

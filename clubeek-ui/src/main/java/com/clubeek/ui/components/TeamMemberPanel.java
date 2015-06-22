@@ -1,6 +1,6 @@
 package com.clubeek.ui.components;
 
-import com.clubeek.enums.TeamFunction;
+import com.clubeek.enums.TeamFunctionType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.TeamMember;
 import com.clubeek.ui.Tools;
@@ -58,7 +58,7 @@ public class TeamMemberPanel extends Panel {
             Tools.Components.fillImageByPortrait(imgPhoto, clubMember.getPhoto(),
                     Integer.toString(clubMember.getId()));
         }
-        if (!teamMember.isFunction(TeamFunction.PLAYER)) {
+        if (!teamMember.isFunction(TeamFunctionType.PLAYER)) {
             lblInfo.setValue(teamMember.getFunctionsAsList().toString());
         } else if (clubMember.getBirthdate() != null) {
             lblInfo.setValue(String.format("%s %s", Messages.getString("yearGroup"),

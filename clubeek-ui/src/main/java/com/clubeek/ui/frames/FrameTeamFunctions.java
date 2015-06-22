@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.clubeek.enums.TeamFunction;
+import com.clubeek.enums.TeamFunctionType;
 import com.clubeek.model.TeamMember;
 import com.clubeek.ui.ModalInput;
 import com.vaadin.ui.OptionGroup;
@@ -21,16 +21,16 @@ public class FrameTeamFunctions extends VerticalLayout implements ModalInput<Tea
 		ogTeamFunctions = new OptionGroup();
 		ogTeamFunctions.setSizeFull();
 		ogTeamFunctions.setMultiSelect(true);
-		for (TeamFunction function : allTeamFunctions)
+		for (TeamFunctionType function : allTeamFunctions)
 			ogTeamFunctions.addItem(function);
 		this.addComponent(ogTeamFunctions);
 	}
 
 	@Override
 	public void dataToInput(TeamMember data) {
-		List<TeamFunction> teamFunctions = new ArrayList<>();
+		List<TeamFunctionType> teamFunctions = new ArrayList<>();
 
-		for (TeamFunction teamFunction : allTeamFunctions)
+		for (TeamFunctionType teamFunction : allTeamFunctions)
 			if (teamFunction.isFlag(data.getFunctions()))
 				teamFunctions.add(teamFunction);
 
@@ -40,10 +40,10 @@ public class FrameTeamFunctions extends VerticalLayout implements ModalInput<Tea
 	@SuppressWarnings("unchecked")
 	@Override
 	public void inputToData(TeamMember data) {
-		Collection<TeamFunction> teamFunctions = (Collection<TeamFunction>) ogTeamFunctions.getValue();
+		Collection<TeamFunctionType> teamFunctions = (Collection<TeamFunctionType>) ogTeamFunctions.getValue();
 
 		int teamFunctionsFlags = 0;
-		for (TeamFunction teamFunction : teamFunctions)
+		for (TeamFunctionType teamFunction : teamFunctions)
 			teamFunctionsFlags |= teamFunction.toFlag();
 
 		data.setFunctions(teamFunctionsFlags);
@@ -51,5 +51,5 @@ public class FrameTeamFunctions extends VerticalLayout implements ModalInput<Tea
 
 	private OptionGroup ogTeamFunctions;
 
-	private TeamFunction[] allTeamFunctions = TeamFunction.values();
+	private TeamFunctionType[] allTeamFunctions = TeamFunctionType.values();
 }

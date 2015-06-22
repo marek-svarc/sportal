@@ -10,7 +10,7 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubSettings;
 import com.clubeek.model.ClubTeam;
@@ -331,21 +331,21 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = (View) new ViewClubRivalCard(this);
         views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = (View) new ViewTeamMatchCard(this);
 
-        if ((user != null) && securityService.checkRole(user.getRole(), Role.EDITOR)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.EDITOR)) {
             views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), Role.SPORT_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.SPORT_MANAGER)) {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this),
                     new ViewTeamMatches(), new ViewTeamTrainings());
             views[HorzMenuNavigationViews.RIVALS.ordinal()] = (View) new ViewClubRivals();
         } else {
             views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this));
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), Role.CLUB_MANAGER)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.CLUB_MANAGER)) {
             views[HorzMenuNavigationViews.SETTINGS.ordinal()] = (View) new LayoutTabSheet(new ViewCategories(this),
                     new ViewClubTeams(this), new ViewClubMembers(), new ViewTeamMembers());
         }
-        if ((user != null) && securityService.checkRole(user.getRole(), Role.ADMINISTRATOR)) {
+        if ((user != null) && securityService.checkRole(user.getRole(), UserRoleType.ADMINISTRATOR)) {
             views[HorzMenuNavigationViews.USERS.ordinal()] = (View) new ViewUsers();
         }
 
@@ -387,7 +387,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         }
 
         // menu nastaveni
-        if ((user != null) && (securityService.checkRole(user.getRole(), Role.EDITOR))) {
+        if ((user != null) && (securityService.checkRole(user.getRole(), UserRoleType.EDITOR))) {
             menuItem = horzMenu.addItem(Messages.getString("settings"), null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("articles"), views, HorzMenuNavigationViews.ARTICLES, null); //$NON-NLS-1$
             addMenuCommand(user, menuItem, Messages.getString("rivalsCatalogue"), views, HorzMenuNavigationViews.RIVALS, null); //$NON-NLS-1$

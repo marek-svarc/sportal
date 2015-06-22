@@ -2,7 +2,7 @@ package com.clubeek.service.impl;
 
 
 import com.clubeek.dao.impl.ownframework.rep.RepUser;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.views.Navigation;
@@ -59,7 +59,7 @@ final public class Security {
 	 *            uroven pozadovaneho opravneni
 	 * @return
 	 */
-	public static boolean authorizeRole(Role role) {
+	public static boolean authorizeRole(UserRoleType role) {
 		// kontrola existence uzivate
 		User user = getUser();
 		// autorizace
@@ -81,7 +81,7 @@ final public class Security {
 	}
 
 	/** Kontroluje prihlaseni a autorizuje podle role */
-	public static void authorize(Role role) {
+	public static void authorize(UserRoleType role) {
 		if (!authorizeRole(role))
 			throw new UnauthorizedAcess();
 	}
@@ -91,7 +91,7 @@ final public class Security {
 		return VaadinSession.getCurrent().getAttribute(User.class);
 	}
 	
-	public static boolean checkRole(Role userRole, Role authRole) {
+	public static boolean checkRole(UserRoleType userRole, UserRoleType authRole) {
 		return userRole.ordinal() >= authRole.ordinal();
 	}
 

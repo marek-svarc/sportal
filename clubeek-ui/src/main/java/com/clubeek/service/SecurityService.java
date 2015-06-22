@@ -1,6 +1,6 @@
 package com.clubeek.service;
 
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.ui.views.Navigation;
 
@@ -12,7 +12,7 @@ public interface SecurityService {
 	
 	public void logout(Navigation navigation);
 	
-	public boolean checkRole(Role r1, Role r2);
+	public boolean checkRole(UserRoleType r1, UserRoleType r2);
 	
-	public void authorize(Role role);
+	public void authorize(UserRoleType role);
 }

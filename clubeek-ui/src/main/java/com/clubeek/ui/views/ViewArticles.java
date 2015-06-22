@@ -8,7 +8,7 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
@@ -65,7 +65,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
-    	securityService.authorize(Role.EDITOR);
+    	securityService.authorize(UserRoleType.EDITOR);
 
 //        List<Article> articles = RepArticle.selectAll(null);
     	List<Article> articles = articleDao.getAllArticles();

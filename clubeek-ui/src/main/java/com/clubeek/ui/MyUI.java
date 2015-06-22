@@ -10,7 +10,7 @@ import org.springframework.web.context.ContextLoaderListener;
 
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.ui.main.HorzMenuAbsOnTop;
 import com.clubeek.ui.views.Navigation;
@@ -68,7 +68,7 @@ public class MyUI extends UI {
             User user = new User();
             user.setName("admin");
             user.setPassword("admin");
-            user.setRole(Role.ADMINISTRATOR);
+            user.setRole(UserRoleType.ADMINISTRATOR);
 //            RepUser.insert(user);
             userDao.insertUser(user);
         }

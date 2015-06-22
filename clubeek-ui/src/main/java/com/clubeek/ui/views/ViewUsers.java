@@ -6,7 +6,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
@@ -50,7 +50,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.ADMINISTRATOR);
+    	securityService.authorize(UserRoleType.ADMINISTRATOR);
 
         // read training list from the database
 //        users = RepUser.selectAll(new RepUser.TableColumn[]{RepUser.TableColumn.ID, RepUser.TableColumn.NAME,

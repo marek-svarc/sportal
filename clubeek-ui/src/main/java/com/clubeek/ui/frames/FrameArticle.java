@@ -8,8 +8,8 @@ import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.enums.Location;
-import com.clubeek.enums.Owner;
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
@@ -67,9 +67,9 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 	private DateField dfExpiration;
 
 	private void updateControls() {
-		Owner owner = (Owner) nsOwner.getValue();
-		nsCategories.setVisible(owner == Owner.CATEGORY);
-		nsTeams.setVisible(owner == Owner.TEAM);
+		OwnerType owner = (OwnerType) nsOwner.getValue();
+		nsCategories.setVisible(owner == OwnerType.CATEGORY);
+		nsTeams.setVisible(owner == OwnerType.TEAM);
 	}
 
 	/** Vytvori a inicializuje layout pro vodorovne rozmisteni komponent */
@@ -97,13 +97,13 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 
 		// sestaveni seznamu moznych vlastniku clanku
 
-		List<Owner> owners = new ArrayList<>();
-		owners.add(Owner.CLUB_ALL);
-		owners.add(Owner.CLUB);
+		List<OwnerType> owners = new ArrayList<>();
+		owners.add(OwnerType.CLUB_ALL);
+		owners.add(OwnerType.CLUB);
 		if ((categories != null) && (categories.size() > 0))
-			owners.add(Owner.CATEGORY);
+			owners.add(OwnerType.CATEGORY);
 		if ((teams != null) && (teams.size() > 0))
-			owners.add(Owner.TEAM);
+			owners.add(OwnerType.TEAM);
 
 		// vytvoreni komponent
 
@@ -113,7 +113,7 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 		taContent = new RichTextArea(Messages.getString("articleContent")); //$NON-NLS-1$
 		taContent.setNullSettingAllowed(true);
 		taContent.setWidth(700, Unit.PIXELS);
-		nsLocation = Tools.Components.createNativeSelect(null, java.util.Arrays.asList(Location.values()));
+		nsLocation = Tools.Components.createNativeSelect(null, java.util.Arrays.asList(LocationType.values()));
 		nsOwner = Tools.Components.createNativeSelect(null, owners);
 		nsOwner.addValueChangeListener(new ValueChangeListener() {
 
@@ -179,8 +179,8 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 			data.setContent(taContent.getValue());
 		else
 			data.setContent(null);
-		data.setLocation((Location) nsLocation.getValue());
-		data.setOwner((Owner) nsOwner.getValue());
+		data.setLocation((LocationType) nsLocation.getValue());
+		data.setOwner((OwnerType) nsOwner.getValue());
 		switch (data.getOwner()) {
 		case CLUB:
 		case CLUB_ALL:

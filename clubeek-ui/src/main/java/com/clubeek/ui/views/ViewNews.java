@@ -13,7 +13,7 @@ import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamMatch;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
-import com.clubeek.enums.Location;
+import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.TeamMatch;
@@ -178,7 +178,7 @@ public class ViewNews extends VerticalLayout implements View {
         return laText;
     }
 
-    private List<Article> getArticles(ClubTeam team, Location location) {
+    private List<Article> getArticles(ClubTeam team, LocationType location) {
         if (team != null) {
 //            return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
             return articleDao.selectArticles(team.getId(), team.getCategoryId(), location);
@@ -305,10 +305,10 @@ public class ViewNews extends VerticalLayout implements View {
             team = clubTeamDao.getClubTeamById(teamId);
         }
         List<PublishableArticle> boardArticles = new ArrayList<>();
-        PublishableArticle.addArticlesToContainer(boardArticles, getArticles(team, Location.BULLETIN_BOARD), ViewId.ARTICLE);
+        PublishableArticle.addArticlesToContainer(boardArticles, getArticles(team, LocationType.BULLETIN_BOARD), ViewId.ARTICLE);
         createNewsLayoutList(boardArticles, vlLeftPanel, false, true, "layout-board", "label-h3", "label-h5");
         List<PublishableArticle> listArticles = new ArrayList<>();
-        PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, Location.NEWS), ViewId.ARTICLE);
+        PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, LocationType.NEWS), ViewId.ARTICLE);
         if (team != null) {
             PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
                     ViewId.ARTICLE);

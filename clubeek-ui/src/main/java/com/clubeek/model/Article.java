@@ -2,8 +2,8 @@ package com.clubeek.model;
 
 import java.util.Date;
 
-import com.clubeek.enums.Location;
-import com.clubeek.enums.Owner;
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 
 /**
  * Trida obsahujici informace o jednom clanku.
@@ -52,7 +52,7 @@ public class Article extends Model implements Publishable {
 	// Hodnoty vlastnosti
 
 	/** Typ umisteni clanku na jedne strance */
-	private Location location = Location.NEWS;
+	private LocationType location = LocationType.NEWS;
 
 	/** priznak zda ma clanek vysokou prioritu */
 	private Boolean priority = false;
@@ -73,7 +73,7 @@ public class Article extends Model implements Publishable {
 	private Date expirationDate = null;
 
 	/** Definuje umisteni na celem webu */
-	private Owner owner = Owner.CLUB_ALL;
+	private OwnerType owner = OwnerType.CLUB_ALL;
 
 	/** Index kategorie pro kterou je clanek urcen */
 	private int categoryId;
@@ -88,22 +88,22 @@ public class Article extends Model implements Publishable {
 	}
 
 	/** Nastavi typ umisteni clanku na webu */
-	public void setOwner(Owner owner) {
+	public void setOwner(OwnerType owner) {
 		this.owner = owner;
 	}
 
 	/** Vraci typ umisteni clanku na webu */
-	public Owner getOwner() {
+	public OwnerType getOwner() {
 		return owner;
 	}
 
 	/** Vraci typ umisteni clanku na jedne strance */
-	public Location getLocation() {
+	public LocationType getLocation() {
 		return location;
 	}
 
 	/** Nastavi typ umisteni clanku na jedne strance */
-	public void setLocation(Location location) {
+	public void setLocation(LocationType location) {
 		this.location = location;
 	}
 

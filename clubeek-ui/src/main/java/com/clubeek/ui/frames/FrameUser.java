@@ -7,7 +7,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.User;
 import com.clubeek.ui.ModalInput;
@@ -36,8 +36,8 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 		this.setWidth(300, Unit.PIXELS);
 		
 		tfName = Tools.Components.createTextField("Uživatelské jméno", true, "Je třeba zadata uživatelské jméno.");
-		nsClubMember = Tools.Components.createNativeSelect("Člen klubu", Arrays.asList(Role.values()));
-		nsRole = Tools.Components.createNativeSelect("Oprávnění", Arrays.asList(Role.values()));
+		nsClubMember = Tools.Components.createNativeSelect("Člen klubu", Arrays.asList(UserRoleType.values()));
+		nsRole = Tools.Components.createNativeSelect("Oprávnění", Arrays.asList(UserRoleType.values()));
 		
 		cbChangePassword = Tools.Components.createCheckBox("Změnit heslo");
 		cbChangePassword.setValue(false);
@@ -101,7 +101,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			testClubMember();
 
 			// prirazeni dat
-			data.setRole((Role) nsRole.getValue());
+			data.setRole((UserRoleType) nsRole.getValue());
 			Object clubMemberId = nsClubMember.getValue();
 			if (clubMemberId != null) {
 				data.setClubMemberId((int) clubMemberId);
@@ -110,7 +110,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			data.setPassword(tfNewPassword1.getValue());
 
 		} else {
-			data.setRole((Role) nsRole.getValue());
+			data.setRole((UserRoleType) nsRole.getValue());
 			if (cbChangePassword.getValue()) {
 				
 				// kontroly vstupu

@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.clubeek.enums.Location;
-import com.clubeek.enums.Owner;
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
 
 /**
@@ -21,14 +21,14 @@ public class ArticleMapper implements RowMapper<Article> {
         Article a = new Article();
         
         a.setId(rs.getInt("id"));
-        a.setLocation(Location.values()[rs.getInt("location")]);
+        a.setLocation(LocationType.values()[rs.getInt("location")]);
         a.setPriority(rs.getBoolean("priority"));
         a.setCaption(rs.getString("caption"));
         a.setSummary(rs.getString("summary"));
         a.setContent(rs.getString("content"));
         a.setCreationDate(rs.getTimestamp("creation_date"));
         a.setExpirationDate(rs.getDate("expiration_date"));
-        a.setOwner(Owner.values()[rs.getInt("owner_type")]);
+        a.setOwner(OwnerType.values()[rs.getInt("owner_type")]);
         a.setClubTeamId(rs.getInt("club_team_id"));
         a.setCategoryId(rs.getInt("category_id"));
         

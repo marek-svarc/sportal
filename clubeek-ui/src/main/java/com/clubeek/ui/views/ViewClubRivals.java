@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubRival;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
@@ -48,7 +48,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
     @Override
     public void enter(ViewChangeEvent event) {
 
-        securityService.authorize(Role.SPORT_MANAGER);
+        securityService.authorize(UserRoleType.SPORT_MANAGER);
 
 //        clubs = RepClubRival.selectAll(null);
         clubs = clubRivalDao.getAllClubRivals();

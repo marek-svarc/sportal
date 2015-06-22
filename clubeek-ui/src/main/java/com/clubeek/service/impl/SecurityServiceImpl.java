@@ -1,6 +1,6 @@
 package com.clubeek.service.impl;
 
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.service.SecurityService;
 import com.clubeek.ui.views.Navigation;
@@ -23,12 +23,12 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	@Override
-	public boolean checkRole(Role r1, Role r2) {
+	public boolean checkRole(UserRoleType r1, UserRoleType r2) {
 		return Security.checkRole(r1, r2);
 	}
 
 	@Override
-	public void authorize(Role role) {
+	public void authorize(UserRoleType role) {
 		Security.authorize(role);		
 	}
 

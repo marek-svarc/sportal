@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
 
-import com.clubeek.enums.Role;
+import com.clubeek.enums.UserRoleType;
 
 public class User extends Model {
 
@@ -35,7 +35,7 @@ public class User extends Model {
 	private String password = ""; //$NON-NLS-1$
 
 	/** Uzivatelska role */
-	private Role role = Role.EMPTY;
+	private UserRoleType role = UserRoleType.EMPTY;
 
 	/** identifikator asociovaneho clena klubu */
 	private int clubMemberId;
@@ -80,12 +80,12 @@ public class User extends Model {
 	}
 
 	/** Vraci uzivatelskou roli */
-	public Role getRole() {
+	public UserRoleType getRole() {
 		return role;
 	}
 
 	/** Nastavi uzivatelskou roli */
-	public void setRole(Role role) {
+	public void setRole(UserRoleType role) {
 		this.role = role;
 	}
 
