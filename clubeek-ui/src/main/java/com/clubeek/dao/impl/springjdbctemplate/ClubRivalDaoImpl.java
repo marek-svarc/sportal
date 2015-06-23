@@ -16,11 +16,11 @@ public class ClubRivalDaoImpl extends DaoImpl implements ClubRivalDao {
         template.update("update t_club_rival set "
                 + "name = :name, "
                 + "web = :web, "
-                + "gps = :gps, "
+                + "gps = :GPS, "
                 + "street = :street, "
                 + "city = :city, "
                 + "code = :code, "
-                + "icon = :icon"
+                + "icon = :icon "
                 + "where id = :id"
                 , source);    
     }
@@ -30,7 +30,7 @@ public class ClubRivalDaoImpl extends DaoImpl implements ClubRivalDao {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
         template.update("insert into t_club_rival "
                 + "( name,  web,  gps,  street,  city,  code,  icon) values "
-                + "(:name, :web, :gps, :street, :city, :code, :icon)"
+                + "(:name, :web, :GPS, :street, :city, :code, :icon)"
                 , source);    
     }
 
