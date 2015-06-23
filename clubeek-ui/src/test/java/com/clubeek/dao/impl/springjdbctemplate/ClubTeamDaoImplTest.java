@@ -14,7 +14,7 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.model.ClubTeam;
 
 /**
- * Class that tests @link {@link ClubTeamDaoImpl}.
+ * Class that tests ClubTeamDaoImpl.
  *
  * @author vitfo
  */

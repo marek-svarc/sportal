@@ -17,10 +17,9 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.enums.LocationType;
 import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
-import com.clubeek.model.ClubTeam;
 
 /**
- * Class that tests {@link ArticleDaoImpl}.
+ * Class that tests ArticleDaoImpl.
  * 
  * @author vitfo
  *

@@ -18,7 +18,7 @@ import com.clubeek.dao.CategoryDao;
 import com.clubeek.model.Category;
 
 /**
-* Class that tests {@link CategoryDaoImpl}.
+* Class that tests CategoryDaoImpl.
 * 
 * @author vitfo
 *

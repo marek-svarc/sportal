@@ -47,8 +47,7 @@ public class ClubMemberDaoImpl extends DaoImpl implements ClubMemberDao {
 
     @Override
     public ClubMember getClubMember(int id) {
-        // TODO Auto-generated method stub
-        return null;
+        return template.getJdbcOperations().queryForObject("select * from t_club_member where id = ?", new Integer[] {id}, new ClubMemberMapper());
     }
 
     @Override
