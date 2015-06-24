@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.clubeek.enums.ContactType;
+import com.clubeek.enums.NotificationType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.ui.Tools;
@@ -152,7 +153,7 @@ public class ContactField extends CustomField<List<Contact>> {
         TextField tfContact = Tools.Components.createTextField(null, true, null);
         tfContact.setInputPrompt("Kontakt");
 
-        ComboBox cbContactNotify = new ComboBox(null, Arrays.asList(Contact.NotificationType.values()));
+        ComboBox cbContactNotify = new ComboBox(null, Arrays.asList(NotificationType.values()));
         cbContactNotify.addStyleName(ValoTheme.COMBOBOX_TINY);
         cbContactNotify.setNullSelectionAllowed(false);
         cbContactNotify.setInputPrompt("Upozornění");

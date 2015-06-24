@@ -1,6 +1,7 @@
 package com.clubeek.model;
 
 import com.clubeek.enums.ContactType;
+import com.clubeek.enums.NotificationType;
 
 public class Contact extends Model implements Cloneable {
 
@@ -16,7 +17,7 @@ public class Contact extends Model implements Cloneable {
 	private String contact;
 
 	/** Zpusob zasilani zprav */
-	private NotificationType notifiction;
+	private NotificationType notifictionType;
 
 	/** identifikator asociovaneho clena klubu */
 	private int clubMemberId;
@@ -41,23 +42,23 @@ public class Contact extends Model implements Cloneable {
 //		};
 //	}
 
-	/** Zpusob oznamovani zprav */
-	public enum NotificationType {
-		NEVER, ALWAYS, ONLY_IMPORTANT;
-
-		public String toString() {
-			switch (ordinal()) {
-			case 0:
-				return Messages.getString("no"); //$NON-NLS-1$
-			case 1:
-				return Messages.getString("yesAlways"); //$NON-NLS-1$
-			case 2:
-				return Messages.getString("yesSignificantOnly"); //$NON-NLS-1$
-			default:
-				return ""; //$NON-NLS-1$
-			}
-		};
-	}
+//	/** Zpusob oznamovani zprav */
+//	public enum NotificationType {
+//		NEVER, ALWAYS, ONLY_IMPORTANT;
+//
+//		public String toString() {
+//			switch (ordinal()) {
+//			case 0:
+//				return Messages.getString("no"); //$NON-NLS-1$
+//			case 1:
+//				return Messages.getString("yesAlways"); //$NON-NLS-1$
+//			case 2:
+//				return Messages.getString("yesSignificantOnly"); //$NON-NLS-1$
+//			default:
+//				return ""; //$NON-NLS-1$
+//			}
+//		};
+//	}
 
 	// Vlastnosti
 
@@ -85,12 +86,12 @@ public class Contact extends Model implements Cloneable {
 		this.contact = contact;
 	}
 
-	public NotificationType getNotification() {
-		return notifiction;
+	public NotificationType getNotificationType() {
+		return notifictionType;
 	}
 
-	public void setNotification(NotificationType notification) {
-		this.notifiction = notification;
+	public void setNotificationType(NotificationType notificationType) {
+		this.notifictionType = notificationType;
 	}
 
 	public int getClubMemberId() {
@@ -106,7 +107,7 @@ public class Contact extends Model implements Cloneable {
 		if (obj instanceof Contact) {
 			Contact with = (Contact) obj;
 			return (getId() == with.getId()) && (contactType == with.contactType) && description.equals(with.description)
-					&& (contact.equals(with.contact)) && (notifiction == with.notifiction) && (clubMemberId == with.clubMemberId);
+					&& (contact.equals(with.contact)) && (notifictionType == with.notifictionType) && (clubMemberId == with.clubMemberId);
 		} else {
 			return false;
 		}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
 import com.clubeek.enums.ContactType;
+import com.clubeek.enums.NotificationType;
 import com.clubeek.model.Contact;
 
 /**
@@ -51,7 +52,7 @@ public class RepContact implements Repository<Contact> {
      * @param contact data jednoho kontaktu, ktera budou vlozena do databaze
      */
     public static void insert(Contact contact) {
-        insert(contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
+        insert(contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotificationType(),
                 contact.getClubMemberId());
     }
 
@@ -59,7 +60,7 @@ public class RepContact implements Repository<Contact> {
      * Vlozi a inicializuje radek v tabulce "contact"
      */
     public static void insert(ContactType type, String description, String contact,
-            Contact.NotificationType notification, int memberId) {
+            NotificationType notification, int memberId) {
         // sestaveni sql prikazu
         String sql = String.format("INSERT INTO %s (%s, %s, %s, %s, %s) VALUES ( ?, ?, ?, ?, ?)", tableName,
                 TableColumn.TYPE.name, TableColumn.DESCRIPTION.name, TableColumn.CONTACT.name, TableColumn.NOTIFICATION.name,
@@ -92,7 +93,7 @@ public class RepContact implements Repository<Contact> {
      * @param contact data kontaktu
      */
     public static void update(Contact contact) {
-        update(contact.getId(), contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotification(),
+        update(contact.getId(), contact.getContactType(), contact.getDescription(), contact.getContact(), contact.getNotificationType(),
                 contact.getClubMemberId());
     }
 
@@ -104,7 +105,7 @@ public class RepContact implements Repository<Contact> {
      * @param priority priorita kategorie
      */
     public static void update(int id, ContactType type, String description, String contact,
-            Contact.NotificationType notification, int clubMemberId) {
+            NotificationType notification, int clubMemberId) {
         // sestaveni sql prikazu
         String sql = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %s", tableName,
                 TableColumn.TYPE.name, TableColumn.DESCRIPTION.name, TableColumn.CONTACT.name, TableColumn.NOTIFICATION.name,
@@ -164,7 +165,7 @@ public class RepContact implements Repository<Contact> {
                     data.setContact(result.getString(TableColumn.CONTACT.name));
                     break;
                 case NOTIFICATION:
-                    data.setNotification(Contact.NotificationType.values()[result.getInt(TableColumn.NOTIFICATION.name)]);
+                    data.setNotificationType(NotificationType.values()[result.getInt(TableColumn.NOTIFICATION.name)]);
                     break;
                 case CLUB_MEMBER_ID:
                     data.setClubMemberId(result.getInt(TableColumn.CLUB_MEMBER_ID.name));

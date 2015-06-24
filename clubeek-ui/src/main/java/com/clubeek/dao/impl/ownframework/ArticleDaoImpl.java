@@ -13,7 +13,6 @@ public class ArticleDaoImpl implements ArticleDao {
     public Article getArticleById(int id) {
         // return RepArticle.selectById(id, new RepArticle.TableColumn[]{RepArticle.TableColumn.CAPTION,
         // RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE});
-        // TODO vitfo, created on 11. 6. 2015 - zkontorlovat zda funguje i pro ne null
         return RepArticle.selectById(id, null);
     }
 
@@ -50,7 +49,6 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public void exchangeRows(int idA, int idB) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not supported.");
     }
 

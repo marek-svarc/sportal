@@ -51,7 +51,6 @@ public class ClubMemberDaoImpl implements ClubMemberDao {
 
     @Override
     public void exchangeRows(int idA, int idB) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not supported.");
     }
 
