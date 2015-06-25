@@ -336,10 +336,76 @@ insert into T_CATEGORY (description, active) values
 insert into T_CLUB_TEAM (name, active, category_id) values
 	('Senioři [týmy]', true, 3),
 	('Mládež [týmy]', true, 3),
-	('Dospělí [týmy]', true, 3);
+	('Dospělí [týmy]', true, 3),
+	('Pokus [týmy]', false, null);
 
-insert into T_CLUB_TEAM (name, active) values
-	('Pokus [týmy]', false);
+insert into t_team_training (start, finish, place, comment, club_team_id) values 
+	(to_timestamp('2015-9-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-14 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-14 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-21 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-21 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-28 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-9 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-9 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2015-9-16 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-16 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2015-9-23 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-23 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2015-9-30 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-30 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-14 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-14 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-21 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-21 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-28 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-9 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-9 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-16 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-16 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-23 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-23 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-30 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-30 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-5-29 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-29 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2016-1-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-6-12 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-6-12 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 1),
+	(to_timestamp('2015-4-15 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-4-15 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 3),
+	(to_timestamp('2016-1-23 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-23 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2015-1-29 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-1-29 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 3),
+	(to_timestamp('2016-11-8 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-11-8 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-2-9 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-9 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 2),
+	(to_timestamp('2016-8-27 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-27 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2015-10-8 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-10-8 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2015-9-8 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-8 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2016-7-6 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-7-6 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 3),
+	(to_timestamp('2016-5-19 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-19 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 2),
+	(to_timestamp('2016-10-23 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-10-23 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-4-13 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-4-13 20:30', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 2),
+	(to_timestamp('2016-2-23 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-23 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2015-6-20 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-20 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-2-25 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-25 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2015-8-16 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-8-16 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2016-2-12 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-12 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 2),
+	(to_timestamp('2015-8-14 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-8-14 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2015-6-23 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-23 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2016-6-30 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-6-30 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 2),
+	(to_timestamp('2016-9-3 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-3 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', '', 1),
+	(to_timestamp('2015-12-13 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-12-13 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 1),
+	(to_timestamp('2016-8-2 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-2 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 1),
+	(to_timestamp('2015-5-12 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-5-12 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-12-1 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-12-1 20:30', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-4-1 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-4-1 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', '', 1),
+	(to_timestamp('2015-5-22 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-5-22 20:30', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 1),
+	(to_timestamp('2015-6-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-8-5 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-5 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2016-8-28 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 1),
+	(to_timestamp('2016-1-9 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-9 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2016-5-22 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-22 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'Příprava na zápas.', 3),
+	(to_timestamp('2015-4-11 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-4-11 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2016-5-2 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-2 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 2),
+	(to_timestamp('2016-11-21 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-11-21 20:30', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-10-16 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-10-16 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 1),
+	(to_timestamp('2015-3-27 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-3-27 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2016-7-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-7-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'Příprava na zápas.', 2),
+	(to_timestamp('2015-5-6 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-5-6 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2016-9-12 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-12 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2015-6-23 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-23 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2015-7-11 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-7-11 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2016-6-25 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-6-25 20:30', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', '', 3),
+	(to_timestamp('2015-6-6 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-6 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 2),
+	(to_timestamp('2016-1-30 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-30 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2015-1-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-1-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2015-6-18 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-18 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 3);
 
 insert into T_CLUB_MEMBER (name, surname, birthdate, street, city, code) values
 	('Kryštof', 'Staněk', null, null, null, null),
@@ -485,6 +551,10 @@ BEGIN
 END;
 $$
 ;
+
+insert into t_participant_of_training (club_member_id, team_training_id) values
+	(19, 1), (52, 1), (60, 1), (15, 1), (68, 2), (32, 2), (2, 2), (33, 2), (3, 2), (38, 2), (98, 2), (4, 2), (96, 2), (37, 2), (67, 2), (76, 2), (8, 2), (42, 2), (72, 2), (85, 2), (16, 2), (87, 2), (20, 2), (52, 2), (95, 2), (88, 2), (28, 2), (91, 2), (60, 2), (48, 3), (33, 3), (55, 3), (65, 3), (82, 3), (61, 3), (69, 4), (32, 4), (67, 4), (97, 4), (43, 4), (72, 4), (14, 4), (51, 4), (86, 4), (55, 4), (20, 4), (54, 4), (52, 4), (22, 4), (29, 4), (50, 6), (36, 6), (69, 8), (4, 8), (98, 8), (99, 8), (66, 8), (96, 8), (43, 8), (10, 8), (41, 8), (79, 8), (72, 8), (46, 8), (85, 8), (16, 8), (19, 8), (58, 8), (24, 8), (30, 8), (17, 9), (64, 9), (6, 9), (53, 9), (67, 9), (77, 9), (29, 9), (2, 10), (99, 10), (6, 10), (7, 10), (76, 10), (77, 10), (10, 10), (12, 10), (17, 10), (53, 10), (82, 10), (92, 10), (95, 10), (63, 10), (62, 10), (91, 10), (59, 12), (99, 14), (28, 14), (49, 16), (100, 16), (34, 17), (32, 17), (39, 17), (9, 17), (41, 17), (14, 17), (74, 17), (44, 17), (15, 17), (51, 17), (16, 17), (87, 17), (49, 17), (18, 17), (21, 17), (82, 17), (24, 17), (92, 17), (94, 17), (60, 17), (30, 17), (100, 18), (3, 18), (64, 18), (66, 18), (37, 18), (9, 18), (43, 18), (45, 18), (85, 18), (86, 18), (81, 18), (83, 18), (93, 18), (59, 18), (94, 18), (56, 18), (89, 18), (88, 18), (61, 18), (91, 18), (60, 18), (30, 18), (16, 19), (70, 19), (18, 19), (66, 19), (7, 19), (93, 19), (29, 19), (73, 19), (38, 20), (53, 20), (95, 20), (72, 20), (44, 20), (51, 21), (65, 21), (59, 21), (49, 22), (33, 22), (4, 22), (98, 22), (99, 22), (43, 22), (92, 22), (89, 22), (46, 22), (30, 22), (70, 24), (39, 24), (97, 24), (24, 24), (46, 24), (44, 24), (91, 24), (60, 24), (21, 25), (77, 25), (10, 25), (99, 26), (27, 26), (40, 26), (78, 26), (94, 26), (47, 27), (15, 28), (69, 29), (35, 29), (100, 29), (20, 29), (96, 29), (23, 29), (22, 29), (95, 29), (56, 29), (72, 29), (65, 30), (96, 30), (24, 30), (68, 31), (3, 31), (38, 31), (99, 31), (36, 31), (66, 31), (9, 31), (10, 31), (40, 31), (72, 31), (46, 31), (44, 31), (75, 31), (53, 31), (25, 31), (58, 31), (56, 31), (89, 31), (63, 31), (17, 32), (8, 32), (42, 32), (56, 32), (74, 32), (70, 33), (4, 33), (20, 33), (59, 33), (76, 33), (92, 33), (85, 34), (17, 34), (86, 34), (33, 34), (48, 34), (85, 36), (2, 36), (100, 36), (95, 36), (94, 36), (13, 36), (28, 36), (75, 36), (1, 37), (69, 37), (100, 37), (33, 37), (7, 37), (76, 37), (47, 37), (75, 37), (85, 37), (87, 37), (19, 37), (28, 37), (91, 37), (90, 37), (38, 38), (39, 38), (53, 38), (13, 38), (91, 38), (74, 40), (17, 42), (3, 42), (38, 42), (39, 42), (23, 42), (46, 42), (89, 42), (13, 42), (39, 44), (6, 44), (47, 44), (49, 45), (100, 45), (71, 45), (54, 45), (66, 45), (24, 45), (41, 45), (11, 45), (29, 45), (14, 45), (60, 45), (75, 45), (51, 47), (69, 47), (71, 47), (38, 47), (4, 47), (39, 47), (78, 47), (62, 47), (3, 50), (96, 50), (59, 50), (40, 50), (57, 50), (88, 50), (13, 50), (74, 50);
+
 
 insert into t_contact (contact, description, contact_type, notification_type, club_member_id) values
 	('b3957e8d-4dcd-435f-9c30-0e20f6a4814b@yahoo.com',null, 0, 0, 88),
