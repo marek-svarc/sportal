@@ -38,4 +38,9 @@ public class ContactDaoImpl implements ContactDao {
     public List<Contact> getContactsByClubMemberId(int clubMemberId) {
         return RepContact.selectByClubMemberId(clubMemberId, null);
     }
+
+    @Override
+    public List<Contact> getAllContacts() {
+        throw new UnsupportedOperationException(); 
+    }
 }

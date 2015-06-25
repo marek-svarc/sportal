@@ -18,7 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
     ClubRivalDaoImplTest.class,
     ClubSettingDaoImplTest.class,
     TeamMemberDaoImplTest.class,
-    UserDaoImplTest.class
+    UserDaoImplTest.class,
+    ContactDaoImplTest.class
 })
 public class AllTests {
 

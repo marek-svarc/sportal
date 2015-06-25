@@ -23,4 +23,5 @@
     <bean id="clubSettingDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubSettingDaoImpl" />
     <bean id="teamMemberDao" class="com.clubeek.dao.impl.springjdbctemplate.TeamMemberDaoImpl" />
     <bean id="userDao" class="com.clubeek.dao.impl.springjdbctemplate.UserDaoImpl" />
+    <bean id="contactDao" class="com.clubeek.dao.impl.springjdbctemplate.ContactDaoImpl" />
 </beans>
