@@ -25,8 +25,7 @@ import com.clubeek.model.Article;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-// This annotation points to the context used to setup the Spring container, which I then inject my repository from. Since I have not specified a name for my context Spring searches for a configuration file within the same directory as my test class that has the name PostRepositoryTest-context.xml.
-@ContextConfiguration("test-config.xml")
+@ContextConfiguration("/test-config.xml")
 public class ArticleDaoImplTest {
     @Autowired
     ArticleDao articleDao;

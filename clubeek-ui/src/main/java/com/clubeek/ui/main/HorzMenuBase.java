@@ -12,7 +12,7 @@ import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Category;
-import com.clubeek.model.ClubSettings;
+import com.clubeek.model.ClubSetting;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User;
 import com.clubeek.service.SecurityService;
@@ -94,7 +94,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     // TODO vitfo, created on 11. 6. 2015 
     private final ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
-    private ClubSettings clubSettings;
+    private ClubSetting clubSettings;
 
     /** Navigation menu in application */
     private MenuBar horzMenu = null;
@@ -419,7 +419,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
     // properties
     /** Informations about club */
-    public ClubSettings getClubSettings() {
+    public ClubSetting getClubSettings() {
         return clubSettings;
     }
 

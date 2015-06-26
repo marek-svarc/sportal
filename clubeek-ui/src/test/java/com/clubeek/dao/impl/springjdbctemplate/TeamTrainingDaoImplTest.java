@@ -25,7 +25,7 @@ import com.clubeek.model.TeamTraining;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("test-config.xml")
+@ContextConfiguration("/test-config.xml")
 public class TeamTrainingDaoImplTest {
     
     @Autowired

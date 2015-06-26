@@ -19,7 +19,7 @@ import com.clubeek.model.User;
  * @author vitfo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("test-config.xml")
+@ContextConfiguration("/test-config.xml")
 public class UserDaoImplTest {
     
     @Autowired

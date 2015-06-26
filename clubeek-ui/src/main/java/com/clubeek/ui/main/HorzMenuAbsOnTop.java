@@ -1,6 +1,6 @@
 package com.clubeek.ui.main;
 
-import com.clubeek.model.ClubSettings;
+import com.clubeek.model.ClubSetting;
 import com.clubeek.model.User;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;

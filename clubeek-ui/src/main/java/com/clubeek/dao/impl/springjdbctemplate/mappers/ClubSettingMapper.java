@@ -5,13 +5,13 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.clubeek.model.ClubSettings;
+import com.clubeek.model.ClubSetting;
 
-public class ClubSettingMapper implements RowMapper<ClubSettings> {
+public class ClubSettingMapper implements RowMapper<ClubSetting> {
 
     @Override
-    public ClubSettings mapRow(ResultSet rs, int rowNum) throws SQLException {
-        ClubSettings cs = new ClubSettings();
+    public ClubSetting mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ClubSetting cs = new ClubSetting();
         
         cs.setId(rs.getInt("id"));
         cs.setTitle(rs.getString("title"));

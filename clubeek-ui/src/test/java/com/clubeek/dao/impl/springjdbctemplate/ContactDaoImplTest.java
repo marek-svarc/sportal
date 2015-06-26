@@ -24,7 +24,7 @@ import com.clubeek.model.Contact;
  * @author vitfo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("test-config.xml")
+@ContextConfiguration("/test-config.xml")
 public class ContactDaoImplTest {
     
     @Autowired

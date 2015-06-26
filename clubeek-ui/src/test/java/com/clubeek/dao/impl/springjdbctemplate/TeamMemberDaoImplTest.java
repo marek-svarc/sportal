@@ -22,7 +22,7 @@ import com.clubeek.model.TeamMember;
 *
 */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("test-config.xml")
+@ContextConfiguration("/test-config.xml")
 public class TeamMemberDaoImplTest {
     
     @Autowired

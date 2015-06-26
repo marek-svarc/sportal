@@ -1,8 +1,18 @@
 package com.clubeek.dao;
 
-import com.clubeek.model.ClubSettings;
+import java.util.List;
+
+import com.clubeek.model.ClubSetting;
 
 public interface ClubSettingDao {
 
-    public ClubSettings getClubSettingById(int id);
+    public ClubSetting getClubSettingById(int id);
+    
+    public void updateClubSetting(ClubSetting clubSetting); 
+    
+    public List<ClubSetting> getAllClubSettings();
+    
+    public void deleteClubSetting(int id);
+    
+    public void addClubSetting(ClubSetting clubSetting);
 }

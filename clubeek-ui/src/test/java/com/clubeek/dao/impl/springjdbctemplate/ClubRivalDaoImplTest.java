@@ -24,7 +24,7 @@ import com.clubeek.model.ClubRival;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("test-config.xml")
+@ContextConfiguration("/test-config.xml")
 public class ClubRivalDaoImplTest {
     
     @Autowired
@@ -42,7 +42,7 @@ public class ClubRivalDaoImplTest {
     public void test() {
         assertTrue(clubRivalDao.getAllClubRivals().size() == 0);
         
-        byte[] image = getImageAsBytes("src/test/java/com/clubeek/dao/impl/springjdbctemplate/logo.png");
+        byte[] image = Tools.getImageAsBytes("src/test/java/com/clubeek/dao/impl/springjdbctemplate/logo.png");
         int imageLength = image.length;
         
         insertClubRival(clubRivalDao, "My club 01", "Ostrava", "http://www.myclub01.cz", image);
@@ -90,19 +90,5 @@ public class ClubRivalDaoImplTest {
         for (ClubRival cr : clubRivalDao.getAllClubRivals()) {
             clubRivalDao.deleteRow(cr.getId());
         }
-    }
-    
-    public byte[] getImageAsBytes(String fileName) {
-        File file = new File(fileName);
-        byte[] fileContent = null;
-        try (FileInputStream fis = new FileInputStream(file)) {
-            fileContent = new byte[(int) file.length()];
-            fis.read(fileContent);
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("File not found! " + fnfe);
-        } catch (IOException ioe) {
-            System.out.println("Exception while reading file! " + ioe);
-        }
-        return fileContent;
     }
 }

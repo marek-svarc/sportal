@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.clubeek.model.ClubSettings;
+import com.clubeek.model.ClubSetting;
 
-public class RepClubSettings implements Repository<ClubSettings> {
+public class RepClubSettings implements Repository<ClubSetting> {
 
     /** Nazev tabulky */
     public static final String tableName = "t_club_setting";
@@ -41,20 +41,20 @@ public class RepClubSettings implements Repository<ClubSettings> {
      * @return data nastaveni klubu
      *
      */
-    public static ClubSettings select(int id, TableColumn[] columns) {
+    public static ClubSetting select(int id, TableColumn[] columns) {
         columns = getColumns(columns);
-        List<ClubSettings> clubSettingsList = Admin.query(ClubSettings.class, String.format("SELECT %s FROM %s WHERE %s = %d",
+        List<ClubSetting> clubSettingsList = Admin.query(ClubSetting.class, String.format("SELECT %s FROM %s WHERE %s = %d",
                 Admin.createSelectParams(columns), tableName, TableColumn.ID.name, id), columns, getInstance());
         return (clubSettingsList != null) && (clubSettingsList.size() == 1) ? clubSettingsList.get(0) : null;
     }
 
     @Override
-    public void updateRow(ClubSettings value) {
+    public void updateRow(ClubSetting value) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public void insertRow(ClubSettings value) {
+    public void insertRow(ClubSetting value) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
@@ -69,7 +69,7 @@ public class RepClubSettings implements Repository<ClubSettings> {
     }
 
     @Override
-    public void readValue(ResultSet result, int resultsColumnId, ClubSettings data, Object dataColumnId) {
+    public void readValue(ResultSet result, int resultsColumnId, ClubSetting data, Object dataColumnId) {
         try {
             switch ((RepClubSettings.TableColumn) dataColumnId) {
                 case ID:
