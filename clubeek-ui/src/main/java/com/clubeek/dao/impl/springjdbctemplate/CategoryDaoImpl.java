@@ -42,16 +42,14 @@ public class CategoryDaoImpl implements CategoryDao{
     @Override
     public void insertRow(Category object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        // TODO vitfo, created on 16. 6. 2015 
-        template.update(
-                "insert into t_category (description, active, sorting) values "
+        template.update("insert into t_category "
+                + "(description, active, sorting) values "
                 + "(:description, :active, :sorting)", source);
-//        template.getJdbcOperations().update("insert into t_category (description, active, sorting) values (?, ?, ?)", object.getDescription(), object.getActive(), object.getSorting());
     }
 
     @Override
     public void deleteRow(int id) {
-        template.getJdbcOperations().update("delete from t_category where id = ?", new Integer[]{id});  
+        template.getJdbcOperations().update("delete from t_category where id = ?", new Object[]{id});  
     }
 
     @Override

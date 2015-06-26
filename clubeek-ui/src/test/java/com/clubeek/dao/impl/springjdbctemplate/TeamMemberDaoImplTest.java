@@ -48,12 +48,17 @@ public class TeamMemberDaoImplTest {
      */
     @Test
     public void test() {
+        assertTrue(clubMemberDao.getAllClubMembers().size() == 0);
+        
+        // insert
         insertTeamMember(clubMemberDao, clubTeamDao, categoryDao);
         int idClubTeam = clubTeamDao.getAllClubTeams().get(0).getId();
         assertTrue(teamMemberDao.getTeamMembersByTeamId(idClubTeam).size() == 1);
         
-        TeamMember tm = teamMemberDao.getTeamMembersByTeamId(idClubTeam).get(0);
-        int idTeamMember = tm.getId();
+        // getById
+        int idTeamMember = teamMemberDao.getTeamMembersByTeamId(idClubTeam).get(0).getId();
+        
+        // delete
         teamMemberDao.deleteRow(idTeamMember);
         assertTrue(teamMemberDao.getTeamMembersByTeamId(idClubTeam).size() == 0);
     }

@@ -14,7 +14,6 @@ public class TeamMemberMapper implements RowMapper<TeamMember> {
         TeamMember tm = new TeamMember();
         
         tm.setId(rs.getInt("id"));
-        // TODO vitfo, created on 16. 6. 2015 - change name from functions to function
         tm.setFunctions(rs.getInt("functions"));
         tm.setClubMemberId(rs.getInt("club_member_id"));
         tm.setClubTeamId(rs.getInt("club_team_id"));

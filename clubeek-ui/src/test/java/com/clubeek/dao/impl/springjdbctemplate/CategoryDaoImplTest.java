@@ -85,11 +85,6 @@ public class CategoryDaoImplTest {
     }
 
     @Test
-    public void testExchangeRows() {
-        // TODO vitfo, created on 15. 6. 2015 - not yet implemented
-    }
-
-    @Test
     public void testGetCategory() {
         insertCategory(categoryDao, "Test category abc", true);
         

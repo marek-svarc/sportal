@@ -3,7 +3,6 @@ package com.clubeek.dao;
 import java.util.List;
 
 import com.clubeek.model.ClubMember;
-import com.clubeek.model.TeamTraining;
 
 public interface ClubMemberDao extends Dao<ClubMember> {
 
