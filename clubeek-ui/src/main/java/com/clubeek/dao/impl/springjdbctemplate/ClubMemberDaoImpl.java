@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ClubMemberMapper;
 import com.clubeek.model.ClubMember;
+import com.clubeek.model.TeamTraining;
 
 public class ClubMemberDaoImpl extends DaoImpl implements ClubMemberDao {
 
@@ -77,5 +78,18 @@ public class ClubMemberDaoImpl extends DaoImpl implements ClubMemberDao {
     public void updateClubMember(ClubMember clubMember) {
         // TODO vitfo, created on 16. 6. 2015 - not needed
         updateRow(clubMember);
+    }
+
+    @Override
+    public List<ClubMember> getClubMembersByTeamTrainingId(int teamTrainingId) {
+        return template.getJdbcOperations().query(""
+                + "select * from t_club_member where id in (select club_member_id from t_participant_of_training where team_training_id = ?)", 
+                new Object[] {teamTrainingId}, new ClubMemberMapper());
+    }
+
+    @Override
+    public void addClubMemberToTeamTraining(int clubMemberId, int teamTrainingId) {
+        template.getJdbcOperations().update("insert into t_participant_of_training (club_member_id, team_training_id) values (?, ?)",
+                new Object[] {clubMemberId, teamTrainingId});        
     }
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
+import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.model.ClubMember;
 
 /**
@@ -31,6 +34,12 @@ public class ClubMemberDaoImplTest {
     
     @Autowired
     ClubTeamDao clubTeamDao;
+    
+    @Autowired
+    TeamTrainingDao teamTrainingDao;
+    
+    @Autowired
+    CategoryDao categoryDao;
     
     @Before
     public void deleteAllClubMembers() {
@@ -104,6 +113,32 @@ public class ClubMemberDaoImplTest {
         
         insertClubMembers(clubMemberDao, 7);
         assertTrue(clubMemberDao.getAllClubMembers().size() == 7);
+    }
+    
+    /**
+     * Tests getClubMembersByTeamTrainingId and addClubMemberToTeamTraining.
+     */
+    @Test
+    public void getClubMembersByTeamTrainingIdTest() {
+        insertClubMembers(clubMemberDao, 5);
+        assertTrue(clubMemberDao.getAllClubMembers().size() == 5);
+        
+        TeamTrainingDaoImplTest teamTrainingTest = new TeamTrainingDaoImplTest();
+        teamTrainingTest.insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, new Date(), new Date(), "Hřiště", "Comment");
+        teamTrainingTest.insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, new Date(), new Date(), "Tělocvična", "Other comment");
+        int teamTrainingId1 = teamTrainingDao.getAllTeamTrainings().get(0).getId();
+        int teamTrainingId2 = teamTrainingDao.getAllTeamTrainings().get(1).getId();
+        List<ClubMember> clubMembers = clubMemberDao.getAllClubMembers();
+        for (int i = 0; i < clubMembers.size(); i++) {
+            if (i < 3) {
+                clubMemberDao.addClubMemberToTeamTraining(clubMembers.get(i).getId(), teamTrainingId1);
+            } else {
+                clubMemberDao.addClubMemberToTeamTraining(clubMembers.get(i).getId(), teamTrainingId2);
+            }
+        }
+        
+        assertTrue(clubMemberDao.getClubMembersByTeamTrainingId(teamTrainingId1).size() == 3);
+        assertTrue(clubMemberDao.getClubMembersByTeamTrainingId(teamTrainingId2).size() == 2);
     }
     
     public void insertClubMember(ClubMemberDao clubMemberDao, String name, String surname, Date birthdate) {

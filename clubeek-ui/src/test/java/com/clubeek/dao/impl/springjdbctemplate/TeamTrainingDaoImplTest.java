@@ -55,7 +55,7 @@ public class TeamTrainingDaoImplTest {
         endTime.set(2015, 9, 11, 17, 00);
         
         // insert
-        insertTeamTraining(teamTrainingDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
+        insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
         assertTrue(teamTrainingDao.getAllTeamTrainings().size() == 1);
         
         // get all
@@ -70,7 +70,7 @@ public class TeamTrainingDaoImplTest {
         assertTrue(teamTrainingDao.getAllTeamTrainings().size() == 0);
         
         // update
-        insertTeamTraining(teamTrainingDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
+        insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
         TeamTraining t = teamTrainingDao.getAllTeamTrainings().get(0);
         
         Calendar startTime2 = new GregorianCalendar();
@@ -93,9 +93,9 @@ public class TeamTrainingDaoImplTest {
         
     }
     
-    public void insertTeamTraining(TeamTrainingDao teamTrainingDao, Date start, Date end, String place, String comment) {
+    public void insertTeamTraining(TeamTrainingDao teamTrainingDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, Date start, Date end, String place, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, "My test club", true, 0);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, true, "My test club", true, 0);
         
         TeamTraining tt = new TeamTraining();
         tt.setStart(start);
