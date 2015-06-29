@@ -2,7 +2,9 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import com.clubeek.dao.TeamMatchDao;
 import com.clubeek.model.TeamMatch;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class TeamMatchDaoImpl extends DaoImpl implements TeamMatchDao {
 
     @Override

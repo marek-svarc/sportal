@@ -524,7 +524,7 @@ BEGIN
 		where rnum <= 20 and rnum > 5	-- offset
 	loop
 		--insert into team_member
-		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 1);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id, functions) values (v_record.id, 1, 1);
 	end loop;
 
 	-- junior team members
@@ -535,7 +535,7 @@ BEGIN
 		where rnum <= 35 and birthdate is not null
 	loop
 		--insert into team_member
-		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 2);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id, functions) values (v_record.id, 2, 1);
 	end loop;
 
 	-- adult team members

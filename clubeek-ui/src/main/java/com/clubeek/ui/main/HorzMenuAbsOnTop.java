@@ -1,6 +1,5 @@
 package com.clubeek.ui.main;
 
-import com.clubeek.model.ClubSetting;
 import com.clubeek.model.User;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
@@ -9,9 +8,10 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import javax.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
 
 /**
  * Class that defines main page with the horizontal menu which is still on the
@@ -19,8 +19,9 @@ import com.vaadin.ui.themes.ValoTheme;
  *
  * @author Marek Svarc
  */
+@Component
 public class HorzMenuAbsOnTop extends HorzMenuBase {
-
+    
     /* PRIVATE */
     
     private void setMenuButtonStyle(Button btn){
@@ -109,14 +110,17 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
 
         super.updateUiControls(user);
     }
-
-    /* PUBLIC */
-    public HorzMenuAbsOnTop(UI ui) {
-        super(ui);
-
-        ui.setSizeFull();
-        ui.addStyleName("horzMenuAbsOnTop");
-        ui.addStyleName(ValoTheme.UI_WITH_MENU);
+    
+    public HorzMenuAbsOnTop() {
+        super();
+        
     }
-
+    
+    @Override
+    public void setUI() {
+        this.getUI().setSizeFull();
+        this.getUI().addStyleName("horzMenuAbsOnTop");
+        this.getUI().addStyleName(ValoTheme.UI_WITH_MENU);
+        createUiControls();
+    }
 }

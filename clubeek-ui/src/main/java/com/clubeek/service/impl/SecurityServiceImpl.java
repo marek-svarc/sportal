@@ -4,7 +4,9 @@ import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.service.SecurityService;
 import com.clubeek.ui.views.Navigation;
+import org.springframework.stereotype.Service;
 
+@Service("securityService")
 public class SecurityServiceImpl implements SecurityService {
 
 	@Override

@@ -19,7 +19,7 @@ public class RepArticle implements Repository<Article> {
     public static enum TableColumn {
 
         ID("id"),
-        LOCATION("location"),
+        LOCATION("location_type"),
         PRIORITY("priority"),
         CAPTION("caption"),
         SUMMARY("summary"),

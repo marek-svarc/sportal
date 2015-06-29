@@ -7,16 +7,12 @@ import java.util.List;
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubSettingDao;
 import com.clubeek.dao.ClubTeamDao;
-import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
-import com.clubeek.dao.impl.ownframework.ClubSettingsDaoImpl;
-import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubSetting;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.LayoutTabSheet;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.views.Navigation;
@@ -46,8 +42,11 @@ import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 /**
  * Trida uzivatelskeho prostredi aplikace. - pro navigaci je pouzito
@@ -56,6 +55,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Marek Svarc
  */
 @SuppressWarnings("serial")
+@Component
 public abstract class HorzMenuBase extends VerticalLayout implements Navigation {
 
     /* PRIVATE */
@@ -77,22 +77,29 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
             this.viewParameters = viewParameters;
         }
     }
+    
+    private LayoutTabSheet tabSheetLayout = new LayoutTabSheet();
 
     // Data
-    /** Nadrazene uzivatelske prostredi */
-    private final UI ui;
+    
+    @Autowired
+    private ApplicationContext applicationContex;
+    
+    // TODO vitfo, created on 11. 6. 2015 
+    @Autowired
+    private SecurityService securityService;
+
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private CategoryDao categoryDao;
 
     // TODO vitfo, created on 11. 6. 2015 
-    private final SecurityService securityService = new SecurityServiceImpl();
+    @Autowired
+    private ClubSettingDao clubSettingDao;
 
-    // TODO vitfo, created on 11. 6. 2015 
-    private final CategoryDao categoryDao = new CategoryDaoImpl();
-
-    // TODO vitfo, created on 11. 6. 2015 
-    private final ClubSettingDao clubSettingDao = new ClubSettingsDaoImpl();
-
-    // TODO vitfo, created on 11. 6. 2015 
-    private final ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ClubTeamDao clubTeamDao;
 
     private ClubSetting clubSettings;
 
@@ -106,7 +113,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     private PasswordField fieldPassword = null;
 
     /** Panel pro zobrazovani komponent pohledu */
-    private final Panel viewsContainer;
+    private Panel viewsContainer;
 
     /** Run standard autentication */
     private Button buttonSignInOut = null;
@@ -304,7 +311,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
         /* NAVIGATOR */
         // vytvoreni navigace
-        navigator = new Navigator(ui, viewsContainer);
+        navigator = new Navigator(this.getUI(), viewsContainer);
         navigator.addViewChangeListener(new ViewChangeListener() {
 
             @Override
@@ -402,19 +409,19 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         addHideCommand("Informace o zápase", views, HorzMenuNavigationViews.MATCH_CARD, null);
 
     }
-
-    /* PUBLIC */
-    public HorzMenuBase(UI ui) {
-        this.ui = ui;
-        this.clubSettings = clubSettingDao.getClubSettingById(1);
-
-        // controls initialization
+    
+    public HorzMenuBase() {
         horzMenu = new MenuBar();
-        viewsContainer = new Panel();
-        createUiControls();
-
+        viewsContainer = new Panel();   
+    }
+    
+    @PostConstruct
+    public void init() {
+        this.clubSettings = clubSettingDao.getClubSettingById(1);
+        //createUiControls();
+        
         // update of the menu
-        updateNavigationMenu();
+        //updateNavigationMenu();
     }
 
     // properties
@@ -470,4 +477,6 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     public void updateNavigationMenu() {
         updateUiControls(securityService.getUser());
     }
+    
+    public abstract void setUI();      
 }

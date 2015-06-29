@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.TeamTrainingMapper;
 import com.clubeek.model.TeamTraining;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class TeamTrainingDaoImpl extends DaoImpl implements TeamTrainingDao {
 
     @Override

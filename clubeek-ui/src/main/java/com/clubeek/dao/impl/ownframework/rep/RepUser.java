@@ -18,9 +18,9 @@ public class RepUser implements Repository<User> {
     public static enum TableColumn {
 
         ID("id"),
-        NAME("name"),
+        NAME("username"),
         PASSWORD("password"),
-        PERMISSIONS("permissions"),
+        PERMISSIONS("user_role_type"),
         CLUB_MEMBER_ID("club_member_id");
 
         private TableColumn(String dbColumnName) {

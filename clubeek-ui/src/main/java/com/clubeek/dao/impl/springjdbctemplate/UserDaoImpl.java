@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.clubeek.dao.UserDao;
 import com.clubeek.model.User;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserDaoImpl extends DaoImpl implements UserDao {
 
     @Override

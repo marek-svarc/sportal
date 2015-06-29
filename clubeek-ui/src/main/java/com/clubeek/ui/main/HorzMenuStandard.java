@@ -13,28 +13,33 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.stereotype.Component;
 
 /**
  * Class that defines main page with the standard horizontal menu
  *
  * @author Marek Svarc
  */
+@Component
 public class HorzMenuStandard extends HorzMenuBase {
 
-    /** Layout controls for user administration */
+    /**
+     * Layout controls for user administration
+     */
     private FormLayout vlLogin = null;
+    
+    public HorzMenuStandard() {
+            super();
+        }
 
     /* PROTECTED */
     @Override
     protected void createUiControls() {
-        
+
         super.createUiControls();
-        
+
         // Zakladni rozvrzeni stranky
         this.addStyleName("ss-main-page"); //$NON-NLS-1$
         this.setHeightUndefined();
@@ -119,10 +124,8 @@ public class HorzMenuStandard extends HorzMenuBase {
         
         super.updateUiControls(user);
     }
-    
-    /* PUBLIC */
-    public HorzMenuStandard(UI ui) {
-        super(ui);
-    }
 
+    @Override
+    public void setUI() {
+    }
 }

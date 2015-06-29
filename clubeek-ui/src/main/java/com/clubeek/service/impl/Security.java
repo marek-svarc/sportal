@@ -88,7 +88,10 @@ final public class Security {
 
 	/** Vraci aktualniho uzivatele, pokud neni prihlasen vraci null */
 	public static User getUser() {
+            if (VaadinSession.getCurrent() != null) {
 		return VaadinSession.getCurrent().getAttribute(User.class);
+            }
+            return null;
 	}
 	
 	public static boolean checkRole(UserRoleType userRole, UserRoleType authRole) {

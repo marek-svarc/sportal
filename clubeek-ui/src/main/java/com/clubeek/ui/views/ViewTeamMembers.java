@@ -7,7 +7,6 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamMemberDao;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.ClubTeam;
@@ -18,6 +17,7 @@ import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameSelectMembers;
+import com.clubeek.ui.frames.FrameTeamFunctions;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -28,11 +28,16 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
 public class ViewTeamMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
+    
     // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+    @Autowired
+    private ClubTeamDao clubTeamDao;
     // TODO vitfo, created on 11. 6. 2015 
     private TeamMemberDao teamMemberDao = new TeamMemberDaoImpl();
 
@@ -105,6 +110,8 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
             case SINGLE_DELETE:
                 deleteTeamMember((int) data);
                 break;
+            case SINGLE_EDIT:
+                selectTeamFunctions((int) data);
         }
         return true;
     }
@@ -151,8 +158,8 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
 
                         @Override
                         public void buttonClick(ClickEvent event) {
-//                            RepTeamMember.update(teamMembers,
-//                                    RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
+                            RepTeamMember.update(teamMembers,
+                                    RepTeamMember.selectOrCreateByClubMembers(selectedTeam.getId(), clubMembers, null));
                             teamMemberDao.update(selectedTeam.getId(), teamMembers, clubMembers);
                             updateTeamMembersTable();
                         }
@@ -167,14 +174,14 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
                 Columns.NAME, Columns.SURNAME, Columns.DATE_OF_BIRTH);
     }
 
-//    private void selectTeamFunctions() {
-//        final TeamMember selectedTeamMember = getSelectedTeamMember();
-//
-//        if (selectedTeamMember != null) {
-//            ModalDialog.show(this, Mode.EDIT, Messages.getString("editTeamFunction"), new FrameTeamFunctions(), selectedTeamMember, //$NON-NLS-1$
-//                    RepTeamMember.getInstance(), null);
-//        }
-//    }
+    private void selectTeamFunctions(int id) {
+        final TeamMember selectedTeamMember = teamMembers.get(id);
+
+        if (selectedTeamMember != null) {
+            ModalDialog.show(this, Mode.EDIT, Messages.getString("editTeamFunction"), new FrameTeamFunctions(), selectedTeamMember, //$NON-NLS-1$
+                    teamMemberDao, null);
+        }
+    }
     /** Teams selection component */
     private final NativeSelect nsTeams;
 

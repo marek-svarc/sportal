@@ -27,12 +27,12 @@ public class LayoutTabSheet extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 
-		// distribuce udalosti vlastnenym komponentam
-		if (tabs != null) {
-			for (Component c : tabs)
-				if (c instanceof View)
-					((View) c).enter(event);
-		}
+//		// distribuce udalosti vlastnenym komponentam
+//		if (tabs != null) {
+//			for (Component c : tabs)
+//				if (c instanceof View)
+//					((View) c).enter(event);
+//		}
 	}
 
 	/** Zalozky pro zobrazovani vlastnenych komponent */

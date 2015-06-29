@@ -6,12 +6,13 @@ import java.util.List;
 
 
 
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ContactMapper;
 import com.clubeek.model.Contact;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ContactDaoImpl extends DaoImpl implements ContactDao {
 
     @Override
