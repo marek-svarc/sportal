@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.model.Category;
+import com.clubeek.model.ClubRival;
 
 /**
 * Class that tests CategoryDaoImpl.
@@ -82,6 +83,18 @@ public class CategoryDaoImplTest {
             }
         }
         assertNull(c);
+    }
+    
+    @Test
+    public void deleteRowsTest() {
+        assertTrue(categoryDao.getAllCategories().size() == 0);
+        
+        insertCategories(categoryDao, 8, 7);
+        assertTrue(categoryDao.getAllCategories().size() == 15);
+        List<Category> categoriesToDelete = categoryDao.getActiveCategories();
+        categoryDao.deleteRows(categoriesToDelete);
+        assertTrue(categoryDao.getAllCategories().size() == 7);
+        assertTrue(categoryDao.getActiveCategories().size() == 0);
     }
 
     @Test

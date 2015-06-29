@@ -19,6 +19,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.model.ClubMember;
+import com.clubeek.model.ClubTeam;
 
 /**
  * Class that tests ClubMemberDaoImpl.
@@ -139,6 +140,17 @@ public class ClubMemberDaoImplTest {
         
         assertTrue(clubMemberDao.getClubMembersByTeamTrainingId(teamTrainingId1).size() == 3);
         assertTrue(clubMemberDao.getClubMembersByTeamTrainingId(teamTrainingId2).size() == 2);
+    }
+    
+    @Test
+    public void deleteRowsTest() {
+        assertTrue(clubMemberDao.getAllClubMembers().size() == 0);
+        
+        insertClubMembers(clubMemberDao, 10);
+        assertTrue(clubMemberDao.getAllClubMembers().size() == 10);
+        List<ClubMember> clubMembersToDelete = clubMemberDao.getAllClubMembers().subList(4, 9);
+        clubMemberDao.deleteRows(clubMembersToDelete);
+        assertTrue(clubMemberDao.getAllClubMembers().size() == 5);
     }
     
     public void insertClubMember(ClubMemberDao clubMemberDao, String name, String surname, Date birthdate) {

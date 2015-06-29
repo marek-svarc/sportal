@@ -61,4 +61,10 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
         return null;
     }
 
+    @Override
+    public void deleteRows(List<User> objects) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

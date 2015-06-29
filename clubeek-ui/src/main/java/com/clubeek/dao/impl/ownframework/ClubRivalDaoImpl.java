@@ -38,4 +38,9 @@ public class ClubRivalDaoImpl implements ClubRivalDao {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
+    public void deleteRows(List<ClubRival> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

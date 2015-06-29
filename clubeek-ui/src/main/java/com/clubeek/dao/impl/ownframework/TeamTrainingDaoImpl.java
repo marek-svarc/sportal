@@ -33,4 +33,9 @@ public class TeamTrainingDaoImpl implements TeamTrainingDao {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void deleteRows(List<TeamTraining> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

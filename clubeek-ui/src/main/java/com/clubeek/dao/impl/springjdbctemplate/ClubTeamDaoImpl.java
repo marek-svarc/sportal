@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.ClubTeamDao;
@@ -65,6 +67,13 @@ public class ClubTeamDaoImpl extends DaoImpl implements ClubTeamDao {
     @Override
     public List<ClubTeam> getAllClubTeams() {
         return template.query("select * from t_club_team", new ClubTeamMapper());
+    }
+
+    @Override
+    public void deleteRows(List<ClubTeam> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_club_team where id = :id", sources);   
+        
     }
 
 }

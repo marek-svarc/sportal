@@ -44,4 +44,10 @@ public class TeamTrainingDaoImpl extends DaoImpl implements TeamTrainingDao {
         return template.query("select * from t_team_training", new TeamTrainingMapper());
     }
 
+    @Override
+    public void deleteRows(List<TeamTraining> objects) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

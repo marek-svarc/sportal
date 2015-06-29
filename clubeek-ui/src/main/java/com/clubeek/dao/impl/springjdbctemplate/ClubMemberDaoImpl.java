@@ -3,6 +3,8 @@ package com.clubeek.dao.impl.springjdbctemplate;
 import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ClubMemberMapper;
@@ -91,5 +93,11 @@ public class ClubMemberDaoImpl extends DaoImpl implements ClubMemberDao {
     public void addClubMemberToTeamTraining(int clubMemberId, int teamTrainingId) {
         template.getJdbcOperations().update("insert into t_participant_of_training (club_member_id, team_training_id) values (?, ?)",
                 new Object[] {clubMemberId, teamTrainingId});        
+    }
+
+    @Override
+    public void deleteRows(List<ClubMember> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_club_member where id = :id", sources);        
     }
 }

@@ -2,6 +2,9 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubTeamDao;
+import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
 
 /**
@@ -60,6 +64,16 @@ public class ClubTeamDaoImplTest {
         assertTrue(clubTeamDao.getActiveClubTeams().size() == 1);
     }
 
+    @Test
+    public void deleteRowsTest() {
+        assertTrue(clubTeamDao.getAllClubTeams().size() == 0);
+        
+        insertClubTeams(clubTeamDao, categoryDao, 10);
+        assertTrue(clubTeamDao.getAllClubTeams().size() == 10);
+        List<ClubTeam> clubTeamsToDelete = clubTeamDao.getAllClubTeams().subList(4, 9);
+        clubTeamDao.deleteRows(clubTeamsToDelete);
+        assertTrue(clubTeamDao.getAllClubTeams().size() == 5);
+    }
 
     @Test
     public void testGetActiveAndAllClubTeams() {
@@ -97,6 +111,18 @@ public class ClubTeamDaoImplTest {
         int categoryId = categoryDao.getAllCategories().get(0).getId();
         ct.setCategoryId(categoryId);
         clubTeamDao.insertRow(ct);
+    }
+    
+    public void insertClubTeams(ClubTeamDao clubTeamDao, CategoryDao categoryDao, int numOfClubTeams) {
+        for (int i = 0; i < numOfClubTeams; i++) {
+            insertClubTeam(
+                    clubTeamDao, 
+                    categoryDao, 
+                    true, 
+                    UUID.randomUUID().toString(), 
+                    true, 
+                    0);
+        }
     }
     
     public void deleteAll(ClubTeamDao clubTeamDao) {

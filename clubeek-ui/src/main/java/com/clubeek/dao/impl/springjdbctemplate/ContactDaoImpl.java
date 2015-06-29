@@ -6,6 +6,7 @@ import java.util.List;
 
 
 
+
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 
 import com.clubeek.dao.ContactDao;
@@ -97,5 +98,11 @@ public class ContactDaoImpl extends DaoImpl implements ContactDao {
             }
         }
         return false;
+    }
+
+    @Override
+    public void deleteRows(List<Contact> objects) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
     }
 }
