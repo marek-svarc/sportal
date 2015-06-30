@@ -42,5 +42,8 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
         throw new UnsupportedOperationException("Not supported.");
     }
 
-
+    @Override
+    public void deleteRows(List<TeamMember> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 }

@@ -2,6 +2,8 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import java.util.List;
 
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.ArticleDao;
@@ -103,6 +105,12 @@ public class ArticleDaoImpl extends DaoImpl implements ArticleDao {
                 "priority", 
                 "creation_date");
         return template.query(str, new ArticleMapper());
+    }
+    
+    @Override
+    public void deleteRows(List<Article> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_article where id = :id", sources);
     }
     
     private String sqlOwnerCondition(int clubTeamId, int categoryId) {

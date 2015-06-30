@@ -1,11 +1,11 @@
 package com.clubeek.dao.impl.springjdbctemplate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +74,17 @@ public class ClubRivalDaoImplTest {
         clubRivalDao.deleteRow(rivalId);
         assertTrue(clubRivalDao.getAllClubRivals().size() == 3);
     }
+    
+    @Test
+    public void deleteRowsTest() {
+        assertTrue(clubRivalDao.getAllClubRivals().size() == 0);
+        
+        insertClubRivals(clubRivalDao, 10);
+        assertTrue(clubRivalDao.getAllClubRivals().size() == 10);
+        List<ClubRival> rivalToDelete = clubRivalDao.getAllClubRivals().subList(3, 8);
+        clubRivalDao.deleteRows(rivalToDelete);
+        assertTrue(clubRivalDao.getAllClubRivals().size() == 5);
+    }
 
     public void insertClubRival(ClubRivalDao clubRivalDao, String name, String city, String web, byte[] icon) {
         ClubRival cr = new ClubRival();
@@ -84,6 +95,14 @@ public class ClubRivalDaoImplTest {
         cr.setIcon(icon);
         
         clubRivalDao.insertRow(cr);
+    }
+    
+    public void insertClubRivals(ClubRivalDao clubRivalDao, int numOfClubRivals) {
+        for (int i = 0; i < numOfClubRivals; i++) {
+            ClubRival cr = new ClubRival();
+            cr.setName(UUID.randomUUID().toString());
+            clubRivalDao.insertRow(cr);
+        }
     }
 
     public void deleteAll(ClubRivalDao clubRivalDao) {

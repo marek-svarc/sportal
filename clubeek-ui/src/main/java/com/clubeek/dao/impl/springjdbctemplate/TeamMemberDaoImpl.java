@@ -54,4 +54,10 @@ public class TeamMemberDaoImpl extends DaoImpl implements TeamMemberDao {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void deleteRows(List<TeamMember> objects) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

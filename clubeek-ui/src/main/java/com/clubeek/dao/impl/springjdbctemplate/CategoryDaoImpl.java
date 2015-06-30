@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.CategoryDao;
@@ -70,5 +72,11 @@ public class CategoryDaoImpl implements CategoryDao{
     @Override
     public List<Category> getAllCategories() {
         return template.query("select * from t_category", new CategoryMapper());
+    }
+
+    @Override
+    public void deleteRows(List<Category> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_category where id = :id", sources);            
     }
 }

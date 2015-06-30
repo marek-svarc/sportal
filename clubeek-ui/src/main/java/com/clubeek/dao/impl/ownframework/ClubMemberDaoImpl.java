@@ -64,4 +64,9 @@ public class ClubMemberDaoImpl implements ClubMemberDao {
         throw new UnsupportedOperationException("Not supported.");        
     }
 
+    @Override
+    public void deleteRows(List<ClubMember> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

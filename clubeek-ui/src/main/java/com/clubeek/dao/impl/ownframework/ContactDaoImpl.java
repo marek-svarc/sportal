@@ -43,4 +43,9 @@ public class ContactDaoImpl implements ContactDao {
     public List<Contact> getAllContacts() {
         throw new UnsupportedOperationException(); 
     }
+
+    @Override
+    public void deleteRows(List<Contact> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 }

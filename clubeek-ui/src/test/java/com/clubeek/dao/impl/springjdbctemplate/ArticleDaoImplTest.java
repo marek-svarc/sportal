@@ -3,6 +3,8 @@ package com.clubeek.dao.impl.springjdbctemplate;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +74,19 @@ public class ArticleDaoImplTest {
         // delete
         articleDao.deleteRow(id);
         assertTrue("The article should be deleted", articleDao.getAllArticles().size() == 0);
+    }
+    
+    @Test
+    public void deleteRowsTest() {
+        assertTrue(articleDao.getAllArticles().size() == 0);
+        
+        insertArticles(articleDao, 10);
+        assertTrue(articleDao.getAllArticles().size() == 10);
+        
+        List<Article> articles = articleDao.getAllArticles();
+        List<Article> articlesToDelete = articles.subList(3, 8);
+        articleDao.deleteRows(articlesToDelete);
+        assertTrue(articleDao.getAllArticles().size() == 5);
     }
     
 
@@ -162,6 +177,15 @@ public class ArticleDaoImplTest {
         }
         
         articleDao.insertRow(a);
+    }
+    
+    public void insertArticles(ArticleDao articleDao, int numOfArticles) {
+        Random gen = new Random();
+        for (int i = 0; i < numOfArticles; i++) {
+            boolean priority = (gen.nextInt(2) == 0) ? true : false;
+            LocationType locationType = (gen.nextInt(2) == 0) ? LocationType.BULLETIN_BOARD : LocationType.NEWS;
+            insertArticle(articleDao, priority, locationType);
+        }
     }
     
     public void deleteAllArticles(ArticleDao articleDao) {

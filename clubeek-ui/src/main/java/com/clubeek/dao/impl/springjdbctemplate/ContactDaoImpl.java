@@ -7,6 +7,7 @@ import java.util.List;
 
 
 
+
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ContactMapper;
 import com.clubeek.model.Contact;
@@ -98,5 +99,11 @@ public class ContactDaoImpl extends DaoImpl implements ContactDao {
             }
         }
         return false;
+    }
+
+    @Override
+    public void deleteRows(List<Contact> objects) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Not supported.");
     }
 }

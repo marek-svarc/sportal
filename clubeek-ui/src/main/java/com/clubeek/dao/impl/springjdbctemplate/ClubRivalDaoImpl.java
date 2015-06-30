@@ -3,6 +3,8 @@ package com.clubeek.dao.impl.springjdbctemplate;
 import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ClubRivalMapper;
@@ -54,6 +56,12 @@ public class ClubRivalDaoImpl extends DaoImpl implements ClubRivalDao {
     @Override
     public ClubRival getClubRivalById(int id) {
         return template.getJdbcOperations().queryForObject("select * from t_club_rival where id = ?", new Integer[] {id}, new ClubRivalMapper());
+    }
+
+    @Override
+    public void deleteRows(List<ClubRival> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_club_rival where id = :id", sources);        
     }
 
 }

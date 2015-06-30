@@ -52,4 +52,9 @@ public class ArticleDaoImpl implements ArticleDao {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
+    public void deleteRows(List<Article> objects) {
+        throw new UnsupportedOperationException("Not supported.");        
+    }
+
 }
