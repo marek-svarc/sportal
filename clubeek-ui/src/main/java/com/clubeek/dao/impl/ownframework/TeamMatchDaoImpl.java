@@ -25,11 +25,16 @@ public class TeamMatchDaoImpl implements TeamMatchDao {
 
     @Override
     public void exchangeRows(int idA, int idB) {
-        throw new UnsupportedOperationException();        
+        throw new UnsupportedOperationException("Not supported."); 
     }
 
     @Override
     public void deleteRows(List<TeamMatch> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public List<TeamMatch> getAllTeamMatches() {
         throw new UnsupportedOperationException("Not supported.");
     }
 
