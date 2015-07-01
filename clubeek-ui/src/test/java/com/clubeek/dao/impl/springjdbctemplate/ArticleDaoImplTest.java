@@ -62,14 +62,14 @@ public class ArticleDaoImplTest {
         a.setCaption("My caption");
         a.setSummary("My summary");
         a.setContent("My content");
-        a.setOwnerType(OwnerType.TEAM);
+        a.setOwnerType(OwnerType.CLUB);
         articleDao.updateRow(a);
         
         Article idArt = articleDao.getArticleById(id);
         assertTrue("Content shoud be 'My content'", idArt.getContent().equals("My content"));
         assertTrue("Summary shoud be 'My summary'", idArt.getSummary().equals("My summary"));
         assertTrue("Caption shoud be 'My caption'", idArt.getCaption().equals("My caption"));
-        assertTrue("Owner type shoud be TEAM", idArt.getOwnerType().equals(OwnerType.TEAM));
+        assertTrue("Owner type shoud be CLUB", idArt.getOwnerType().equals(OwnerType.CLUB));
         
         // delete
         articleDao.deleteRow(id);
@@ -102,6 +102,8 @@ public class ArticleDaoImplTest {
 
     @Test
     public void testSelectArticles() {
+        assertTrue(articleDao.getAllArticles().size() == 0);
+        
         insertArticle(articleDao, false, LocationType.NEWS);
         insertArticle(articleDao, true, LocationType.BULLETIN_BOARD);
         insertArticle(articleDao, false, LocationType.BULLETIN_BOARD);
@@ -133,10 +135,10 @@ public class ArticleDaoImplTest {
         insertArticle(articleDao, "My caption 9", false, LocationType.BULLETIN_BOARD, OwnerType.CLUB, categoryIdOther, clubTeamIdOther);
         
         // sqlOwnerCondition (in select) adds some parameters
-        assertTrue(articleDao.selectArticles(clubTeamId, categoryId, LocationType.BULLETIN_BOARD).size() == 2);
-        assertTrue(articleDao.selectArticles(clubTeamId, categoryId, LocationType.NEWS).size() == 5);
-        assertTrue(articleDao.selectArticles(0, 0, LocationType.BULLETIN_BOARD).size() == 3);
-        assertTrue(articleDao.selectArticles(0, 0, LocationType.NEWS).size() == 6);
+        assertTrue(articleDao.selectArticles(clubTeamId, categoryId, LocationType.BULLETIN_BOARD).size() == 5);
+        assertTrue(articleDao.selectArticles(clubTeamId, categoryId, LocationType.NEWS).size() == 7);
+        assertTrue(articleDao.selectArticles(0, 0, LocationType.BULLETIN_BOARD).size() == 6);
+        assertTrue(articleDao.selectArticles(0, 0, LocationType.NEWS).size() == 8);
     }
     
     public void insertArticle(ArticleDao articleDao, boolean priority, LocationType locationType) {
@@ -149,15 +151,17 @@ public class ArticleDaoImplTest {
         if (priority) {
             a.setPriority(priority);
         }
-        CategoryDaoImplTest categoryTest = new CategoryDaoImplTest();
-        categoryTest.insertCategory(categoryDao, "My test category", true);
-        int categoryId = categoryDao.getAllCategories().get(0).getId();
-        a.setCategoryId(categoryId);
         
-        ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, "Test club team", true, 5);
-        int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
-        a.setClubTeamId(clubTeamId);
+        // categoryId and clubTeamId might be null
+//        CategoryDaoImplTest categoryTest = new CategoryDaoImplTest();
+//        categoryTest.insertCategory(categoryDao, "My test category", true);
+//        int categoryId = categoryDao.getAllCategories().get(0).getId();
+//        a.setCategoryId(categoryId);
+//        
+//        ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
+//        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, "Test club team", true, 5);
+//        int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
+//        a.setClubTeamId(clubTeamId);
         
         articleDao.insertRow(a);
     }

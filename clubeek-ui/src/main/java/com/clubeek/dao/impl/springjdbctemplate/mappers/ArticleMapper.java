@@ -29,8 +29,10 @@ public class ArticleMapper implements RowMapper<Article> {
         a.setCreationDate(rs.getTimestamp("creation_date"));
         a.setExpirationDate(rs.getDate("expiration_date"));
         a.setOwnerType(OwnerType.values()[rs.getInt("owner_type")]);
-        a.setClubTeamId(rs.getInt("club_team_id"));
-        a.setCategoryId(rs.getInt("category_id"));
+        a.setClubTeamId((Integer)rs.getObject("club_team_id"));
+        a.setCategoryId((Integer)rs.getObject("category_id"));
+//        a.setClubTeamId(rs.getInt("club_team_id"));
+//        a.setCategoryId(rs.getInt("category_id"));
         
         return a;
     }
