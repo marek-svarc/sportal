@@ -7,6 +7,8 @@
                            http://www.springframework.org/schema/context/spring-context-4.1.xsd">
 
 	<context:component-scan base-package="com.clubeek.ui" />
+        <context:component-scan base-package="com.clubeek.dao.impl.springjdbctemplate" />
+        <context:component-scan base-package="com.clubeek.service" />
 	
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
@@ -15,12 +17,13 @@
 		<property name="password" value="password" />
 	</bean>
 	
-	<bean id="articleDao" class="com.clubeek.dao.impl.springjdbctemplate.ArticleDaoImpl" />
+	<!--bean id="articleDao" class="com.clubeek.dao.impl.springjdbctemplate.ArticleDaoImpl" />
     <bean id="categoryDao" class="com.clubeek.dao.impl.springjdbctemplate.CategoryDaoImpl" />
     <bean id="clubTeamDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubTeamDaoImpl" />
     <bean id="clubMemberDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubMemberDaoImpl" />
     <bean id="clubRivalDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubRivalDaoImpl" />
     <bean id="clubSettingDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubSettingDaoImpl" />
     <bean id="teamMemberDao" class="com.clubeek.dao.impl.springjdbctemplate.TeamMemberDaoImpl" />
-    <bean id="userDao" class="com.clubeek.dao.impl.springjdbctemplate.UserDaoImpl" />
+    <bean id="userDao" class="com.clubeek.dao.impl.springjdbctemplate.UserDaoImpl" /-->
+    
 </beans>

@@ -17,13 +17,20 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewCategories extends VerticalLayout implements View, ActionTable.OnActionListener {
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+	private SecurityService securityService;
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-    private CategoryDao categoryDao = new CategoryDaoImpl();
+    @Autowired
+    private CategoryDao categoryDao;
 
     /* PUBLIC */
     public enum Columns {
@@ -31,10 +38,9 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
         CAPTION;
     }
 
-    public ViewCategories(Navigation navigation) {
+    public ViewCategories() {
 
         this.setCaption(Messages.getString("category"));
-        this.navigation = navigation;
 
         ActionTable.UserColumnInfo[] columns = {
             new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption"))
@@ -111,11 +117,12 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
 
     /* PRIVATE */
     /** Komponenty tabulky */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** Seznam aktualne zobrazenych kategorii */
     private List<Category> categories = null;
 
     /** Navigace v aplikaci */
-    private final Navigation navigation;
+    @Autowired
+    private Navigation navigation;
 }

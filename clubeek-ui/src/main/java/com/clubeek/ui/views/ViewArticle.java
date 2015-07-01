@@ -13,12 +13,18 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
 @Theme("baseTheme")
+@Component
+@Scope("prototype")
 public class ViewArticle extends VerticalLayout implements View {
     // TODO vitfo, created on 11. 6. 2015
-    private ArticleDao articleDao = new ArticleDaoImpl();
+    @Autowired
+    private ArticleDao articleDao;
 
     /* PRIVATE */
     /** Label pro vypis nadpisu clanku */

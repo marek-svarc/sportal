@@ -17,24 +17,30 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewClubTeams extends VerticalLayout implements View, ActionTable.OnActionListener {
     // TODO vitfo, created on 11. 6. 2015
-    private SecurityService securityService = new SecurityServiceImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+    @Autowired
+    private SecurityService securityService;
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ClubTeamDao clubTeamDao;
 
     public enum Columns {
 
         CAPTION, CATEGORY;
     }
 
-    public ViewClubTeams(Navigation navigation) {
+    public ViewClubTeams() {
 
         this.setCaption(Messages.getString("teams")); //$NON-NLS-1$
-        this.navigation = navigation;
-
+        
         ActionTable.UserColumnInfo[] columns = { new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
                 new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category")) };
 
@@ -108,10 +114,11 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
 
     /* PRIVATE */
     /** Navigation provider */
-    private final Navigation navigation;
+    @Autowired
+    private Navigation navigation;
 
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of teams loaded from tha database */
     private List<ClubTeam> teams = null;

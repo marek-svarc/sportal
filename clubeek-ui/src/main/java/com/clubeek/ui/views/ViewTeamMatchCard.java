@@ -6,19 +6,32 @@ import com.clubeek.ui.components.TeamMatchCard;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.VerticalLayout;
+import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * View container for TeamMatchCard. Shows informations about team match.
  *
  * @author Marek Svarc
  */
+@Component
+@Scope("prototype")
 public class ViewTeamMatchCard extends VerticalLayout implements View {
 
     /** Component that shows club member informations */
-    private final TeamMatchCard card;
+    private TeamMatchCard card;
+    
+    @Autowired
+    private Navigation navigation;
 
-    public ViewTeamMatchCard(Navigation navigation) {
+    public ViewTeamMatchCard() {
 
+    }
+    
+    @PostConstruct
+    public void init() {
         card = new TeamMatchCard(navigation);
         card.setSizeFull();
         this.addComponent(card);

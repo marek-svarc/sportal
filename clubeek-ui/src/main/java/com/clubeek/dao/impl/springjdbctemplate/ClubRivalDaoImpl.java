@@ -9,7 +9,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ClubRivalMapper;
 import com.clubeek.model.ClubRival;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ClubRivalDaoImpl extends DaoImpl implements ClubRivalDao {
 
     @Override

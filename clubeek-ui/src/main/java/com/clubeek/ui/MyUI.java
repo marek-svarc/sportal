@@ -23,14 +23,17 @@ import com.vaadin.spring.annotation.EnableVaadin;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.server.SpringVaadinServlet;
 import com.vaadin.ui.UI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @SuppressWarnings("serial")
 @Theme("valo_base")
 @Widgetset("com.clubeek.MyAppWidgetset")
 @SpringUI
 public class MyUI extends UI {
-	// TODO vitfo, created on 11. 6. 2015 
-	private UserDao userDao = new UserDaoImpl();
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private UserDao userDao;
 
     @WebServlet(urlPatterns = "/*", asyncSupported = true)
 //    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
@@ -45,6 +48,9 @@ public class MyUI extends UI {
     @EnableVaadin
     public static class MyConfiguration {
     }
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /* PROTECTED */
     @Override
@@ -74,6 +80,10 @@ public class MyUI extends UI {
         }
 
         // pouziti prostredi s horizontalnim navigacnim menu
-        setContent(new HorzMenuAbsOnTop(this));
+        HorzMenuAbsOnTop content = applicationContext.getBean(HorzMenuAbsOnTop.class);
+        setContent(content);
+        content.setUI();
+        content.updateNavigationMenu();
+        
     }
 }

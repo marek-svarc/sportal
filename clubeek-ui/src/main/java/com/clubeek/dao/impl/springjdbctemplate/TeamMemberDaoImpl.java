@@ -8,7 +8,9 @@ import com.clubeek.dao.TeamMemberDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.TeamMemberMapper;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.TeamMember;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class TeamMemberDaoImpl extends DaoImpl implements TeamMemberDao {
 
     @Override

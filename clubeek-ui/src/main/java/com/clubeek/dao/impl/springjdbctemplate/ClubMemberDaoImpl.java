@@ -9,8 +9,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ClubMemberMapper;
 import com.clubeek.model.ClubMember;
-import com.clubeek.model.TeamTraining;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ClubMemberDaoImpl extends DaoImpl implements ClubMemberDao {
 
     @Override

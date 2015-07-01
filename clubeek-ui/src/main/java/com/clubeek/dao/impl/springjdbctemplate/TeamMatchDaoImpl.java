@@ -9,7 +9,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import com.clubeek.dao.TeamMatchDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.TeamMatchMapper;
 import com.clubeek.model.TeamMatch;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class TeamMatchDaoImpl extends DaoImpl implements TeamMatchDao {
 
     @Override

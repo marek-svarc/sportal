@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import com.clubeek.dao.ClubSettingDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ClubSettingMapper;
 import com.clubeek.model.ClubSetting;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ClubSettingDaoImpl extends DaoImpl implements ClubSettingDao {
 
     @Override

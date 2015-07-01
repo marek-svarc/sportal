@@ -24,13 +24,18 @@ import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
 public final class ViewTeamTrainings extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-	private TeamTrainingDao teamTrainingDao = new TeamTrainingDaoImpl();
+    @Autowired
+	private SecurityService securityService;
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+	private TeamTrainingDao teamTrainingDao;
 
     public enum Columns {
 
@@ -139,7 +144,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
     private int teamId = -1;
 
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of trainings loaded from the database */
     private List<TeamTraining> trainings;

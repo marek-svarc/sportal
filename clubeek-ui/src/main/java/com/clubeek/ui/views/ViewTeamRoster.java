@@ -16,6 +16,9 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * View for team members for tab panel named "Team".
@@ -25,14 +28,18 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 @SuppressWarnings("serial")
 @PreserveOnRefresh
+@Component
+@Scope("prototype")
 public class ViewTeamRoster extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015 
-    private TeamMemberDao teamMemberDao = new TeamMemberDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private TeamMemberDao teamMemberDao;
 
     private final String cssTeamMembersList = "teamMembersList"; //$NON-NLS-1$
 
     /** Navigation administrator */
-    private final Navigation navigation;
+    @Autowired
+    private Navigation navigation;
 
     // management upper layout
     private final CssLayout layoutManagement;
@@ -82,8 +89,8 @@ public class ViewTeamRoster extends VerticalLayout implements View {
         }
     }
 
-    public ViewTeamRoster(Navigation navigation) {
-        this.navigation = navigation;
+    public ViewTeamRoster() {
+        
         this.setCaption(Messages.getString("team"));
 
         addMembersLabel(Messages.getString("SupportTeam"));

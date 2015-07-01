@@ -10,7 +10,9 @@ import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.UserMapper;
 import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserDaoImpl extends DaoImpl implements UserDao {
 
     @Override
