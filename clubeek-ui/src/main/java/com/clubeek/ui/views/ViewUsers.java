@@ -18,15 +18,23 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewUsers extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
+    @Autowired
+	private SecurityService securityService;
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+	private UserDao userDao;
 	// TODO vitfo, created on 11. 6. 2015 
-	private UserDao userDao = new UserDaoImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
+    @Autowired
+    private ClubMemberDao clubMemberDao;
 
     public enum Columns {
 
@@ -118,7 +126,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 
     /* PRIVATE */
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of users loaded from the database */
     private List<User> users = null;

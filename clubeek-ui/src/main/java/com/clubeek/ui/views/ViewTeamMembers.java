@@ -29,17 +29,20 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
 @Component
+@Scope("prototype")
 public class ViewTeamMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
     
     // TODO vitfo, created on 11. 6. 2015 
     @Autowired
     private ClubTeamDao clubTeamDao;
     // TODO vitfo, created on 11. 6. 2015 
-    private TeamMemberDao teamMemberDao = new TeamMemberDaoImpl();
+    @Autowired
+    private TeamMemberDao teamMemberDao;
 
     public enum Columns {
 
@@ -183,10 +186,10 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
         }
     }
     /** Teams selection component */
-    private final NativeSelect nsTeams;
+    private NativeSelect nsTeams;
 
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of team members loaded from the database */
     private List<TeamMember> teamMembers;

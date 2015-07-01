@@ -1,6 +1,7 @@
 package com.clubeek.dao.impl.springjdbctemplate;
 
 import java.util.List;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ContactMapper;

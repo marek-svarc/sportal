@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
  *
  * @author Marek Svarc
  */
-@Component
 public class HorzMenuStandard extends HorzMenuBase {
 
     /**

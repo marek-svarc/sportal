@@ -23,15 +23,23 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public final class ViewClubMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
+    @Autowired
+	private SecurityService securityService;
 	// TODO vitfo, created on 11. 6. 2015 
-    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
-    // TODO vitfo, created on 12. 6. 2015 
-    private ContactDao contactDao = new ContactDaoImpl();
+    @Autowired
+    private ClubMemberDao clubMemberDao;
+    // TODO vitfo, created on 12. 6. 2015
+    @Autowired
+    private ContactDao contactDao;
 
     public enum Columns {
 
@@ -130,7 +138,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
 
     /* PRIVATE */
     /** table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of all club members */
     private List<ClubMember> members = null;

@@ -46,7 +46,6 @@ import com.vaadin.ui.VerticalLayout;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Trida uzivatelskeho prostredi aplikace. - pro navigaci je pouzito
@@ -55,7 +54,6 @@ import org.springframework.stereotype.Component;
  * @author Marek Svarc
  */
 @SuppressWarnings("serial")
-@Component
 public abstract class HorzMenuBase extends VerticalLayout implements Navigation {
 
     /* PRIVATE */
@@ -78,12 +76,10 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         }
     }
     
-    private LayoutTabSheet tabSheetLayout = new LayoutTabSheet();
-
     // Data
     
     @Autowired
-    private ApplicationContext applicationContex;
+    private ApplicationContext applicationContext;
     
     // TODO vitfo, created on 11. 6. 2015 
     @Autowired
@@ -332,28 +328,35 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         View[] views = new View[viewsValues.length];
         Arrays.fill(views, null);
 
-        views[HorzMenuNavigationViews.NEWS.ordinal()] = new ViewNews(this);
-        views[HorzMenuNavigationViews.ARTICLE.ordinal()] = (View) new ViewArticle();
-        views[HorzMenuNavigationViews.MEMBER_CARD.ordinal()] = (View) new ViewClubMemberCard(this);
-        views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = (View) new ViewClubRivalCard(this);
-        views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = (View) new ViewTeamMatchCard(this);
+        views[HorzMenuNavigationViews.NEWS.ordinal()] = applicationContext.getBean(ViewNews.class);
+        views[HorzMenuNavigationViews.ARTICLE.ordinal()] = applicationContext.getBean(ViewArticle.class);
+        views[HorzMenuNavigationViews.MEMBER_CARD.ordinal()] = applicationContext.getBean(ViewClubMemberCard.class);
+        views[HorzMenuNavigationViews.RIVAL_CARD.ordinal()] = applicationContext.getBean(ViewClubRivalCard.class);
+        views[HorzMenuNavigationViews.MATCH_CARD.ordinal()] = applicationContext.getBean(ViewTeamMatchCard.class);
 
         if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.EDITOR)) {
-            views[HorzMenuNavigationViews.ARTICLES.ordinal()] = (View) new ViewArticles(this);
+            views[HorzMenuNavigationViews.ARTICLES.ordinal()] = applicationContext.getBean(ViewArticles.class);
         }
         if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.SPORT_MANAGER)) {
-            views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this),
-                    new ViewTeamMatches(), new ViewTeamTrainings());
-            views[HorzMenuNavigationViews.RIVALS.ordinal()] = (View) new ViewClubRivals();
+            
+            LayoutTabSheet lTabsheet = applicationContext.getBean(LayoutTabSheet.class);
+            lTabsheet.addViews(applicationContext.getBean(ViewNews.class), applicationContext.getBean(ViewTeamRoster.class),
+                    applicationContext.getBean(ViewTeamMatches.class), applicationContext.getBean(ViewTeamTrainings.class));
+            views[HorzMenuNavigationViews.TEAM.ordinal()] = lTabsheet;
+            views[HorzMenuNavigationViews.RIVALS.ordinal()] = applicationContext.getBean(ViewClubRivals.class);
         } else {
-            views[HorzMenuNavigationViews.TEAM.ordinal()] = new LayoutTabSheet(new ViewNews(this), new ViewTeamRoster(this));
+            LayoutTabSheet lTabsheet = applicationContext.getBean(LayoutTabSheet.class);
+            lTabsheet.addViews(applicationContext.getBean(ViewNews.class), applicationContext.getBean(ViewTeamRoster.class));
+            views[HorzMenuNavigationViews.TEAM.ordinal()] = lTabsheet;
         }
         if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.CLUB_MANAGER)) {
-            views[HorzMenuNavigationViews.SETTINGS.ordinal()] = (View) new LayoutTabSheet(new ViewCategories(this),
-                    new ViewClubTeams(this), new ViewClubMembers(), new ViewTeamMembers());
+            LayoutTabSheet lTabsheet = applicationContext.getBean(LayoutTabSheet.class);
+            lTabsheet.addViews(applicationContext.getBean(ViewCategories.class), applicationContext.getBean(ViewClubTeams.class),
+                    applicationContext.getBean(ViewClubMembers.class), applicationContext.getBean(ViewTeamMembers.class));
+            views[HorzMenuNavigationViews.SETTINGS.ordinal()] = lTabsheet;
         }
         if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.ADMINISTRATOR)) {
-            views[HorzMenuNavigationViews.USERS.ordinal()] = (View) new ViewUsers();
+            views[HorzMenuNavigationViews.USERS.ordinal()] = applicationContext.getBean(ViewUsers.class);
         }
 
         // prirazeni nenulovych navigovatelnych komponent do navigatoru

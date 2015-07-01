@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Marek Svarc
  */
-@Component
+@Component("navigation")
 public class HorzMenuAbsOnTop extends HorzMenuBase {
     
     /* PRIVATE */

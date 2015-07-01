@@ -18,13 +18,20 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewClubRivals extends VerticalLayout implements View, ActionTable.OnActionListener {
     // TODO vitfo, created on 11. 6. 2015
-    private SecurityService securityService = new SecurityServiceImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubRivalDao clubRivalDao = new ClubRivalDaoImpl();
+    @Autowired
+    private SecurityService securityService;
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ClubRivalDao clubRivalDao;
 
     public enum Columns {
 
@@ -106,7 +113,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
     /* PRIVATE */
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of clubs loaded from the database */
     private List<ClubRival> clubs;

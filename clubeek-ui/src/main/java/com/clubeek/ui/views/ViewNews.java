@@ -32,6 +32,9 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * Trida pro zobrazeni clanku a pripravovanych akci
@@ -40,13 +43,18 @@ import com.vaadin.ui.VerticalLayout;
  *
  */
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewNews extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015 
-    private ArticleDao articleDao = new ArticleDaoImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ArticleDao articleDao;
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ClubTeamDao clubTeamDao;
 
     /* PRIVATE */
+    @Autowired
     private Navigation navigation;
 
     /** Panel pro zobrazeni clanku na leve strane stranky */
@@ -189,8 +197,8 @@ public class ViewNews extends VerticalLayout implements View {
     }
 
     /* PUBLIC */
-    public ViewNews(Navigation navigation) {
-        this.navigation = navigation;
+    public ViewNews() {
+        //this.navigation = navigation;
         this.setCaption(Messages.getString("currently")); //$NON-NLS-1$
 
         HorizontalLayout laMain = new HorizontalLayout();

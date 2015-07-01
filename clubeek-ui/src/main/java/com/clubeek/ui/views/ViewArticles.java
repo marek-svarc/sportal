@@ -24,17 +24,26 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewArticles extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-    private ArticleDao articleDao = new ArticleDaoImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private CategoryDao categoryDao = new CategoryDaoImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+    @Autowired
+    private SecurityService securityService;
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ArticleDao articleDao;
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private CategoryDao categoryDao;
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ClubTeamDao clubTeamDao;
 
     /* PUBLIC */
     public enum Columns {
@@ -42,8 +51,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
         CAPTION, LOCATION, LAST_UPDATE, EXPIRATION_DATE;
     }
 
-    public ViewArticles(Navigation navigation) {
-        this.navigation = navigation;
+    public ViewArticles() {
         this.setSizeFull();
 
         // view caption
@@ -171,9 +179,10 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
 
     /* PRIVATE */
     /** Rozhrani pro navigaci webem a aktualizaci webu */
-    private final Navigation navigation;
+    @Autowired
+    private Navigation navigation;
 
     /** Komponenty tabulky */
-    private final ActionTable table;
+    private ActionTable table;
 
 }
