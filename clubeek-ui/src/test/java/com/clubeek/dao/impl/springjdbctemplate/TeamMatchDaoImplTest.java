@@ -86,7 +86,7 @@ public class TeamMatchDaoImplTest {
     @Test
     public void deleteRowsTest() {
         assertTrue(teamMatchDao.getAllTeamMatches().size() == 0);
-        insertTeamMatches(teamMatchDao, clubTeamDao, categoryDao, clubRivalDao, 10);
+        insertTeamMatches(teamMatchDao, clubTeamDao, 10);
         assertTrue(teamMatchDao.getAllTeamMatches().size() == 10);
         teamMatchDao.deleteRows(teamMatchDao.getAllTeamMatches().subList(2, 7));
         assertTrue(teamMatchDao.getAllTeamMatches().size() == 5);
@@ -111,9 +111,20 @@ public class TeamMatchDaoImplTest {
         teamMatchDao.insertRow(t);
     }
     
-    public void insertTeamMatches(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubRivalDao clubRivalDao, int numOfTeamMatches) {
+    public void insertTeamMatch(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, Date start, int scorePos, int scoreNeg, String comment) {
+        ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
+        clubTeamTest.insertClubTeam(clubTeamDao, "My club team");
+        int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
+        
+        TeamMatch t = new TeamMatch();
+        t.setStart(start);
+        t.setClubTeamId(clubTeamId);
+        teamMatchDao.insertRow(t);
+    }
+    
+    public void insertTeamMatches(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, int numOfTeamMatches) {
         for (int i = 0; i < numOfTeamMatches; i++) {
-            insertTeamMatch(teamMatchDao, clubTeamDao, categoryDao, clubRivalDao, new Date(), 0, 0, "");
+            insertTeamMatch(teamMatchDao, clubTeamDao, new Date(), 0, 0, "");
         }
     }
 

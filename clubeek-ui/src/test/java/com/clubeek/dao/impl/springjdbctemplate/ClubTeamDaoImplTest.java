@@ -68,7 +68,7 @@ public class ClubTeamDaoImplTest {
     public void deleteRowsTest() {
         assertTrue(clubTeamDao.getAllClubTeams().size() == 0);
         
-        insertClubTeams(clubTeamDao, categoryDao, 10);
+        insertClubTeams(clubTeamDao, 10);
         assertTrue(clubTeamDao.getAllClubTeams().size() == 10);
         List<ClubTeam> clubTeamsToDelete = clubTeamDao.getAllClubTeams().subList(4, 9);
         clubTeamDao.deleteRows(clubTeamsToDelete);
@@ -113,15 +113,17 @@ public class ClubTeamDaoImplTest {
         clubTeamDao.insertRow(ct);
     }
     
-    public void insertClubTeams(ClubTeamDao clubTeamDao, CategoryDao categoryDao, int numOfClubTeams) {
+    public void insertClubTeam(ClubTeamDao clubTeamDao, String name) {
+        ClubTeam ct = new ClubTeam();
+        ct.setName(name);
+        clubTeamDao.insertRow(ct);
+    }
+    
+    public void insertClubTeams(ClubTeamDao clubTeamDao, int numOfClubTeams) {
         for (int i = 0; i < numOfClubTeams; i++) {
             insertClubTeam(
                     clubTeamDao, 
-                    categoryDao, 
-                    true, 
-                    UUID.randomUUID().toString(), 
-                    true, 
-                    0);
+                    UUID.randomUUID().toString());
         }
     }
     
