@@ -36,6 +36,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
@@ -207,7 +208,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
     /* PROTECTED */
     /** Identifikatory skupin zobrazovanych stranek (View) */
-    protected enum HorzMenuNavigationViews {
+    public enum HorzMenuNavigationViews {
 
         NEWS("news"), //$NON-NLS-1$
         TEAM("team"), //$NON-NLS-1$
@@ -216,7 +217,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         RIVALS("rivals"), //$NON-NLS-1$
         SETTINGS("club"), //$NON-NLS-1$
         USERS("users"), //$NON-NLS-1$
-        MEMBER_CARD("memberCard"), //$NON-NLS-1$
+        MEMBER_CARD("clubMemberCard"), //$NON-NLS-1$
         RIVAL_CARD("rivalCard"), //$NON-NLS-1$
         MATCH_CARD("matchCard") //$NON-NLS-1$
         ;
@@ -340,18 +341,24 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
         if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.SPORT_MANAGER)) {
             
             LayoutTabSheet lTabsheet = applicationContext.getBean(LayoutTabSheet.class);
-            lTabsheet.addViews(applicationContext.getBean(ViewNews.class), applicationContext.getBean(ViewTeamRoster.class),
+            Component defaultView = applicationContext.getBean(ViewNews.class);
+            lTabsheet.setDefaultView(defaultView);
+            lTabsheet.addViews(defaultView, applicationContext.getBean(ViewTeamRoster.class),
                     applicationContext.getBean(ViewTeamMatches.class), applicationContext.getBean(ViewTeamTrainings.class));
             views[HorzMenuNavigationViews.TEAM.ordinal()] = lTabsheet;
             views[HorzMenuNavigationViews.RIVALS.ordinal()] = applicationContext.getBean(ViewClubRivals.class);
         } else {
             LayoutTabSheet lTabsheet = applicationContext.getBean(LayoutTabSheet.class);
-            lTabsheet.addViews(applicationContext.getBean(ViewNews.class), applicationContext.getBean(ViewTeamRoster.class));
+            Component defaultView = applicationContext.getBean(ViewNews.class);
+            lTabsheet.setDefaultView(defaultView);
+            lTabsheet.addViews(defaultView, applicationContext.getBean(ViewTeamRoster.class));
             views[HorzMenuNavigationViews.TEAM.ordinal()] = lTabsheet;
         }
         if ((user != null) && securityService.checkRole(user.getUserRoleType(), UserRoleType.CLUB_MANAGER)) {
             LayoutTabSheet lTabsheet = applicationContext.getBean(LayoutTabSheet.class);
-            lTabsheet.addViews(applicationContext.getBean(ViewCategories.class), applicationContext.getBean(ViewClubTeams.class),
+            Component defaultView = applicationContext.getBean(ViewCategories.class);
+            lTabsheet.setDefaultView(defaultView);
+            lTabsheet.addViews(defaultView, applicationContext.getBean(ViewClubTeams.class),
                     applicationContext.getBean(ViewClubMembers.class), applicationContext.getBean(ViewTeamMembers.class));
             views[HorzMenuNavigationViews.SETTINGS.ordinal()] = lTabsheet;
         }
@@ -415,7 +422,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     
     public HorzMenuBase() {
         horzMenu = new MenuBar();
-        viewsContainer = new Panel();   
+        viewsContainer = new Panel();
     }
     
     @PostConstruct

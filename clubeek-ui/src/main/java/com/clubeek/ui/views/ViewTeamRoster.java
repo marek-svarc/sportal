@@ -90,6 +90,9 @@ public class ViewTeamRoster extends VerticalLayout implements View {
     }
 
     public ViewTeamRoster() {
+        setSizeFull();
+        setSpacing(true);
+        setMargin(true);
         
         this.setCaption(Messages.getString("team"));
 
@@ -114,8 +117,6 @@ public class ViewTeamRoster extends VerticalLayout implements View {
         layoutPlayers.removeAllComponents();
 
         if (teamId >= 0) {
-            // load all team members
-//            List<TeamMember> members = RepTeamMember.selectByTeamId(teamId, null);
             List<TeamMember> members = teamMemberDao.getTeamMembersByTeamId(teamId);
             // divide members to groups for layouts
             if (members != null) {

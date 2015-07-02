@@ -6,6 +6,7 @@ import com.clubeek.model.TeamMember;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.views.Messages;
 import com.clubeek.util.DateTime;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -29,12 +30,13 @@ public class TeamMemberPanel extends Panel {
     private final Label lblInfo;
 
     public TeamMemberPanel() {
-        this.setStyleName(ValoTheme.PANEL_WELL);
-        this.addStyleName("detail");
-
+        addStyleName(ValoTheme.PANEL_WELL);
+        addStyleName("detail");
+        setWidth(128, Unit.PIXELS);
+        
         vlaMain = new VerticalLayout();
-        vlaMain.setSizeFull();
-
+        vlaMain.setMargin(true);
+        vlaMain.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
         imgPhoto = new Image();
         imgPhoto.setWidth(100, Unit.PIXELS);
         imgPhoto.setHeight(100, Unit.PIXELS);
@@ -53,11 +55,10 @@ public class TeamMemberPanel extends Panel {
     public void setTeamMember(TeamMember teamMember) {
         ClubMember clubMember = teamMember.getClubMember();
 
-        setCaption(String.format("%s %s", clubMember.getName(), clubMember.getSurname()));
-        if (clubMember.getPhoto() != null) {
-            Tools.Components.fillImageByPortrait(imgPhoto, clubMember.getPhoto(),
+        setCaption(clubMember.getName() + "</br>" + clubMember.getSurname());
+        Tools.Components.fillImageByPortrait(imgPhoto, clubMember.getPhoto(),
                     Integer.toString(clubMember.getId()));
-        }
+        
         if (!teamMember.isFunction(TeamFunctionType.PLAYER)) {
             lblInfo.setValue(teamMember.getFunctionsAsList().toString());
         } else if (clubMember.getBirthdate() != null) {

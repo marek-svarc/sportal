@@ -98,6 +98,7 @@ public class ViewNews extends VerticalLayout implements View {
 
         // oblast clanku
         VerticalLayout newsLayout = new VerticalLayout();
+        newsLayout.setSizeFull();
         if (article.getArticle().getPriority() && showActiveColor) {
             newsLayout.addStyleName("priority"); //$NON-NLS-1$
         }
@@ -215,6 +216,7 @@ public class ViewNews extends VerticalLayout implements View {
 
         // stredni cast, aktuality
         vlCenterPanel = new VerticalLayout();
+        vlCenterPanel.setSizeFull();
         vlCenterPanel.setStyleName("layout-container"); //$NON-NLS-1$
         laMain.addComponent(vlCenterPanel);
         laMain.setExpandRatio(vlCenterPanel, 5.0f);

@@ -21,33 +21,28 @@ public class LayoutTabSheet extends VerticalLayout implements View {
     private TabSheet tabs;
     
     private ViewChangeEvent event;
+    
+    private Component defaultView;
 
     public LayoutTabSheet() {
-
-    }
-
-    public LayoutTabSheet(Component... components) {
-
-        // kontejner (TabSheet) pro zobrazovanych komponent
-        tabs = new TabSheet(components);
-        tabs.addStyleName(ValoTheme.TABSHEET_FRAMED);
-        tabs.addStyleName(ValoTheme.TABSHEET_COMPACT_TABBAR);
-        this.addComponent(tabs);
-        for (Component tab : components) {
-            tabs.addTab(tab, tab.getCaption());
-        }
+        setSizeFull();
     }
 
     @Override
     public void enter(ViewChangeEvent event) {
         this.event = event;
-
-//		// distribuce udalosti vlastnenym komponentam
-//		if (tabs != null) {
-//			for (Component c : tabs)
-//				if (c instanceof View)
-//					((View) c).enter(event);
-//		}
+        if (defaultView != null) {
+            if (!tabs.getSelectedTab().equals(defaultView)) {
+                tabs.setSelectedTab(defaultView);
+            } else {
+                ((View) defaultView).enter(event);
+            }
+        }
+        
+    }
+    
+    public void setDefaultView(Component view) {
+        this.defaultView = view;
     }
 
     public void addViews(Component... components) {
@@ -60,6 +55,7 @@ public class LayoutTabSheet extends VerticalLayout implements View {
                 ((View) getSelectedTab()).enter(event);
             }
         };
+        tabs.setSizeFull();
         tabs.addStyleName(ValoTheme.TABSHEET_FRAMED);
         tabs.addStyleName(ValoTheme.TABSHEET_COMPACT_TABBAR);
         this.addComponent(tabs);

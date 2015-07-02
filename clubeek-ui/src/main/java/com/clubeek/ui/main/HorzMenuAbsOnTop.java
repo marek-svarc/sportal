@@ -10,7 +10,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import javax.annotation.PostConstruct;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
  * @author Marek Svarc
  */
 @Component("navigation")
+@Scope("prototype")
 public class HorzMenuAbsOnTop extends HorzMenuBase {
     
     /* PRIVATE */
@@ -90,6 +91,9 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
         vlViews.addComponent(getViewsContainer());
         this.addComponent(vlViews);
         this.setComponentAlignment(vlViews, Alignment.TOP_CENTER);
+        
+        this.setExpandRatio(hlTopMenu, 0);
+        this.setExpandRatio(vlViews, 1);
     }
 
     @Override
@@ -118,9 +122,6 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
     
     @Override
     public void setUI() {
-        this.getUI().setSizeFull();
-        this.getUI().addStyleName("horzMenuAbsOnTop");
-        this.getUI().addStyleName(ValoTheme.UI_WITH_MENU);
         createUiControls();
     }
 }

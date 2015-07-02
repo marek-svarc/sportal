@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamMemberDao;
-import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.ClubTeam;
@@ -50,7 +48,6 @@ public class ViewTeamMembers extends VerticalLayout implements View, ActionTable
     }
 
     public ViewTeamMembers() {
-
         this.setCaption(Messages.getString("assignmentToTeams"));
 
         // columns definition

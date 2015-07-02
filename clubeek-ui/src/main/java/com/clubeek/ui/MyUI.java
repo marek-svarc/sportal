@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ContextLoaderListener;
 
 import com.clubeek.dao.UserDao;
-import com.clubeek.dao.impl.ownframework.UserDaoImpl;
 import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.ui.main.HorzMenuAbsOnTop;
@@ -75,7 +74,6 @@ public class MyUI extends UI {
             user.setUsername("admin");
             user.setPassword("admin");
             user.setUserRoleType(UserRoleType.ADMINISTRATOR);
-//            RepUser.insert(user);
             userDao.insertUser(user);
         }
 
