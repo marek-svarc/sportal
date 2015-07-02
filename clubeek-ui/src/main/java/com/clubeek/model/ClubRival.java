@@ -6,6 +6,27 @@ package com.clubeek.model;
  * @author Marek Svarc
  */
 public class ClubRival extends Model {
+    
+    /** Nazev klubu */
+    private String name = ""; //$NON-NLS-1$
+
+    /** internetove stranky klubu */
+    private String web = ""; //$NON-NLS-1$
+
+    /** GPS souradnice klubu */
+    private String GPS = ""; //$NON-NLS-1$
+
+    /** Ulice */
+    private String street = ""; //$NON-NLS-1$
+
+    /** mesto */
+    private String city = ""; //$NON-NLS-1$
+
+    /** Postovni smerovaci cislo */
+    private String code = ""; //$NON-NLS-1$
+
+    /** Znak klubu (64px x 64px) */
+    private byte[] icon = null;
 
 	/** Vraci jmeno klubu */
 	public String getName() {
@@ -76,26 +97,4 @@ public class ClubRival extends Model {
 	public void setIcon(byte[] icon) {
 		this.icon = icon;
 	}
-
-	/** Nazev klubu */
-	private String name = ""; //$NON-NLS-1$
-
-	/** internetove stranky klubu */
-	private String web = ""; //$NON-NLS-1$
-
-	/** GPS souradnice klubu */
-	private String GPS = ""; //$NON-NLS-1$
-
-	/** Ulice */
-	private String street = ""; //$NON-NLS-1$
-
-	/** mesto */
-	private String city = ""; //$NON-NLS-1$
-
-	/** Postovni smerovaci cislo */
-	private String code = ""; //$NON-NLS-1$
-
-	/** Znak klubu (64px x 64px) */
-	private byte[] icon = null;
-
 }

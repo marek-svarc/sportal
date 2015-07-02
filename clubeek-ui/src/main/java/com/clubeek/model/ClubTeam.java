@@ -18,7 +18,7 @@ public class ClubTeam extends Model {
 	private Boolean active = true;
 
 	/** identifikator kategorie do ktere je tym zarazen */
-	private int categoryId;
+	private Integer categoryId;
 
 	/** data kategorie do ktere je tym zarazen */
 	private Category category;
@@ -51,12 +51,12 @@ public class ClubTeam extends Model {
 	}
 
 	/** Vraci identifikator kategore ke ktere tym patri */
-	public int getCategoryId() {
+	public Integer getCategoryId() {
 		return categoryId;
 	}
 
 	/** Nastavi identifikator kategore ke ktere tym patri */
-	public void setCategoryId(int categoryId) {
+	public void setCategoryId(Integer categoryId) {
 		if (this.categoryId != categoryId) {
 			this.category = null;
 			this.categoryId = categoryId;
