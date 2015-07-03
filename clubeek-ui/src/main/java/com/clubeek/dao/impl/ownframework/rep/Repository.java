@@ -1,6 +1,6 @@
 package com.clubeek.dao.impl.ownframework.rep;
 
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 import java.sql.ResultSet;
 
 /**
@@ -8,7 +8,7 @@ import java.sql.ResultSet;
  *
  * @param <T> Data class used for data exchange with database.
  */
-public interface Repository<T extends Unique> {
+public interface Repository<T extends IUnique> {
 
     /**
      * Modifies one row in the database table.

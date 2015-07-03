@@ -3,7 +3,7 @@ package com.clubeek.model;
 /**
  * Rozhrani poskytujici unikatni identifikator objektu.
  */
-public interface Unique {
+public interface IUnique {
 
 	int getId();
 	

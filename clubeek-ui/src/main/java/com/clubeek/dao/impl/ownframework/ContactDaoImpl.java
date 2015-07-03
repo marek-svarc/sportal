@@ -5,7 +5,7 @@ import java.util.List;
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.ownframework.rep.RepContact;
 import com.clubeek.model.Contact;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 
 public class ContactDaoImpl implements ContactDao {
 

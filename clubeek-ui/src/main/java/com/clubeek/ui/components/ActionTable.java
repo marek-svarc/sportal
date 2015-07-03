@@ -9,7 +9,7 @@ import org.tepi.filtertable.FilterTable;
 import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
 
 import com.clubeek.dao.Dao;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.views.Navigation;
@@ -448,7 +448,7 @@ public final class ActionTable {
      * @param navigation Navigation to update navigation in application
      * @param columns Columns used to create information string about the deleting item
      */
-    public <T extends Unique> void deleteRow(final int dataId, int rowId, final Dao<T> dataAdmin, final Component parent,
+    public <T extends IUnique> void deleteRow(final int dataId, int rowId, final Dao<T> dataAdmin, final Component parent,
             final Navigation navigation, Object... columns) {
         if (dataId > 0) {
             ConfirmDialog.addConfirmDialog(parent.getCaption(), String.format("<strong>%s</strong><br><em>( %s )</em><br>",
@@ -464,7 +464,7 @@ public final class ActionTable {
         }
     }
 
-    public <T extends Unique> void exchangeRows(List<T> data, int id, boolean moveUp,
+    public <T extends IUnique> void exchangeRows(List<T> data, int id, boolean moveUp,
             final Dao<T> dataAdmin, final Component parent, final Navigation navigation) {
         int idNext = id + (moveUp ? -1 : 1);
         if ((id >= 0) && (id < data.size()) && (idNext >= 0) && (idNext < data.size())) {

@@ -8,7 +8,7 @@ import java.util.Date;
  * @author Marek Svarc
  * 
  */
-public interface Event {
+public interface IEvent {
 
 	/**
 	 * Zacatek akce

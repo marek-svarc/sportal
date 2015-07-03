@@ -1,6 +1,6 @@
 package com.clubeek.util;
 
-import com.clubeek.model.Event;
+import com.clubeek.model.IEvent;
 import com.clubeek.ui.Tools;
 import static com.clubeek.ui.Tools.getLocale;
 import java.text.SimpleDateFormat;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class DateTime {
 
-    public static <T extends Event> T getEvent(Date date, List<T> events) {
+    public static <T extends IEvent> T getEvent(Date date, List<T> events) {
         Date today = new Date();
         if (events != null) {
             for (T event : events) {
@@ -34,7 +34,7 @@ public class DateTime {
      * @param events List of the events
      * @return Returns the nearest event
      */
-    public static <T extends Event> T getEarliestEvent(List<T> events) {
+    public static <T extends IEvent> T getEarliestEvent(List<T> events) {
         long timeDiff, minTimeDiff = Long.MAX_VALUE;
         T earliestEvent = null;
 
@@ -125,7 +125,7 @@ public class DateTime {
      * @param styleEnd styl vypisu konce konani akce
      * @return datum prevedeny na text
      */
-    public static String eventToString(Event event, DateStyle styleStart, DateStyle styleEnd) {
+    public static String eventToString(IEvent event, DateStyle styleStart, DateStyle styleEnd) {
         if (styleEnd == DateStyle.NONE) {
             return dateToString(event.getStart(), styleStart);
         } else if (styleStart == DateStyle.NONE) {

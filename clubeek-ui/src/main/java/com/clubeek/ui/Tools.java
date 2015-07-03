@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import com.clubeek.model.TeamMatch;
 import com.clubeek.model.TeamTraining;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 import com.clubeek.util.DateTime;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.ObjectProperty;
@@ -308,7 +308,7 @@ public final class Tools {
             if (items != null) {
                 Object id;
                 for (int i = 0; i < items.size(); ++i) {
-                    id = useUniqueId ? ((Unique) items.get(i)).getId() : items.get(i);
+                    id = useUniqueId ? ((IUnique) items.get(i)).getId() : items.get(i);
                     select.addItem(id);
                     select.setItemCaption(id, items.get(i).toString());
                 }

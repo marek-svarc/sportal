@@ -14,7 +14,7 @@ import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.ModelTools;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 import com.clubeek.ui.ModalInput;
 import com.clubeek.ui.Tools;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -184,7 +184,7 @@ public class FrameSelectMembers extends VerticalLayout implements ModalInput<Lis
 
 	/* PRIVATE */
 
-	private final class ClubMemberWrapper implements Unique {
+	private final class ClubMemberWrapper implements IUnique {
 
 		public ClubMemberWrapper(ClubMember clubMember) {
 			this.clubMember = clubMember;

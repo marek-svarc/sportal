@@ -7,7 +7,7 @@ import java.util.Date;
  * 
  * @author Marek Svarc
  */
-public class TeamTraining extends Model implements Event {
+public class TeamTraining extends Model implements IEvent {
 	/* PRIVATE */
 
 	/** Zacatek treninku */

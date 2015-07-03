@@ -8,7 +8,7 @@ import java.util.Date;
  * @author Marek Svarc
  * 
  */
-public class TeamMatch extends Model implements Event, Publishable {
+public class TeamMatch extends Model implements IEvent, Publishable {
 
     /* PRIVATE */
 

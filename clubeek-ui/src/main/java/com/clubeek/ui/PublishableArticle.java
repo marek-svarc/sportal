@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.clubeek.model.Publishable;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 import com.clubeek.ui.views.Navigation.ViewId;
 
 /**
@@ -50,7 +50,7 @@ public class PublishableArticle {
 		return view;
 	}
 
-	public static <T extends Publishable & Unique> void addArticlesToContainer(List<PublishableArticle> container,
+	public static <T extends Publishable & IUnique> void addArticlesToContainer(List<PublishableArticle> container,
 			List<T> articles, ViewId view) {
 		for (T item : articles) {
 			container.add(new PublishableArticle(item, item.getId(), view));
