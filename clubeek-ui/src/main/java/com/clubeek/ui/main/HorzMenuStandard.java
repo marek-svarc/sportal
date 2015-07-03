@@ -15,7 +15,6 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.stereotype.Component;
 
 /**
  * Class that defines main page with the standard horizontal menu

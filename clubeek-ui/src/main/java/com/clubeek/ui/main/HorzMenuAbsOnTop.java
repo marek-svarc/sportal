@@ -120,6 +120,8 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
 
     @Override
     public void setUI() {
+        this.getUI().addStyleName("horzMenuAbsOnTop");
+        this.getUI().addStyleName(ValoTheme.UI_WITH_MENU);
         createUiControls();
     }
 }
