@@ -6,16 +6,16 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-import com.clubeek.dao.ActionDao;
-import com.clubeek.dao.impl.springjdbctemplate.mappers.ActionMapper;
-import com.clubeek.model.Action;
+import com.clubeek.dao.EventDao;
+import com.clubeek.dao.impl.springjdbctemplate.mappers.EventMapper;
+import com.clubeek.model.Event;
 
-public class ActionDaoImpl extends DaoImpl implements ActionDao {
+public class EventDaoImpl extends DaoImpl implements EventDao {
 
     @Override
-    public void updateRow(Action object) {
+    public void updateRow(Event object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("update t_action set "
+        template.update("update t_event set "
                 + "start = :start, "
                 + "finish = :finish, "
                 + "caption = :caption, "
@@ -28,22 +28,22 @@ public class ActionDaoImpl extends DaoImpl implements ActionDao {
     }
 
     @Override
-    public void insertRow(Action object) {
+    public void insertRow(Event object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("insert into t_action "
+        template.update("insert into t_event "
                 + "(start, finish, caption, place, description, sign_participation, club_team_id, category_id) values "
                 + "(:start, :finish, :caption, :place, :description, :signParticipation, :clubTeamId, :categoryId)", source);
     }
 
     @Override
     public void deleteRow(int id) {
-        template.getJdbcOperations().update("delete from t_action where id = ?", new Object[] {id});        
+        template.getJdbcOperations().update("delete from t_event where id = ?", new Object[] {id});        
     }
 
     @Override
-    public void deleteRows(List<Action> objects) {
+    public void deleteRows(List<Event> objects) {
         SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
-        template.batchUpdate("delete from t_action where id = :id", sources);
+        template.batchUpdate("delete from t_event where id = :id", sources);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class ActionDaoImpl extends DaoImpl implements ActionDao {
     }
 
     @Override
-    public List<Action> getAllActions() {
-        return template.query("select * from t_action", new ActionMapper());
+    public List<Event> getAllEvents() {
+        return template.query("select * from t_event", new EventMapper());
     }
 
 }

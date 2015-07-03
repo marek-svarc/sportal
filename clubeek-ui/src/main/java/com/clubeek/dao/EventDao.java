@@ -2,11 +2,11 @@ package com.clubeek.dao;
 
 import java.util.List;
 
-import com.clubeek.model.Action;
+import com.clubeek.model.Event;
 
-public interface ActionDao extends Dao<Action> {
+public interface EventDao extends Dao<Event> {
 
-    public List<Action> getAllActions();
+    public List<Event> getAllEvents();
     
     // TODO vitfo, created on 30. 6. 2015 - will it be needed?
 //    public List<Action> getAllActionsByClubTeamId(int clubTeamId);

@@ -2,7 +2,9 @@ package com.clubeek.model;
 
 import java.util.Date;
 
-public class Action extends Model {
+import com.clubeek.enums.OwnerType;
+
+public class Event extends Model {
 
     private Date start;
     private Date finish;
@@ -11,6 +13,7 @@ public class Action extends Model {
     private String description;
     // TODO vitfo, created on 30. 6. 2015 - change name of variable
     private Boolean signParticipation;
+    private OwnerType ownerType;
     private Integer clubTeamId;
     private Integer categoryId;
     
@@ -61,5 +64,11 @@ public class Action extends Model {
     }
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+    public OwnerType getOwnerType() {
+        return ownerType;
+    }
+    public void setOwnerType(OwnerType ownerType) {
+        this.ownerType = ownerType;
     }
 }

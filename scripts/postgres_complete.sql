@@ -4,13 +4,13 @@
 
 drop table if exists T_CLUB;
 drop table if exists T_CONTACT;
-drop table if exists T_APPLICANT_FOR_ACTION;
+drop table if exists T_EVENT_APPLICANT;
 drop table if exists T_APPLICANT_FOR_TEAM_TRAINING;
 drop table if exists T_APPLICANT_FOR_TEAM_MATCH;
 drop table if exists T_USER;
 drop table if exists T_PARTICIPANT_OF_TRAINING;
 drop table if exists T_PARTICIPANT_OF_MATCH;
-drop table if exists T_ACTION;
+drop table if exists T_EVENT;
 drop table if exists T_TEAM_TRAINING;
 
 drop view if exists club_member_by_team;
@@ -159,7 +159,7 @@ CREATE TABLE T_TEAM_MATCH
 
 );
 
-CREATE TABLE T_ACTION
+CREATE TABLE T_EVENT
 (
     id			serial,
     start		timestamp		not null,
@@ -168,6 +168,7 @@ CREATE TABLE T_ACTION
     place		varchar(500),
     description		TEXT,
     sign_participation	boolean,
+    owner_type 		smallint 		NOT NULL DEFAULT 0,
     club_team_id	integer,
     category_id		integer,
 
@@ -181,7 +182,7 @@ CREATE TABLE T_ACTION
 
 );
 
-CREATE TABLE T_APPLICANT_FOR_ACTION
+CREATE TABLE T_EVENT_APPLICANT
 (
     attend		boolean	not null default 'false',
     club_member_id	integer		not null,
@@ -190,7 +191,7 @@ CREATE TABLE T_APPLICANT_FOR_ACTION
     primary key ( club_member_id, action_id ),
     foreign key ( club_member_id ) references T_CLUB_MEMBER( id )
 	ON DELETE CASCADE,
-    foreign key ( action_id ) references T_ACTION ( id )
+    foreign key ( action_id ) references T_EVENT ( id )
 	ON DELETE CASCADE
 );
 

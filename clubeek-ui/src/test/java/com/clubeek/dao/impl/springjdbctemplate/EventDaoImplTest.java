@@ -13,25 +13,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.clubeek.dao.ActionDao;
-import com.clubeek.model.Action;
+import com.clubeek.dao.EventDao;
+import com.clubeek.model.Event;
 
 /**
- * Class that tests ActionDaoImpl.
+ * Class that tests EvenDaoImpl.
  * 
  * @author vitfo
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-config.xml")
-public class ActionDaoImplTest {
+public class EventDaoImplTest {
     
     @Autowired
-    ActionDao actionDao;
+    EventDao eventDao;
     
     @Before
-    public void deleteAllActions() {
-        deleteAll(actionDao);
+    public void deleteAllEvents() {
+        deleteAll(eventDao);
     }
 
     /**
@@ -39,7 +39,7 @@ public class ActionDaoImplTest {
      */
     @Test
     public void test() {
-        assertTrue(actionDao.getAllActions().size() == 0);
+        assertTrue(eventDao.getAllEvents().size() == 0);
         
         // insert
         Calendar start = new GregorianCalendar();
@@ -48,8 +48,8 @@ public class ActionDaoImplTest {
         Calendar finish = new GregorianCalendar();
         finish.setTime(new Date(0L));
         finish.set(2015,  6, 20, 10, 30);
-        insertAction(
-                actionDao, 
+        insertEvent(
+                eventDao, 
                 start.getTime(), 
                 finish.getTime(), 
                 "My caption", 
@@ -58,9 +58,9 @@ public class ActionDaoImplTest {
                 true, 
                 null, 
                 null);
-        assertTrue(actionDao.getAllActions().size() == 1);
+        assertTrue(eventDao.getAllEvents().size() == 1);
         
-        Action a = actionDao.getAllActions().get(0);
+        Event a = eventDao.getAllEvents().get(0);
         assertTrue(a.getStart().getTime() == start.getTimeInMillis());
         assertTrue(a.getFinish().getTime() == finish.getTimeInMillis());
         assertTrue(a.getCaption().equals("My caption"));
@@ -83,9 +83,9 @@ public class ActionDaoImplTest {
         a.setPlace("place");
         a.setDescription("description");
         a.setSignParticipation(false);
-        actionDao.updateRow(a);
+        eventDao.updateRow(a);
         
-        Action a2 = actionDao.getAllActions().get(0);
+        Event a2 = eventDao.getAllEvents().get(0);
         assertTrue(a2.getStart().getTime() == start2.getTimeInMillis());
         assertTrue(a2.getFinish().getTime() == finish2.getTimeInMillis());
         assertTrue(a2.getCaption().equals("caption"));
@@ -93,8 +93,8 @@ public class ActionDaoImplTest {
         assertTrue(a2.getDescription().equals("description"));
         assertFalse(a2.getSignParticipation());
         
-        insertAction(
-                actionDao, 
+        insertEvent(
+                eventDao, 
                 new Date(), 
                 null, 
                 "My caption", 
@@ -103,30 +103,30 @@ public class ActionDaoImplTest {
                 false, 
                 null, 
                 null);
-        assertTrue(actionDao.getAllActions().size() == 2);
+        assertTrue(eventDao.getAllEvents().size() == 2);
         
         // delete
-        deleteAll(actionDao);
-        assertTrue(actionDao.getAllActions().size() == 0);
+        deleteAll(eventDao);
+        assertTrue(eventDao.getAllEvents().size() == 0);
     }
     
     @Test
     public void testDeleteRows() {
-        assertTrue(actionDao.getAllActions().size() == 0);
-        insertActions(actionDao, 10);
-        assertTrue(actionDao.getAllActions().size() == 10);
-        actionDao.deleteRows(actionDao.getAllActions().subList(3, 8));
-        assertTrue(actionDao.getAllActions().size() == 5);
+        assertTrue(eventDao.getAllEvents().size() == 0);
+        insertEvents(eventDao, 10);
+        assertTrue(eventDao.getAllEvents().size() == 10);
+        eventDao.deleteRows(eventDao.getAllEvents().subList(3, 8));
+        assertTrue(eventDao.getAllEvents().size() == 5);
     }
 
-    public void deleteAll(ActionDao actionDao) {
-        for (Action a : actionDao.getAllActions()) {
-            actionDao.deleteRow(a.getId());
+    public void deleteAll(EventDao eventDao) {
+        for (Event a : eventDao.getAllEvents()) {
+            eventDao.deleteRow(a.getId());
         }
     }
     
-    public void insertAction(ActionDao actionDao, Date start, Date finish, String caption, String place, String description, Boolean signParticipation, Integer clubTeamId, Integer categoryId) {
-        Action a = new Action();
+    public void insertEvent(EventDao eventDao, Date start, Date finish, String caption, String place, String description, Boolean signParticipation, Integer clubTeamId, Integer categoryId) {
+        Event a = new Event();
         a.setStart(start);
         a.setStart(start);
         a.setFinish(finish);
@@ -136,13 +136,13 @@ public class ActionDaoImplTest {
         a.setSignParticipation(signParticipation);
         a.setClubTeamId(clubTeamId);
         a.setCategoryId(categoryId);
-        actionDao.insertRow(a);
+        eventDao.insertRow(a);
     }
     
-    public void insertActions(ActionDao actionDao, int numOfActions) {
-        for (int i = 0; i < numOfActions; i++) {
-            insertAction(
-                    actionDao, 
+    public void insertEvents(EventDao eventDao, int numOfEvents) {
+        for (int i = 0; i < numOfEvents; i++) {
+            insertEvent(
+                    eventDao, 
                     new Date(), 
                     null, 
                     "", 
