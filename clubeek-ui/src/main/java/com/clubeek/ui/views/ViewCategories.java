@@ -25,12 +25,23 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class ViewCategories extends VerticalLayout implements View, ActionTable.OnActionListener {
-	// TODO vitfo, created on 11. 6. 2015
+
+    /* PRIVATE */
+
     @Autowired
-	private SecurityService securityService;
-	// TODO vitfo, created on 11. 6. 2015 
+    private SecurityService securityService;
+
     @Autowired
     private CategoryDao categoryDao;
+
+    /** Application navigation provider */
+    private Navigation navigation;
+    
+    /** Categories table */
+    private ActionTable table;
+
+    /** List of categories */
+    private List<Category> categories = null;
 
     /* PUBLIC */
     public enum Columns {
@@ -53,11 +64,11 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
 
-    	securityService.authorize(UserRoleType.CLUB_MANAGER);
+        securityService.authorize(UserRoleType.CLUB_MANAGER);
 
-//        categories = RepCategory.selectAll(null);
-    	categories = categoryDao.getAllCategories();
+        categories = categoryDao.getAllCategories();
 
         table.removeAllRows();
         if (categories != null) {
@@ -114,15 +125,4 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     public void exchangeCategories(int id, boolean moveUp) {
         table.exchangeRows(categories, id, moveUp, categoryDao, this, navigation);
     }
-
-    /* PRIVATE */
-    /** Komponenty tabulky */
-    private ActionTable table;
-
-    /** Seznam aktualne zobrazenych kategorii */
-    private List<Category> categories = null;
-
-    /** Navigace v aplikaci */
-    @Autowired
-    private Navigation navigation;
 }

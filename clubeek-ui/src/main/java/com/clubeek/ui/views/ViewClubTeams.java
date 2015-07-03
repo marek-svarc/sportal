@@ -25,13 +25,24 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class ViewClubTeams extends VerticalLayout implements View, ActionTable.OnActionListener {
-    // TODO vitfo, created on 11. 6. 2015
+
+    /* PRIVATE */
     @Autowired
     private SecurityService securityService;
-    // TODO vitfo, created on 11. 6. 2015
+
     @Autowired
     private ClubTeamDao clubTeamDao;
 
+    /** Application navigation provider */
+    private Navigation navigation;
+
+    /** Table component */
+    private final ActionTable table;
+
+    /** List of teams loaded from tha database */
+    private List<ClubTeam> teams = null;
+
+    /* PUBLIC */
     public enum Columns {
 
         CAPTION, CATEGORY;
@@ -40,9 +51,9 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     public ViewClubTeams() {
 
         this.setCaption(Messages.getString("teams")); //$NON-NLS-1$
-        
-        ActionTable.UserColumnInfo[] columns = { new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
-                new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category")) };
+
+        ActionTable.UserColumnInfo[] columns = {new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
+            new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category"))};
 
         table = new ActionTable(ActionTable.Action.getMaximalSet(false, true), columns, this);
         table.addToOwner(this);
@@ -51,10 +62,10 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
 
         securityService.authorize(UserRoleType.SPORT_MANAGER);
 
-//        teams = RepClubTeam.select(false, null);
         teams = clubTeamDao.getAllClubTeams();
 
         table.removeAllRows();
@@ -63,8 +74,8 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
             for (int i = 0; i < teams.size(); ++i) {
                 ClubTeam team = teams.get(i);
                 table.addRow(container,
-                        new Object[] { String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
-                                team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned") }, i);
+                        new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
+                            team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
             }
             table.setDataContainer(container);
         }
@@ -111,15 +122,4 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     public void exchangeTeams(int id, boolean moveUp) {
         table.exchangeRows(teams, id, moveUp, clubTeamDao, this, navigation);
     }
-
-    /* PRIVATE */
-    /** Navigation provider */
-    @Autowired
-    private Navigation navigation;
-
-    /** Table component */
-    private ActionTable table;
-
-    /** List of teams loaded from tha database */
-    private List<ClubTeam> teams = null;
 }

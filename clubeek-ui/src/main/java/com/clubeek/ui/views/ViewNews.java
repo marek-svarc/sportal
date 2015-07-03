@@ -9,8 +9,6 @@ import org.vaadin.risto.stylecalendar.StyleCalendar;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.ClubTeamDao;
-import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
-import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamMatch;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
 import com.clubeek.enums.LocationType;
@@ -46,15 +44,15 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class ViewNews extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015
-    @Autowired
-    private ArticleDao articleDao;
-    // TODO vitfo, created on 11. 6. 2015
-    @Autowired
-    private ClubTeamDao clubTeamDao;
 
     /* PRIVATE */
     @Autowired
+    private ArticleDao articleDao;
+
+    @Autowired
+    private ClubTeamDao clubTeamDao;
+
+    /** Application navigation provider */
     private Navigation navigation;
 
     /** Panel pro zobrazeni clanku na leve strane stranky */
@@ -189,10 +187,8 @@ public class ViewNews extends VerticalLayout implements View {
 
     private List<Article> getArticles(ClubTeam team, LocationType location) {
         if (team != null) {
-//            return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
             return articleDao.selectArticles(team.getId(), team.getCategoryId(), location);
         } else {
-//            return RepArticle.select(0, 0, location, null);
             return articleDao.selectArticles(0, 0, location);
         }
     }
@@ -297,6 +293,7 @@ public class ViewNews extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
 
         vlLeftPanel.removeAllComponents();
         vlCenterPanel.removeAllComponents();
@@ -311,7 +308,6 @@ public class ViewNews extends VerticalLayout implements View {
 
         ClubTeam team = null;
         if (teamId > 0) {
-//            team = RepClubTeam.selectById(teamId, new RepClubTeam.TableColumn[]{TableColumn.ID, TableColumn.CATEGORY_ID});
             team = clubTeamDao.getClubTeamById(teamId);
         }
         List<PublishableArticle> boardArticles = new ArrayList<>();
@@ -323,7 +319,6 @@ public class ViewNews extends VerticalLayout implements View {
             PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
                     ViewId.ARTICLE);
         } else {
-//            List<ClubTeam> teams = RepClubTeam.select(true, new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.ID});
             List<ClubTeam> teams = clubTeamDao.getActiveClubTeams();
             for (ClubTeam item : teams) {
                 PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(item.getId(), null),

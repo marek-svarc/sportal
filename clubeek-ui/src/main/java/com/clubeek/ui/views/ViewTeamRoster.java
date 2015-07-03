@@ -3,7 +3,6 @@ package com.clubeek.ui.views;
 import java.util.List;
 
 import com.clubeek.dao.TeamMemberDao;
-import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
 import com.clubeek.enums.TeamFunctionType;
 import com.clubeek.model.TeamMember;
 import com.clubeek.ui.Tools;
@@ -23,30 +22,30 @@ import org.springframework.stereotype.Component;
 /**
  * View for team members for tab panel named "Team".
  *
- * @author marek
- * @author lukas
+ * @author Marek Svarc
+ * @author Lukas Janacek
  */
 @SuppressWarnings("serial")
 @PreserveOnRefresh
 @Component
 @Scope("prototype")
 public class ViewTeamRoster extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015
+    
+    /* PRIVATE */
     @Autowired
     private TeamMemberDao teamMemberDao;
 
-    private final String cssTeamMembersList = "teamMembersList"; //$NON-NLS-1$
-
-    /** Navigation administrator */
-    @Autowired
+    /** Application navigation provider */
     private Navigation navigation;
 
-    // management upper layout
+    /** Management upper layout */
     private final CssLayout layoutManagement;
 
-    // players bottom layout
+    /** Players bottom layout */
     private final CssLayout layoutPlayers;
 
+    private final String cssTeamMembersList = "teamMembersList"; //$NON-NLS-1$
+    
     /**
      * Adds caption label for team members layout.
      *
@@ -111,6 +110,8 @@ public class ViewTeamRoster extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
+        
         int teamId = Tools.Strings.analyzeParameters(event);
 
         layoutManagement.removeAllComponents();

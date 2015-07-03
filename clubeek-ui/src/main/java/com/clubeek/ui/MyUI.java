@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationContext;
 @Widgetset("com.clubeek.MyAppWidgetset")
 @SpringUI
 public class MyUI extends UI {
-	// TODO vitfo, created on 11. 6. 2015
+
     @Autowired
     private UserDao userDao;
 
@@ -67,7 +67,6 @@ public class MyUI extends UI {
             }
         });
         
-//        List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
         List<User> admins = userDao.getAllAdministrators();
         if ((admins == null) || (admins.size() <= 0)) {
             User user = new User();
@@ -79,6 +78,7 @@ public class MyUI extends UI {
 
         // pouziti prostredi s horizontalnim navigacnim menu
         HorzMenuAbsOnTop content = applicationContext.getBean(HorzMenuAbsOnTop.class);
+        //HorzMenuAbsOnTop content = new HorzMenuAbsOnTop();
         setContent(content);
         content.setUI();
         content.updateNavigationMenu();
