@@ -68,7 +68,10 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 //            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), new RepClubMember.TableColumn[]{
 //                RepClubMember.TableColumn.ID, RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME,
 //                RepClubMember.TableColumn.BIRTHDATE}));
-            user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
+            // clubMemberId can be null
+            if (user.getClubMemberId() != null) {
+                user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
+            }
         }
 
         // add table rows
