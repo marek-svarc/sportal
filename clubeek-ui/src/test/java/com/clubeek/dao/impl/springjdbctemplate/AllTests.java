@@ -11,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
     CategoryDaoImplTest.class, 
     ClubMemberDaoImplTest.class, 
     ClubRivalDaoImplTest.class,
-    ClubSettingDaoImplTest.class, 
+    ClubDaoImplTest.class, 
     ClubTeamDaoImplTest.class, 
     ContactDaoImplTest.class, 
     TeamMatchDaoImplTest.class, 

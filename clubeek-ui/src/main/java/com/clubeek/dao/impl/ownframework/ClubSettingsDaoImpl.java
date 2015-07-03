@@ -2,34 +2,34 @@ package com.clubeek.dao.impl.ownframework;
 
 import java.util.List;
 
-import com.clubeek.dao.ClubSettingDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.impl.ownframework.rep.RepClubSettings;
-import com.clubeek.model.ClubSetting;
+import com.clubeek.model.Club;
 
-public class ClubSettingsDaoImpl implements ClubSettingDao {
+public class ClubSettingsDaoImpl implements ClubDao {
 
     @Override
-    public ClubSetting getClubSettingById(int id) {
+    public Club getClubById(int id) {
         return RepClubSettings.select(1, null);
     }
 
     @Override
-    public void updateClubSetting(ClubSetting clubSetting) {
+    public void updateClub(Club clubSetting) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ClubSetting> getAllClubSettings() {
+    public List<Club> getAllClubs() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void deleteClubSetting(int id) {
+    public void deleteClub(int id) {
         throw new UnsupportedOperationException();        
     }
 
     @Override
-    public void addClubSetting(ClubSetting clubSetting) {
+    public void addClub(Club clubSetting) {
         throw new UnsupportedOperationException();                
     }
 

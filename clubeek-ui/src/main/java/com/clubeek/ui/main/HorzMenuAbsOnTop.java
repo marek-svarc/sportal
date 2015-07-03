@@ -35,7 +35,7 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
     protected String GetMenuItemCaption(User user, HorzMenuNavigationViews viewId, String caption) {
         switch (viewId) {
             case NEWS:
-                return this.getClubSettings().getTitle();
+                return this.getClub().getTitle();
         }
         return super.GetMenuItemCaption(user, viewId, caption);
     }

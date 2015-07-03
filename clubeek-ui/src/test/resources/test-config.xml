@@ -18,7 +18,7 @@
     <bean id="clubTeamDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubTeamDaoImpl" />
     <bean id="clubMemberDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubMemberDaoImpl" />
     <bean id="clubRivalDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubRivalDaoImpl" />
-    <bean id="clubSettingDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubSettingDaoImpl" />
+    <bean id="clubDao" class="com.clubeek.dao.impl.springjdbctemplate.ClubDaoImpl" />
     <bean id="teamMemberDao" class="com.clubeek.dao.impl.springjdbctemplate.TeamMemberDaoImpl" />
     <bean id="userDao" class="com.clubeek.dao.impl.springjdbctemplate.UserDaoImpl" />
     <bean id="contactDao" class="com.clubeek.dao.impl.springjdbctemplate.ContactDaoImpl" />

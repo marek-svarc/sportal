@@ -1,6 +1,6 @@
 package com.clubeek.ui.main;
 
-import com.clubeek.model.ClubSetting;
+import com.clubeek.model.Club;
 import com.clubeek.model.User;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.Tools;
@@ -50,7 +50,7 @@ public class HorzMenuStandard extends HorzMenuBase {
         mainLayout.setWidth(900, Unit.PIXELS);
 
         // Hlavicka stranky (logo, nadpis, prihlaseni/odhlaseni)
-        ClubSetting settings = getClubSettings();
+        Club settings = getClub();
         if (settings != null) {
             final int TITLE_HEIGHT = 50;
             final int LOGO_SIZE = 80;

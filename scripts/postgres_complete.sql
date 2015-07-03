@@ -2,7 +2,7 @@
 -- Dropping tables if exist --
 ------------------------------
 
-drop table if exists T_CLUB_SETTING;
+drop table if exists T_CLUB;
 drop table if exists T_CONTACT;
 drop table if exists T_APPLICANT_FOR_ACTION;
 drop table if exists T_APPLICANT_FOR_TEAM_TRAINING;
@@ -28,7 +28,7 @@ drop table if exists T_CATEGORY;
 -- Creating tables --
 ---------------------
 
-CREATE TABLE T_CLUB_SETTING
+CREATE TABLE T_CLUB
 (
     id 		serial,
     title	varchar(200),
@@ -312,7 +312,7 @@ FROM    T_TEAM_MEMBER tm
 -- Test data --
 ---------------------
 --------------------------------------------------------------------------------
-INSERT INTO T_CLUB_SETTING (id, title, comment) VALUES
+INSERT INTO T_CLUB (id, title, comment) VALUES
 	(1, 'FC Chvojkovice Brod', 'Zřejmě dobrý oddíl ...'),
 	(2, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
 
@@ -999,7 +999,7 @@ $$;
 -- INSERT LOGO TO THE CLUB SETTING
 do $$
 begin
-	update T_CLUB_SETTING set logo = (select bytea_import('clubeek_pictures/club_logo.png')) where id = 1;
+	update T_CLUB set logo = (select bytea_import('clubeek_pictures/club_logo.png')) where id = 1;
 end;
 $$;
 

@@ -1,6 +1,6 @@
 package com.clubeek.model;
 
-public class ClubSetting extends Model {
+public class Club extends Model {
 
 	/* PRIVATE */
 

@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
-import com.clubeek.dao.ClubSettingDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Category;
-import com.clubeek.model.ClubSetting;
+import com.clubeek.model.Club;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.User;
 import com.clubeek.service.SecurityService;
@@ -92,13 +92,13 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
     // TODO vitfo, created on 11. 6. 2015 
     @Autowired
-    private ClubSettingDao clubSettingDao;
+    private ClubDao clubDao;
 
     // TODO vitfo, created on 11. 6. 2015
     @Autowired
     private ClubTeamDao clubTeamDao;
 
-    private ClubSetting clubSettings;
+    private Club club;
 
     /** Navigation menu in application */
     private MenuBar horzMenu = null;
@@ -427,7 +427,7 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
     
     @PostConstruct
     public void init() {
-        this.clubSettings = clubSettingDao.getClubSettingById(1);
+        this.club = clubDao.getClubById(1);
         //createUiControls();
         
         // update of the menu
@@ -436,8 +436,8 @@ public abstract class HorzMenuBase extends VerticalLayout implements Navigation 
 
     // properties
     /** Informations about club */
-    public ClubSetting getClubSettings() {
-        return clubSettings;
+    public Club getClub() {
+        return club;
     }
 
     // rozhrani Navigation

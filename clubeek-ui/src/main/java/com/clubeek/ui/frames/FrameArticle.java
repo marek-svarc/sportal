@@ -170,6 +170,7 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 	}
 	
 	@Override
+	// TODO vitfo, created on 1. 7. 2015 xxx - change id setting.
 	public void inputToData(Article data) {
 		tfCaption.validate();
 		
