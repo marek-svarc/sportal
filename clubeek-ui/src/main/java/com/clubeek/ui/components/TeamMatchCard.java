@@ -14,6 +14,10 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class TeamMatchCard extends VerticalLayout {
 
+    /* PRIVATE */
+    /** Application navigation provider */
+    private Navigation navigation;
+
     /** Informations about match */
     private TeamMatch teamMatch;
 
@@ -50,8 +54,8 @@ public class TeamMatchCard extends VerticalLayout {
         }
     }
 
-    public TeamMatchCard(Navigation navigation) {
-
+    /* PUBLIC */
+    public TeamMatchCard() {
         HorizontalLayout layoutTop = new HorizontalLayout();
         this.addComponent(layoutTop);
 
@@ -67,7 +71,8 @@ public class TeamMatchCard extends VerticalLayout {
         this.addComponent(lblMatchInfo);
     }
 
-    public void setTeamMatch(TeamMatch teamMatch) {
+    public void setTeamMatch(Navigation navigation, TeamMatch teamMatch) {
+        this.navigation = navigation;
         if (this.teamMatch != teamMatch) {
             this.teamMatch = teamMatch;
             Refresh();

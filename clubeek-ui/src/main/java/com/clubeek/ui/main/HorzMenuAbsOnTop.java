@@ -22,14 +22,13 @@ import org.springframework.stereotype.Component;
 @Component("navigation")
 @Scope("prototype")
 public class HorzMenuAbsOnTop extends HorzMenuBase {
-    
+
     /* PRIVATE */
-    
-    private void setMenuButtonStyle(Button btn){
+    private void setMenuButtonStyle(Button btn) {
         btn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         btn.addStyleName(ValoTheme.BUTTON_TINY);
     }
-    
+
     /* PROTECTED */
     @Override
     protected String GetMenuItemCaption(User user, HorzMenuNavigationViews viewId, String caption) {
@@ -48,7 +47,7 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
         }
         return super.GetMenuItemStyle(viewId);
     }
-    
+
     @Override
     protected void createUiControls() {
 
@@ -73,7 +72,7 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
 
         Button btnFacebook = getButtonOAuthFacebook();
         setMenuButtonStyle(btnFacebook);
-        
+
         HorizontalLayout hlTopMenu = new HorizontalLayout();
         hlTopMenu.addStyleName(ValoTheme.LAYOUT_CARD);
         hlTopMenu.addStyleName("topLayout");
@@ -91,7 +90,7 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
         vlViews.addComponent(getViewsContainer());
         this.addComponent(vlViews);
         this.setComponentAlignment(vlViews, Alignment.TOP_CENTER);
-        
+
         this.setExpandRatio(hlTopMenu, 0);
         this.setExpandRatio(vlViews, 1);
     }
@@ -114,14 +113,15 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
 
         super.updateUiControls(user);
     }
-    
+
     public HorzMenuAbsOnTop() {
         super();
-        
     }
-    
+
     @Override
     public void setUI() {
+        this.getUI().addStyleName("horzMenuAbsOnTop");
+        this.getUI().addStyleName(ValoTheme.UI_WITH_MENU);
         createUiControls();
     }
 }
