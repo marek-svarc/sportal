@@ -5,7 +5,7 @@ import java.util.List;
 import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
 
-public interface ArticleDao extends Dao<Article> {
+public interface ArticleDao extends Dao<Article>, DiscussionDao<Article> {
 
     public Article getArticleById(int id);
     

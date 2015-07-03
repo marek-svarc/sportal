@@ -10,11 +10,15 @@ drop table if exists T_APPLICANT_FOR_TEAM_MATCH;
 drop table if exists T_USER;
 drop table if exists T_PARTICIPANT_OF_TRAINING;
 drop table if exists T_PARTICIPANT_OF_MATCH;
-drop table if exists T_EVENT;
-drop table if exists T_TEAM_TRAINING;
+drop table if exists T_ARTICLE_DISCUSSION_POST;
+drop table if exists T_EVENT_DISCUSSION_POST;
+drop table if exists T_TEAM_TRAINING_DISCUSSION_POST;
+drop table if exists T_TEAM_MATCH_DISCUSSION_POST;
 
 drop view if exists club_member_by_team;
 
+drop table if exists T_TEAM_TRAINING;
+drop table if exists T_EVENT;
 drop table if exists T_TEAM_MEMBER;
 drop table if exists T_CLUB_MEMBER;
 drop table if exists T_TEAM_MATCH;
@@ -138,6 +142,18 @@ CREATE TABLE T_TEAM_TRAINING
         ON DELETE CASCADE
 );
 
+CREATE TABLE T_TEAM_TRAINING_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    team_training_id 	INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (team_training_id) references t_team_training(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
 CREATE TABLE T_TEAM_MATCH
 (
     id			serial,
@@ -157,6 +173,18 @@ CREATE TABLE T_TEAM_MATCH
     foreign key (club_team_id) references T_CLUB_TEAM (id)
         ON DELETE CASCADE
 
+);
+
+CREATE TABLE T_TEAM_MATCH_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    team_match_id 	INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (team_match_id) references t_team_match(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 CREATE TABLE T_EVENT
@@ -180,6 +208,18 @@ CREATE TABLE T_EVENT
 
     check ((category_id is not null AND club_team_id is null) OR (club_team_id is not null AND category_id is null) OR (club_team_id is null AND category_id is null))
 
+);
+
+CREATE TABLE T_EVENT_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    event_id 		INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (event_id) references t_event(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 CREATE TABLE T_EVENT_APPLICANT
@@ -241,6 +281,18 @@ CREATE TABLE T_ARTICLE
     foreign key (category_id) references T_CATEGORY (id)
         ON DELETE CASCADE,
     check (((owner_type = 1) AND category_id is not null) OR ((owner_type = 2) AND club_team_id is not null) OR (owner_type <> 1 AND owner_type <> 2))
+);
+
+CREATE TABLE T_ARTICLE_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    article_id 		INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (article_id) references t_article(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 CREATE TABLE T_USER

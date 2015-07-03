@@ -2,6 +2,7 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import java.util.List;
 
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Repository;
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle.TableColumn;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.ArticleMapper;
+import com.clubeek.dao.impl.springjdbctemplate.mappers.DiscussionPostMapper;
 import com.clubeek.enums.LocationType;
 import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
+import com.clubeek.model.DiscussionPost;
 
 /**
  * Implementation of @link {@link ArticleDao} interface.
@@ -129,5 +132,37 @@ public class ArticleDaoImpl extends DaoImpl implements ArticleDao {
     
     private static String sqlLocationCondition(LocationType location) {
         return String.format("(%s = %d)", "location_type", location.ordinal());
+    }
+
+    @Override
+    public List<DiscussionPost> getAllDiscussionPosts(int referencedObjectId) {
+        return template.getJdbcOperations().query(
+                "select * from t_article_discussion_post where article_id = ?", 
+                new Object[] {referencedObjectId},
+                new DiscussionPostMapper());
+    }
+
+    @Override
+    public void insertDiscussionPost(DiscussionPost post) {
+        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(post);
+        template.update("insert into t_article_discussion_post "
+                + "(creation_time, comment, article_id) values "
+                + "(:creationTime, :comment, :referencedObjectId)", source);
+        
+    }
+
+    @Override
+    public void updateDiscussionPost(DiscussionPost discussionPost) {
+        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(discussionPost);
+        template.update("update t_article_discussion_post set "
+                + "creation_time = :creationTime, "
+                + "comment = :comment, "
+                + "article_id = :referencedObjectId "
+                + "where id = :id", source);
+    }
+
+    @Override
+    public void deleteDiscussionPost(int discussionPostId) {
+        template.getJdbcOperations().update("delete from t_article_discussion_post where id = ?", new Object[] {discussionPostId});        
     }
 }

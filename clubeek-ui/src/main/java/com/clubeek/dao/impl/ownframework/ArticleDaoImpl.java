@@ -6,6 +6,7 @@ import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle;
 import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
+import com.clubeek.model.DiscussionPost;
 
 public class ArticleDaoImpl implements ArticleDao {
 
@@ -57,4 +58,23 @@ public class ArticleDaoImpl implements ArticleDao {
         throw new UnsupportedOperationException("Not supported.");        
     }
 
+    @Override
+    public void updateDiscussionPost(DiscussionPost discussionPost) {
+        throw new UnsupportedOperationException("Not supported.");      
+    }
+
+    @Override
+    public void deleteDiscussionPost(int discussionPostId) {
+        throw new UnsupportedOperationException("Not supported.");      
+    }
+
+    @Override
+    public List<DiscussionPost> getAllDiscussionPosts(int referencedObjectId) {
+        throw new UnsupportedOperationException("Not supported.");        
+    }
+
+    @Override
+    public void insertDiscussionPost(DiscussionPost discussionPost) {
+        throw new UnsupportedOperationException("Not supported.");        
+    }
 }

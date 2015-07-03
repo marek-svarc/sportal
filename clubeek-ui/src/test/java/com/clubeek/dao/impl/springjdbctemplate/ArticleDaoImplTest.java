@@ -2,9 +2,13 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
+
+import javax.validation.constraints.AssertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +23,7 @@ import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.enums.LocationType;
 import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
+import com.clubeek.model.DiscussionPost;
 
 /**
  * Class that tests ArticleDaoImpl.
@@ -141,6 +146,45 @@ public class ArticleDaoImplTest {
         assertTrue(articleDao.selectArticles(0, 0, LocationType.NEWS).size() == 8);
     }
     
+    /**
+     * Tests insert, delete, update, getAll for discussion post.
+     */
+    @Test
+    public void testDiscussionPosts() {
+        assertTrue(articleDao.getAllArticles().size() == 0);
+        
+        // insert
+        insertArticles(articleDao, 1);
+        int articleId = articleDao.getAllArticles().get(0).getId();
+        assertTrue(articleDao.getAllDiscussionPosts(articleId).size() == 0);
+        Calendar creation = new GregorianCalendar();
+        creation.setTime(new Date(0L));
+        creation.set(2014,  5, 24, 17, 38, 51);
+        insertDiscussionPost(articleDao, creation.getTime(), "My comment", articleId);
+        
+        assertTrue(articleDao.getAllDiscussionPosts(articleId).size() == 1);
+        DiscussionPost dp = articleDao.getAllDiscussionPosts(articleId).get(0);
+        assertTrue(dp.getCreationTime().getTime() == creation.getTimeInMillis());
+        assertTrue(dp.getComment().equals("My comment"));
+        
+        // update
+        Calendar creation2 = new GregorianCalendar();
+        creation2.setTime(new Date(0L));
+        creation2.set(2015,  7, 19, 22, 13, 03);
+        dp.setCreationTime(creation2.getTime());
+        dp.setComment("Comment");
+        articleDao.updateDiscussionPost(dp);
+        
+        assertTrue(articleDao.getAllDiscussionPosts(articleId).size() == 1);
+        DiscussionPost dp2 = articleDao.getAllDiscussionPosts(articleId).get(0);
+        assertTrue(dp2.getCreationTime().getTime() == creation2.getTimeInMillis());
+        assertTrue(dp2.getComment().equals("Comment"));
+        
+        // delete
+        articleDao.deleteDiscussionPost(dp2.getId());
+        assertTrue(articleDao.getAllDiscussionPosts(articleId).size() == 0);
+    }
+    
     public void insertArticle(ArticleDao articleDao, boolean priority, LocationType locationType) {
         Article a = new Article();
         a.setCaption("Caption");
@@ -196,5 +240,13 @@ public class ArticleDaoImplTest {
         for (Article a : articleDao.getAllArticles()) {
             articleDao.deleteRow(a.getId());
         }
+    }
+    
+    public void insertDiscussionPost(ArticleDao articleDao, Date creationTime, String comment, int articleId) {
+        DiscussionPost dp = new DiscussionPost();
+        dp.setCreationTime(creationTime);
+        dp.setComment(comment);
+        dp.setReferencedObjectId(articleId);
+        articleDao.insertDiscussionPost(dp);
     }
 }
