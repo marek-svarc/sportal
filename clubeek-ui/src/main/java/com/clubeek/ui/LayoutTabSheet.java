@@ -19,9 +19,9 @@ public class LayoutTabSheet extends VerticalLayout implements View {
      * Zalozky pro zobrazovani vlastnenych komponent
      */
     private TabSheet tabs;
-    
+
     private ViewChangeEvent event;
-    
+
     private Component defaultView;
 
     public LayoutTabSheet() {
@@ -38,21 +38,22 @@ public class LayoutTabSheet extends VerticalLayout implements View {
                 ((View) defaultView).enter(event);
             }
         }
-        
+
     }
-    
+
     public void setDefaultView(Component view) {
         this.defaultView = view;
     }
 
     public void addViews(Component... components) {
-// kontejner (TabSheet) pro zobrazovanych komponent
         tabs = new TabSheet() {
-            
+
             @Override
             public void fireSelectedTabChange() {
                 super.fireSelectedTabChange();
-                ((View) getSelectedTab()).enter(event);
+                if (getUI() != null) {
+                    ((View) getSelectedTab()).enter(event);
+                }
             }
         };
         tabs.setSizeFull();
