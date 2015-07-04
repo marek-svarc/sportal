@@ -55,4 +55,9 @@ public class UserDaoImpl implements UserDao {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
+    public void deleteRows(List<User> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.CategoryDao;
@@ -42,16 +44,14 @@ public class CategoryDaoImpl implements CategoryDao{
     @Override
     public void insertRow(Category object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        // TODO vitfo, created on 16. 6. 2015 
-        template.update(
-                "insert into t_category (description, active, sorting) values "
+        template.update("insert into t_category "
+                + "(description, active, sorting) values "
                 + "(:description, :active, :sorting)", source);
-//        template.getJdbcOperations().update("insert into t_category (description, active, sorting) values (?, ?, ?)", object.getDescription(), object.getActive(), object.getSorting());
     }
 
     @Override
     public void deleteRow(int id) {
-        template.getJdbcOperations().update("delete from t_category where id = ?", new Integer[]{id});  
+        template.getJdbcOperations().update("delete from t_category where id = ?", new Object[]{id});  
     }
 
     @Override
@@ -72,5 +72,11 @@ public class CategoryDaoImpl implements CategoryDao{
     @Override
     public List<Category> getAllCategories() {
         return template.query("select * from t_category", new CategoryMapper());
+    }
+
+    @Override
+    public void deleteRows(List<Category> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_category where id = :id", sources);            
     }
 }

@@ -1,6 +1,6 @@
 package com.clubeek.ui.main;
 
-import com.clubeek.model.ClubSettings;
+import com.clubeek.model.Club;
 import com.clubeek.model.User;
 import com.clubeek.ui.Messages;
 import com.clubeek.ui.Tools;
@@ -13,9 +13,6 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -26,15 +23,21 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class HorzMenuStandard extends HorzMenuBase {
 
-    /** Layout controls for user administration */
+    /**
+     * Layout controls for user administration
+     */
     private FormLayout vlLogin = null;
+    
+    public HorzMenuStandard() {
+            super();
+        }
 
     /* PROTECTED */
     @Override
     protected void createUiControls() {
-        
+
         super.createUiControls();
-        
+
         // Zakladni rozvrzeni stranky
         this.addStyleName("ss-main-page"); //$NON-NLS-1$
         this.setHeightUndefined();
@@ -46,7 +49,7 @@ public class HorzMenuStandard extends HorzMenuBase {
         mainLayout.setWidth(900, Unit.PIXELS);
 
         // Hlavicka stranky (logo, nadpis, prihlaseni/odhlaseni)
-        ClubSettings settings = getClubSettings();
+        Club settings = getClub();
         if (settings != null) {
             final int TITLE_HEIGHT = 50;
             final int LOGO_SIZE = 80;
@@ -111,7 +114,7 @@ public class HorzMenuStandard extends HorzMenuBase {
         } else {
             // controls to show user informations and sign out
             String userName = user.getClubMember() != null ? user.getClubMember().getName() + " "
-                    + user.getClubMember().getSurname() : user.getName();
+                    + user.getClubMember().getSurname() : user.getUsername();
             vlLogin.addComponents(new Label(String.format("<strong>%s</strong>", userName),
                     ContentMode.HTML), getButtonSignInOut());
             getButtonSignInOut().setCaption("Odhlásit");
@@ -119,10 +122,8 @@ public class HorzMenuStandard extends HorzMenuBase {
         
         super.updateUiControls(user);
     }
-    
-    /* PUBLIC */
-    public HorzMenuStandard(UI ui) {
-        super(ui);
-    }
 
+    @Override
+    public void setUI() {
+    }
 }

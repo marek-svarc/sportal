@@ -1,13 +1,12 @@
 package com.clubeek.dao.impl.ownframework;
 
-import java.sql.ResultSet;
 import java.util.List;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.rep.RepArticle;
+import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Location;
-import com.clubeek.model.Unique;
+import com.clubeek.model.DiscussionPost;
 
 public class ArticleDaoImpl implements ArticleDao {
 
@@ -15,7 +14,6 @@ public class ArticleDaoImpl implements ArticleDao {
     public Article getArticleById(int id) {
         // return RepArticle.selectById(id, new RepArticle.TableColumn[]{RepArticle.TableColumn.CAPTION,
         // RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE});
-        // TODO vitfo, created on 11. 6. 2015 - zkontorlovat zda funguje i pro ne null
         return RepArticle.selectById(id, null);
     }
 
@@ -31,7 +29,7 @@ public class ArticleDaoImpl implements ArticleDao {
 //     }
 
     @Override
-    public List<Article> selectArticles(int clubTeamId, int categoryId, Location location) {
+    public List<Article> selectArticles(int clubTeamId, int categoryId, LocationType location) {
         return RepArticle.select(clubTeamId, categoryId, location, null);
     }
 
@@ -52,8 +50,31 @@ public class ArticleDaoImpl implements ArticleDao {
 
     @Override
     public void exchangeRows(int idA, int idB) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
+    public void deleteRows(List<Article> objects) {
+        throw new UnsupportedOperationException("Not supported.");        
+    }
+
+    @Override
+    public void updateDiscussionPost(DiscussionPost discussionPost) {
+        throw new UnsupportedOperationException("Not supported.");      
+    }
+
+    @Override
+    public void deleteDiscussionPost(int discussionPostId) {
+        throw new UnsupportedOperationException("Not supported.");      
+    }
+
+    @Override
+    public List<DiscussionPost> getAllDiscussionPosts(int referencedObjectId) {
+        throw new UnsupportedOperationException("Not supported.");        
+    }
+
+    @Override
+    public void insertDiscussionPost(DiscussionPost discussionPost) {
+        throw new UnsupportedOperationException("Not supported.");        
+    }
 }

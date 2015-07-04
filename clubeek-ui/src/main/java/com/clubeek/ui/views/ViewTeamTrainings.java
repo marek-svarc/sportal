@@ -1,18 +1,18 @@
 package com.clubeek.ui.views;
 
+import java.util.Date;
 import java.util.List;
 
 import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.dao.impl.ownframework.TeamTrainingDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.TeamTraining;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeamTraining;
 import com.clubeek.util.DateTime;
@@ -24,15 +24,18 @@ import com.vaadin.ui.CustomTable;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
-
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
 public final class ViewTeamTrainings extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-	private TeamTrainingDao teamTrainingDao = new TeamTrainingDaoImpl();
+    @Autowired
+	private SecurityService securityService;
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+	private TeamTrainingDao teamTrainingDao;
 
     public enum Columns {
 
@@ -73,7 +76,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.SPORT_MANAGER);
+    	securityService.authorize(UserRoleType.SPORT_MANAGER);
 
         table.removeAllRows();
 
@@ -141,7 +144,7 @@ public final class ViewTeamTrainings extends VerticalLayout implements View, Act
     private int teamId = -1;
 
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of trainings loaded from the database */
     private List<TeamTraining> trainings;

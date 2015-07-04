@@ -2,6 +2,9 @@ package com.clubeek.model;
 
 import java.util.Date;
 
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
+
 /**
  * Trida obsahujici informace o jednom clanku.
  * 
@@ -10,46 +13,10 @@ import java.util.Date;
  */
 public class Article extends Model implements Publishable {
 
-	/** Typy umisteni clanku na jedne strance */
-	public enum Location {
-		BULLETIN_BOARD, NEWS;
-
-		@Override
-		public String toString() {
-			switch (Location.values()[this.ordinal()]) {
-			case BULLETIN_BOARD:
-				return Messages.getString("bulletinBoard"); //$NON-NLS-1$
-			case NEWS:
-				return Messages.getString("news"); //$NON-NLS-1$
-			}
-			return ""; //$NON-NLS-1$
-		}
-	}
-
-	/** Typy umisteni clanku na celem webu */
-	public enum Owner {
-		CLUB, CATEGORY, TEAM, CLUB_ALL;
-
-		@Override
-		public String toString() {
-			switch (Owner.values()[this.ordinal()]) {
-			case CLUB_ALL:
-				return Messages.getString("wholeWeb"); //$NON-NLS-1$
-			case CLUB:
-				return Messages.getString("onlyClub"); //$NON-NLS-1$
-			case CATEGORY:
-				return Messages.getString("onlyCategory"); //$NON-NLS-1$
-			case TEAM:
-				return Messages.getString("onlyTeam"); //$NON-NLS-1$
-			}
-			return ""; //$NON-NLS-1$
-		}
-	}
-
 	// Hodnoty vlastnosti
 
 	/** Typ umisteni clanku na jedne strance */
-	private Location location = Location.NEWS;
+	private LocationType locationType = LocationType.NEWS;
 
 	/** priznak zda ma clanek vysokou prioritu */
 	private Boolean priority = false;
@@ -70,13 +37,13 @@ public class Article extends Model implements Publishable {
 	private Date expirationDate = null;
 
 	/** Definuje umisteni na celem webu */
-	private Owner owner = Owner.CLUB_ALL;
+	private OwnerType ownerType = OwnerType.CLUB_ALL;
 
 	/** Index kategorie pro kterou je clanek urcen */
-	private int categoryId = 0;
+	private Integer categoryId;
 
 	/** Index tymu pro ktery je clanek urcen */
-	private int clubTeamId = 0;
+	private Integer clubTeamId;
 
 	// Konstruktor
 
@@ -85,23 +52,23 @@ public class Article extends Model implements Publishable {
 	}
 
 	/** Nastavi typ umisteni clanku na webu */
-	public void setOwner(Owner owner) {
-		this.owner = owner;
+	public void setOwnerType(OwnerType ownerType) {
+		this.ownerType = ownerType;
 	}
 
 	/** Vraci typ umisteni clanku na webu */
-	public Owner getOwner() {
-		return owner;
+	public OwnerType getOwnerType() {
+		return ownerType;
 	}
 
 	/** Vraci typ umisteni clanku na jedne strance */
-	public Location getLocation() {
-		return location;
+	public LocationType getLocationType() {
+		return locationType;
 	}
 
 	/** Nastavi typ umisteni clanku na jedne strance */
-	public void setLocation(Location location) {
-		this.location = location;
+	public void setLocationType(LocationType locationType) {
+		this.locationType = locationType;
 	}
 
 	/** Vraci priznak zda ma clanek vysokou prioritu */
@@ -165,22 +132,22 @@ public class Article extends Model implements Publishable {
 	}
 
 	/** Vraci index kategorie pro kterou je clanek urcen */
-	public int getCategoryId() {
+	public Integer getCategoryId() {
 		return categoryId;
 	}
 
 	/** Nastavi index kategorie pro kterou je clanek urcen */
-	public void setCategoryId(int categoryId) {
+	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
 
 	/** Vraci index tymu pro ktery je clanek urcen */
-	public int getClubTeamId() {
+	public Integer getClubTeamId() {
 		return clubTeamId;
 	}
 
 	/** Nastavi index tymu pro ktery je clanek urcen */
-	public void setClubTeamId(int clubTeamId) {
+	public void setClubTeamId(Integer clubTeamId) {
 		this.clubTeamId = clubTeamId;
 	}
 

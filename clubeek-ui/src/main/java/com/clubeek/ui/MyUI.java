@@ -1,21 +1,17 @@
 package com.clubeek.ui;
 
-import com.clubeek.ui.main.HorzMenuBase;
 import java.util.List;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ContextLoaderListener;
 
-import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.UserDao;
-import com.clubeek.dao.impl.ownframework.UserDaoImpl;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
 import com.clubeek.ui.main.HorzMenuAbsOnTop;
-import com.clubeek.ui.main.HorzMenuStandard;
 import com.clubeek.ui.views.Navigation;
 import com.clubeek.ui.views.Navigation.ViewId;
 import com.vaadin.annotations.Theme;
@@ -26,14 +22,17 @@ import com.vaadin.spring.annotation.EnableVaadin;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.server.SpringVaadinServlet;
 import com.vaadin.ui.UI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @SuppressWarnings("serial")
 @Theme("valo_base")
 @Widgetset("com.clubeek.MyAppWidgetset")
 @SpringUI
 public class MyUI extends UI {
-	// TODO vitfo, created on 11. 6. 2015 
-	private UserDao userDao = new UserDaoImpl();
+
+    @Autowired
+    private UserDao userDao;
 
     @WebServlet(urlPatterns = "/*", asyncSupported = true)
 //    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
@@ -48,6 +47,9 @@ public class MyUI extends UI {
     @EnableVaadin
     public static class MyConfiguration {
     }
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /* PROTECTED */
     @Override
@@ -65,18 +67,21 @@ public class MyUI extends UI {
             }
         });
         
-//        List<User> admins = RepUser.selectAllAdministrators(new RepUser.TableColumn[]{RepUser.TableColumn.ID});
         List<User> admins = userDao.getAllAdministrators();
         if ((admins == null) || (admins.size() <= 0)) {
             User user = new User();
-            user.setName("admin");
+            user.setUsername("admin");
             user.setPassword("admin");
-            user.setRole(User.Role.ADMINISTRATOR);
-//            RepUser.insert(user);
+            user.setUserRoleType(UserRoleType.ADMINISTRATOR);
             userDao.insertUser(user);
         }
 
         // pouziti prostredi s horizontalnim navigacnim menu
-        setContent(new HorzMenuAbsOnTop(this));
+        HorzMenuAbsOnTop content = applicationContext.getBean(HorzMenuAbsOnTop.class);
+        //HorzMenuAbsOnTop content = new HorzMenuAbsOnTop();
+        setContent(content);
+        content.setUI();
+        content.updateNavigationMenu();
+        
     }
 }

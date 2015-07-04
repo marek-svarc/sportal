@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.ClubTeamDao;
@@ -19,14 +21,7 @@ import com.clubeek.model.ClubTeam;
  * @author vitfo
  */
 @Repository
-public class ClubTeamDaoImpl implements ClubTeamDao {
-    
-    private NamedParameterJdbcTemplate template;
-
-    @Autowired
-    public void init(DataSource dataSource) {
-        this.template = new NamedParameterJdbcTemplate(dataSource);
-    }
+public class ClubTeamDaoImpl extends DaoImpl implements ClubTeamDao {
 
     @Override
     public void updateRow(ClubTeam object) {
@@ -35,7 +30,7 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
                 + "name = :name, "
                 + "active = :active, "
                 + "sorting = :sorting, "
-                + "category_id = :category_id "
+                + "category_id = :categoryId "
                 + "where id = :id"
                 , source);        
     }
@@ -43,8 +38,10 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
     @Override
     public void insertRow(ClubTeam object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("insert into t_club_team (name, active, sorting, category_id) values "
-                + "(:name, :active, :sorting, :categoryId)", source);
+        template.update("insert into t_club_team "
+                + "( name,  active,  sorting,  category_id) values "
+                + "(:name, :active, :sorting, :categoryId)"
+                , source);
     }
 
     @Override
@@ -70,6 +67,13 @@ public class ClubTeamDaoImpl implements ClubTeamDao {
     @Override
     public List<ClubTeam> getAllClubTeams() {
         return template.query("select * from t_club_team", new ClubTeamMapper());
+    }
+
+    @Override
+    public void deleteRows(List<ClubTeam> objects) {
+        SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
+        template.batchUpdate("delete from t_club_team where id = :id", sources);   
+        
     }
 
 }

@@ -5,38 +5,23 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
 
+import com.clubeek.enums.UserRoleType;
+
 public class User extends Model {
-
-	public enum Role {
-
-		EMPTY("member"), EDITOR("editor"), SPORT_MANAGER("sportManager"), CLUB_MANAGER("clubManager"), ADMINISTRATOR( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				"administrator"); //$NON-NLS-1$
-
-		private Role(String textId) {
-			this.textId = textId;
-		}
-
-		@Override
-		public String toString() {
-			return Messages.getString(textId);
-		}
-
-		public final String textId;
-	}
 
 	/* PRIVATE */
 
 	/** Uzivatelske jmeno */
-	private String name = ""; //$NON-NLS-1$
+	private String username = ""; //$NON-NLS-1$
 
 	/** Heslo */
 	private String password = ""; //$NON-NLS-1$
 
 	/** Uzivatelska role */
-	private Role role = Role.EMPTY;
+	private UserRoleType userRoleType = UserRoleType.EMPTY;
 
 	/** identifikator asociovaneho clena klubu */
-	private int clubMemberId;
+	private Integer clubMemberId;
 
 	/** Data asociovaneho clena klubu */
 	private ClubMember clubMember;
@@ -64,27 +49,27 @@ public class User extends Model {
 
 	/** Zakoduje heslo podle pravidel pouzivaji trida User */
 	public String hashPassword(String password) {
-		return hashPassword(password, getName());
+		return hashPassword(password, getUsername());
 	}
 
 	/** Vraci uzivatelske jmeno */
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
 
 	/** Nastavi uzivatelske jmeno */
-	public void setName(String name) {
-		this.name = name;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/** Vraci uzivatelskou roli */
-	public Role getRole() {
-		return role;
+	public UserRoleType getUserRoleType() {
+		return userRoleType;
 	}
 
 	/** Nastavi uzivatelskou roli */
-	public void setRole(Role role) {
-		this.role = role;
+	public void setUserRoleType(UserRoleType userRoleType) {
+		this.userRoleType = userRoleType;
 	}
 
 	/** Vraci uzivatelske heslo */
@@ -94,7 +79,7 @@ public class User extends Model {
 
 	/** Vraci zaheshovane heslo */
 	public String GetHashPassword() {
-		return getPassword() != null ? hashPassword(getPassword(), getName()) : null;
+		return getPassword() != null ? hashPassword(getPassword(), getUsername()) : null;
 	}
 
 	/** Nastavi uzivatelske heslo */
@@ -103,12 +88,12 @@ public class User extends Model {
 	}
 
 	/** Vraci identifikator asociovaneho clena klubu */
-	public int getClubMemberId() {
-		return clubMember != null ? clubMember.getId() : clubMemberId;
+	public Integer getClubMemberId() {
+		return clubMemberId;
 	}
 
 	/** Nastavi identifikator asociovaneho clena klubu */
-	public void setClubMemberId(int clubMemberId) {
+	public void setClubMemberId(Integer clubMemberId) {
 		this.clubMemberId = clubMemberId;
 	}
 

@@ -4,41 +4,56 @@ import java.util.List;
 
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubTeam;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameTeam;
 import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewClubTeams extends VerticalLayout implements View, ActionTable.OnActionListener {
-    // TODO vitfo, created on 11. 6. 2015
-    private SecurityService securityService = new SecurityServiceImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
+    /* PRIVATE */
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private ClubTeamDao clubTeamDao;
+
+    /** Application navigation provider */
+    private Navigation navigation;
+
+    /** Table component */
+    private final ActionTable table;
+
+    /** List of teams loaded from tha database */
+    private List<ClubTeam> teams = null;
+
+    /* PUBLIC */
     public enum Columns {
 
         CAPTION, CATEGORY;
     }
 
-    public ViewClubTeams(Navigation navigation) {
+    public ViewClubTeams() {
 
         this.setCaption(Messages.getString("teams")); //$NON-NLS-1$
-        this.navigation = navigation;
 
-        ActionTable.UserColumnInfo[] columns = { new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
-                new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category")) };
+        ActionTable.UserColumnInfo[] columns = {new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption")),
+            new ActionTable.UserColumnInfo(Columns.CATEGORY, String.class, Messages.getString("category"))};
 
         table = new ActionTable(ActionTable.Action.getMaximalSet(false, true), columns, this);
         table.addToOwner(this);
@@ -47,10 +62,10 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
 
-        securityService.authorize(Role.SPORT_MANAGER);
+        securityService.authorize(UserRoleType.SPORT_MANAGER);
 
-//        teams = RepClubTeam.select(false, null);
         teams = clubTeamDao.getAllClubTeams();
 
         table.removeAllRows();
@@ -59,8 +74,8 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
             for (int i = 0; i < teams.size(); ++i) {
                 ClubTeam team = teams.get(i);
                 table.addRow(container,
-                        new Object[] { String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
-                                team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned") }, i);
+                        new Object[]{String.format("%s - %s", Tools.Strings.getCheckString(team.getActive()), team.getName()),
+                            team.getCategory() != null ? team.getCategory().toString() : Messages.getString("categoryNotAssigned")}, i);
             }
             table.setDataContainer(container);
         }
@@ -107,14 +122,4 @@ public class ViewClubTeams extends VerticalLayout implements View, ActionTable.O
     public void exchangeTeams(int id, boolean moveUp) {
         table.exchangeRows(teams, id, moveUp, clubTeamDao, this, navigation);
     }
-
-    /* PRIVATE */
-    /** Navigation provider */
-    private final Navigation navigation;
-
-    /** Table component */
-    private final ActionTable table;
-
-    /** List of teams loaded from tha database */
-    private List<ClubTeam> teams = null;
 }

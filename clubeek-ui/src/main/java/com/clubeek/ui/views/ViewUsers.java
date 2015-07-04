@@ -6,12 +6,9 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.dao.impl.ownframework.rep.RepUser;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.User;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.ModalDialog.Mode;
@@ -21,15 +18,23 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewUsers extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
+    @Autowired
+	private SecurityService securityService;
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+	private UserDao userDao;
 	// TODO vitfo, created on 11. 6. 2015 
-	private UserDao userDao = new UserDaoImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
+    @Autowired
+    private ClubMemberDao clubMemberDao;
 
     public enum Columns {
 
@@ -53,7 +58,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.ADMINISTRATOR);
+    	securityService.authorize(UserRoleType.ADMINISTRATOR);
 
         // read training list from the database
 //        users = RepUser.selectAll(new RepUser.TableColumn[]{RepUser.TableColumn.ID, RepUser.TableColumn.NAME,
@@ -63,7 +68,10 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 //            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), new RepClubMember.TableColumn[]{
 //                RepClubMember.TableColumn.ID, RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME,
 //                RepClubMember.TableColumn.BIRTHDATE}));
-            user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
+            // clubMemberId can be null
+            if (user.getClubMemberId() != null) {
+                user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
+            }
         }
 
         // add table rows
@@ -72,7 +80,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             Container container = table.createDataContainer();
             for (int i = 0; i < users.size(); ++i) {
                 User user = users.get(i);
-                table.addRow(container, new Object[]{user.getName(), user.getRole().toString(),
+                table.addRow(container, new Object[]{user.getUsername(), user.getUserRoleType().toString(),
                     user.getClubMember() != null ? user.getClubMember().toString() : ""}, i);
             }
             table.setDataContainer(container);
@@ -109,7 +117,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
             User user = users.get(id);
             ModalDialog.show(this, Mode.EDIT, String.format("%s '%s'", Messages.getString("userProperties"),
 //                    user.getName()), new FrameUser(), user, RepUser.getInstance(), null);
-            		user.getName()), new FrameUser(), user, userDao, null);
+            		user.getUsername()), new FrameUser(), user, userDao, null);
         }
     }
 
@@ -121,7 +129,7 @@ public class ViewUsers extends VerticalLayout implements View, ActionTable.OnAct
 
     /* PRIVATE */
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of users loaded from the database */
     private List<User> users = null;

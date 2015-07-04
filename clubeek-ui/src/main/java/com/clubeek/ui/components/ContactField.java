@@ -1,5 +1,16 @@
 package com.clubeek.ui.components;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.clubeek.enums.ContactType;
+import com.clubeek.enums.NotificationType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
 import com.clubeek.ui.Tools;
@@ -18,14 +29,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Custom field for edit contact of club member.
@@ -139,7 +142,7 @@ public class ContactField extends CustomField<List<Contact>> {
      */
     private void addRowForContact(Contact contact) {
 
-        ComboBox cbContactType = new ComboBox(null, Arrays.asList(Contact.ContactType.values()));
+        ComboBox cbContactType = new ComboBox(null, Arrays.asList(ContactType.values()));
         cbContactType.addStyleName(ValoTheme.COMBOBOX_TINY);
         cbContactType.setNullSelectionAllowed(false);
         cbContactType.setInputPrompt("Typ");
@@ -150,7 +153,7 @@ public class ContactField extends CustomField<List<Contact>> {
         TextField tfContact = Tools.Components.createTextField(null, true, null);
         tfContact.setInputPrompt("Kontakt");
 
-        ComboBox cbContactNotify = new ComboBox(null, Arrays.asList(Contact.NotificationType.values()));
+        ComboBox cbContactNotify = new ComboBox(null, Arrays.asList(NotificationType.values()));
         cbContactNotify.addStyleName(ValoTheme.COMBOBOX_TINY);
         cbContactNotify.setNullSelectionAllowed(false);
         cbContactNotify.setInputPrompt("Upozornění");

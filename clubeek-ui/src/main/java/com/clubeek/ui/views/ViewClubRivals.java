@@ -4,14 +4,11 @@ import java.util.List;
 
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.impl.ownframework.ClubRivalDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubRival;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubRival;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubRival;
@@ -21,13 +18,20 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewClubRivals extends VerticalLayout implements View, ActionTable.OnActionListener {
     // TODO vitfo, created on 11. 6. 2015
-    private SecurityService securityService = new SecurityServiceImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubRivalDao clubRivalDao = new ClubRivalDaoImpl();
+    @Autowired
+    private SecurityService securityService;
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ClubRivalDao clubRivalDao;
 
     public enum Columns {
 
@@ -51,7 +55,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
     @Override
     public void enter(ViewChangeEvent event) {
 
-        securityService.authorize(Role.SPORT_MANAGER);
+        securityService.authorize(UserRoleType.SPORT_MANAGER);
 
 //        clubs = RepClubRival.selectAll(null);
         clubs = clubRivalDao.getAllClubRivals();
@@ -109,7 +113,7 @@ public class ViewClubRivals extends VerticalLayout implements View, ActionTable.
 
     /* PRIVATE */
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of clubs loaded from the database */
     private List<ClubRival> clubs;

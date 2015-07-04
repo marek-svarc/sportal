@@ -13,7 +13,7 @@ public class ModelTools {
 	 *            pozadovane Id
 	 * @return objekt jehoz Id se rovn pozadovanemu
 	 */
-	public static <T extends Unique> T listFindById(Iterable<T> list, int id) {
+	public static <T extends IUnique> T listFindById(Iterable<T> list, int id) {
 		for (T item : list)
 			if (item.getId() == id)
 				return item;
@@ -28,7 +28,7 @@ public class ModelTools {
 	 * @param duplicates
 	 *            seznam ve kterem se duplicitni objekty vyhledavaji
 	 */
-	public static <T1 extends Unique, T2 extends Unique> void listRemoveDuplicates(List<T1> list, Iterable<T2> duplicates) {
+	public static <T1 extends IUnique, T2 extends IUnique> void listRemoveDuplicates(List<T1> list, Iterable<T2> duplicates) {
 		for (int i = list.size() - 1; i >= 0; --i) {
 			if (listFindById(duplicates, list.get(i).getId()) != null)
 				list.remove(i);
@@ -43,7 +43,7 @@ public class ModelTools {
 	 *            prohledavany seznam
 	 * @return objekt jehoz Id se rovna pozadovanemu
 	 */
-	public static <T extends Unique> String listToString(Iterable<T> list) {
+	public static <T extends IUnique> String listToString(Iterable<T> list) {
 		StringBuilder text = new StringBuilder();
 
 		for (T item : list) {

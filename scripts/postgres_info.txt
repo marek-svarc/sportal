@@ -1,3 +1,7 @@
+postgres_create_role.sql
+------------------------
+Creates login role for application and grants privileges to this role.
+
 postgres_complete.sql
 ---------------------
 Contains complete script for droping tables, creating tables and filling tables with test data.

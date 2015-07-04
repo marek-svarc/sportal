@@ -8,7 +8,42 @@ import java.util.Date;
  * @author Marek Svarc
  * 
  */
-public class TeamMatch extends Model implements Event, Publishable {
+public class TeamMatch extends Model implements IEvent, Publishable {
+
+    /* PRIVATE */
+
+    /** Zacatek zapasu */
+    private Date start = null;
+
+    /** Identifikator tymu hrajici zapas */
+    private int clubTeamId;
+
+    /** Vlastnosti tymu hrajici zapas */
+    private ClubTeam clubTeam;
+
+    /** Identifikator soupere */
+    private Integer clubRivalId = null;
+
+    /** Vlastnosti soupere */
+    private ClubRival clubRival = null;
+
+    /** Doplnek k popisu soupere */
+    private String clubRivalComment = ""; //$NON-NLS-1$
+
+    /** Zapas na domacim hristi */
+    private boolean homeCourt = true;
+
+    /** Priznak zda se ma vysledek publikovat */
+    private boolean publish = false;
+
+    /** Komentar k zapasu */
+    private String comment = ""; //$NON-NLS-1$
+
+    /** Pocet bodu */
+    private int scorePos = -1;
+
+    /** Pocet bodu soupere */
+    private int scoreNeg = -1;
 
 	@Override
 	public Date getStart() {
@@ -50,12 +85,12 @@ public class TeamMatch extends Model implements Event, Publishable {
 	}
 
 	/** Vraci identifikator soupere */
-	public int getClubRivalId() {
-		return clubRival != null ? clubRival.getId() : clubRivalId;
+	public Integer getClubRivalId() {
+		return clubRivalId;
 	}
 
 	/** Nastavi identifikator soupere */
-	public void setClubRivalId(int clubRivalId) {
+	public void setClubRivalId(Integer clubRivalId) {
 		this.clubRivalId = clubRivalId;
 	}
 
@@ -214,39 +249,4 @@ public class TeamMatch extends Model implements Event, Publishable {
 	public String getDescription() {
 		return Messages.getString("competitiveMatch"); //$NON-NLS-1$
 	}
-
-	/* PRIVATE */
-
-	/** Zacatek zapasu */
-	private Date start = null;
-
-	/** Identifikator tymu hrajici zapas */
-	private int clubTeamId;
-
-	/** Vlastnosti tymu hrajici zapas */
-	private ClubTeam clubTeam;
-
-	/** Identifikator soupere */
-	private int clubRivalId = 0;
-
-	/** Vlastnosti soupere */
-	private ClubRival clubRival = null;
-
-	/** Doplnek k popisu soupere */
-	private String clubRivalComment = ""; //$NON-NLS-1$
-
-	/** Zapas na domacim hristi */
-	private boolean homeCourt = true;
-
-	/** Priznak zda se ma vysledek publikovat */
-	private boolean publish = false;
-
-	/** Komentar k zapasu */
-	private String comment = ""; //$NON-NLS-1$
-
-	/** Pocet bodu */
-	private int scorePos = -1;
-
-	/** Pocet bodu soupere */
-	private int scoreNeg = -1;
 }

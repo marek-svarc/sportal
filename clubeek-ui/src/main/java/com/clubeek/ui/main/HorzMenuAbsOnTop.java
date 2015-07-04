@@ -1,6 +1,5 @@
 package com.clubeek.ui.main;
 
-import com.clubeek.model.ClubSettings;
 import com.clubeek.model.User;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
@@ -9,9 +8,10 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * Class that defines main page with the horizontal menu which is still on the
@@ -19,21 +19,22 @@ import com.vaadin.ui.themes.ValoTheme;
  *
  * @author Marek Svarc
  */
+@Component("navigation")
+@Scope("prototype")
 public class HorzMenuAbsOnTop extends HorzMenuBase {
 
     /* PRIVATE */
-    
-    private void setMenuButtonStyle(Button btn){
+    private void setMenuButtonStyle(Button btn) {
         btn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         btn.addStyleName(ValoTheme.BUTTON_TINY);
     }
-    
+
     /* PROTECTED */
     @Override
     protected String GetMenuItemCaption(User user, HorzMenuNavigationViews viewId, String caption) {
         switch (viewId) {
             case NEWS:
-                return this.getClubSettings().getTitle();
+                return this.getClub().getTitle();
         }
         return super.GetMenuItemCaption(user, viewId, caption);
     }
@@ -46,7 +47,7 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
         }
         return super.GetMenuItemStyle(viewId);
     }
-    
+
     @Override
     protected void createUiControls() {
 
@@ -71,7 +72,7 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
 
         Button btnFacebook = getButtonOAuthFacebook();
         setMenuButtonStyle(btnFacebook);
-        
+
         HorizontalLayout hlTopMenu = new HorizontalLayout();
         hlTopMenu.addStyleName(ValoTheme.LAYOUT_CARD);
         hlTopMenu.addStyleName("topLayout");
@@ -89,6 +90,9 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
         vlViews.addComponent(getViewsContainer());
         this.addComponent(vlViews);
         this.setComponentAlignment(vlViews, Alignment.TOP_CENTER);
+
+        this.setExpandRatio(hlTopMenu, 0);
+        this.setExpandRatio(vlViews, 1);
     }
 
     @Override
@@ -110,13 +114,14 @@ public class HorzMenuAbsOnTop extends HorzMenuBase {
         super.updateUiControls(user);
     }
 
-    /* PUBLIC */
-    public HorzMenuAbsOnTop(UI ui) {
-        super(ui);
-
-        ui.setSizeFull();
-        ui.addStyleName("horzMenuAbsOnTop");
-        ui.addStyleName(ValoTheme.UI_WITH_MENU);
+    public HorzMenuAbsOnTop() {
+        super();
     }
 
+    @Override
+    public void setUI() {
+        this.getUI().addStyleName("horzMenuAbsOnTop");
+        this.getUI().addStyleName(ValoTheme.UI_WITH_MENU);
+        createUiControls();
+    }
 }

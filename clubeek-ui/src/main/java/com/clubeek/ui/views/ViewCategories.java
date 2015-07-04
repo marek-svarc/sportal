@@ -4,28 +4,44 @@ import java.util.List;
 
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepCategory;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Category;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameCategory;
 import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewCategories extends VerticalLayout implements View, ActionTable.OnActionListener {
-	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-    private CategoryDao categoryDao = new CategoryDaoImpl();
+
+    /* PRIVATE */
+
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private CategoryDao categoryDao;
+
+    /** Application navigation provider */
+    private Navigation navigation;
+    
+    /** Categories table */
+    private ActionTable table;
+
+    /** List of categories */
+    private List<Category> categories = null;
 
     /* PUBLIC */
     public enum Columns {
@@ -33,10 +49,9 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
         CAPTION;
     }
 
-    public ViewCategories(Navigation navigation) {
+    public ViewCategories() {
 
         this.setCaption(Messages.getString("category"));
-        this.navigation = navigation;
 
         ActionTable.UserColumnInfo[] columns = {
             new ActionTable.UserColumnInfo(Columns.CAPTION, String.class, Messages.getString("caption"))
@@ -49,11 +64,11 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
 
-    	securityService.authorize(Role.CLUB_MANAGER);
+        securityService.authorize(UserRoleType.CLUB_MANAGER);
 
-//        categories = RepCategory.selectAll(null);
-    	categories = categoryDao.getAllCategories();
+        categories = categoryDao.getAllCategories();
 
         table.removeAllRows();
         if (categories != null) {
@@ -110,14 +125,4 @@ public class ViewCategories extends VerticalLayout implements View, ActionTable.
     public void exchangeCategories(int id, boolean moveUp) {
         table.exchangeRows(categories, id, moveUp, categoryDao, this, navigation);
     }
-
-    /* PRIVATE */
-    /** Komponenty tabulky */
-    private final ActionTable table;
-
-    /** Seznam aktualne zobrazenych kategorii */
-    private List<Category> categories = null;
-
-    /** Navigace v aplikaci */
-    private final Navigation navigation;
 }

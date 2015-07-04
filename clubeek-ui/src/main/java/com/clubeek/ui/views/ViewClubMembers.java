@@ -7,17 +7,14 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.ContactDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.dao.impl.ownframework.rep.RepContact;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.Contact;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.Security;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
-import com.clubeek.ui.Tools;
 import com.clubeek.ui.ModalDialog.Mode;
+import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.ActionTable;
 import com.clubeek.ui.frames.FrameClubMember;
 import com.vaadin.data.Container;
@@ -26,15 +23,23 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public final class ViewClubMembers extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
+    @Autowired
+	private SecurityService securityService;
 	// TODO vitfo, created on 11. 6. 2015 
-    private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
-    // TODO vitfo, created on 12. 6. 2015 
-    private ContactDao contactDao = new ContactDaoImpl();
+    @Autowired
+    private ClubMemberDao clubMemberDao;
+    // TODO vitfo, created on 12. 6. 2015
+    @Autowired
+    private ContactDao contactDao;
 
     public enum Columns {
 
@@ -78,7 +83,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.CLUB_MANAGER);
+    	securityService.authorize(UserRoleType.CLUB_MANAGER);
 
 //        members = RepClubMember.selectAll(null);
     	members = clubMemberDao.getAllClubMembers();
@@ -133,7 +138,7 @@ public final class ViewClubMembers extends VerticalLayout implements View, Actio
 
     /* PRIVATE */
     /** table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** List of all club members */
     private List<ClubMember> members = null;

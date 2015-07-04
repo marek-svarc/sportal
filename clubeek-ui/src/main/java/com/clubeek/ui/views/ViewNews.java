@@ -9,22 +9,18 @@ import org.vaadin.risto.stylecalendar.StyleCalendar;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.ClubTeamDao;
-import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
-import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepArticle;
-import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamMatch;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamTraining;
+import com.clubeek.enums.LocationType;
 import com.clubeek.model.Article;
 import com.clubeek.model.ClubTeam;
 import com.clubeek.model.TeamMatch;
 import com.clubeek.model.TeamTraining;
-import com.clubeek.model.Article.Location;
 import com.clubeek.ui.PublishableArticle;
 import com.clubeek.ui.Tools;
+import com.clubeek.ui.views.Navigation.ViewId;
 import com.clubeek.util.DateTime;
 import com.clubeek.util.DateTime.DateStyle;
-import com.clubeek.ui.views.Navigation.ViewId;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.navigator.View;
@@ -34,6 +30,9 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * Trida pro zobrazeni clanku a pripravovanych akci
@@ -42,13 +41,18 @@ import com.vaadin.ui.VerticalLayout;
  *
  */
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewNews extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015 
-    private ArticleDao articleDao = new ArticleDaoImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
 
     /* PRIVATE */
+    @Autowired
+    private ArticleDao articleDao;
+
+    @Autowired
+    private ClubTeamDao clubTeamDao;
+
+    /** Application navigation provider */
     private Navigation navigation;
 
     /** Panel pro zobrazeni clanku na leve strane stranky */
@@ -92,6 +96,7 @@ public class ViewNews extends VerticalLayout implements View {
 
         // oblast clanku
         VerticalLayout newsLayout = new VerticalLayout();
+        newsLayout.setSizeFull();
         if (article.getArticle().getPriority() && showActiveColor) {
             newsLayout.addStyleName("priority"); //$NON-NLS-1$
         }
@@ -180,19 +185,17 @@ public class ViewNews extends VerticalLayout implements View {
         return laText;
     }
 
-    private List<Article> getArticles(ClubTeam team, Location location) {
+    private List<Article> getArticles(ClubTeam team, LocationType location) {
         if (team != null) {
-//            return RepArticle.select(team.getId(), team.getCategoryId(), location, null);
             return articleDao.selectArticles(team.getId(), team.getCategoryId(), location);
         } else {
-//            return RepArticle.select(0, 0, location, null);
             return articleDao.selectArticles(0, 0, location);
         }
     }
 
     /* PUBLIC */
-    public ViewNews(Navigation navigation) {
-        this.navigation = navigation;
+    public ViewNews() {
+        //this.navigation = navigation;
         this.setCaption(Messages.getString("currently")); //$NON-NLS-1$
 
         HorizontalLayout laMain = new HorizontalLayout();
@@ -209,6 +212,7 @@ public class ViewNews extends VerticalLayout implements View {
 
         // stredni cast, aktuality
         vlCenterPanel = new VerticalLayout();
+        vlCenterPanel.setSizeFull();
         vlCenterPanel.setStyleName("layout-container"); //$NON-NLS-1$
         laMain.addComponent(vlCenterPanel);
         laMain.setExpandRatio(vlCenterPanel, 5.0f);
@@ -289,6 +293,7 @@ public class ViewNews extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
 
         vlLeftPanel.removeAllComponents();
         vlCenterPanel.removeAllComponents();
@@ -303,19 +308,17 @@ public class ViewNews extends VerticalLayout implements View {
 
         ClubTeam team = null;
         if (teamId > 0) {
-//            team = RepClubTeam.selectById(teamId, new RepClubTeam.TableColumn[]{TableColumn.ID, TableColumn.CATEGORY_ID});
             team = clubTeamDao.getClubTeamById(teamId);
         }
         List<PublishableArticle> boardArticles = new ArrayList<>();
-        PublishableArticle.addArticlesToContainer(boardArticles, getArticles(team, Location.BULLETIN_BOARD), ViewId.ARTICLE);
+        PublishableArticle.addArticlesToContainer(boardArticles, getArticles(team, LocationType.BULLETIN_BOARD), ViewId.ARTICLE);
         createNewsLayoutList(boardArticles, vlLeftPanel, false, true, "layout-board", "label-h3", "label-h5");
         List<PublishableArticle> listArticles = new ArrayList<>();
-        PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, Location.NEWS), ViewId.ARTICLE);
+        PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, LocationType.NEWS), ViewId.ARTICLE);
         if (team != null) {
             PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
                     ViewId.ARTICLE);
         } else {
-//            List<ClubTeam> teams = RepClubTeam.select(true, new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.ID});
             List<ClubTeam> teams = clubTeamDao.getActiveClubTeams();
             for (ClubTeam item : teams) {
                 PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(item.getId(), null),

@@ -5,16 +5,11 @@ import java.util.List;
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubTeamDao;
-import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
-import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
-import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
-import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
 import com.clubeek.ui.ModalDialog.Mode;
 import com.clubeek.ui.components.ActionTable;
@@ -25,17 +20,33 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewArticles extends VerticalLayout implements View, ActionTable.OnActionListener {
-	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-    private ArticleDao articleDao = new ArticleDaoImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private CategoryDao categoryDao = new CategoryDaoImpl();
-    // TODO vitfo, created on 11. 6. 2015 
-    private ClubTeamDao clubTeamDao = new ClubTeamDaoImpl();
+
+    /* PRIVATE */
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private ArticleDao articleDao;
+
+    @Autowired
+    private CategoryDao categoryDao;
+
+    @Autowired
+    private ClubTeamDao clubTeamDao;
+
+    /** Application navigation provider */
+    private Navigation navigation;
+
+    /** Actions table */
+    private ActionTable table;
 
     /* PUBLIC */
     public enum Columns {
@@ -43,8 +54,7 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
         CAPTION, LOCATION, LAST_UPDATE, EXPIRATION_DATE;
     }
 
-    public ViewArticles(Navigation navigation) {
-        this.navigation = navigation;
+    public ViewArticles() {
         this.setSizeFull();
 
         // view caption
@@ -66,10 +76,11 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // interface View
     @Override
     public void enter(ViewChangeEvent event) {
-    	securityService.authorize(Role.EDITOR);
+        this.navigation = (Navigation) getUI().getContent();
 
-//        List<Article> articles = RepArticle.selectAll(null);
-    	List<Article> articles = articleDao.getAllArticles();
+        securityService.authorize(UserRoleType.EDITOR);
+
+        List<Article> articles = articleDao.getAllArticles();
 
         table.removeAllRows();
         if (articles != null) {
@@ -105,33 +116,27 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
     // operations
     public void addArticle() {
         ModalDialog.show(this, Mode.ADD_ONCE, Messages.getString("ViewArticles.9"), new FrameArticle(),
-//                new Article(), RepArticle.getInstance(), navigation);
-                // TODO vitfo, created on 11. 6. 2015 
                 new Article(), articleDao, navigation);
     }
 
     public void editArticle(int id) {
-//        Article article = RepArticle.selectById(id, null);
         Article article = articleDao.getArticleById(id);
         if (article != null) {
-//            ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
-//                    article, RepArticle.getInstance(), navigation);
             ModalDialog.show(this, Mode.EDIT, Messages.getString("ViewArticles.10"), new FrameArticle(),
                     article, articleDao, navigation);
         }
     }
 
     public void deleteArticle(int id) {
-//        table.deleteRow(id, id, RepArticle.getInstance(), this, navigation, Columns.CAPTION);
         table.deleteRow(id, id, articleDao, this, navigation, Columns.CAPTION);
     }
 
     // Auxiliary
     /** Generuje textovy popis umisteni clanku na strankach */
     public String GetArticleLocationAsString(Article article) {
-        String locationStr = article.getLocation().toString();
+        String locationStr = article.getLocationType().toString();
 
-        switch (article.getOwner()) {
+        switch (article.getOwnerType()) {
             case CLUB_ALL:
                 locationStr += ", " + Messages.getString("ViewArticles.1"); //$NON-NLS-1$ //$NON-NLS-2$
                 break;
@@ -139,16 +144,12 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
                 locationStr += ", " + Messages.getString("ViewArticles.3"); //$NON-NLS-1$ //$NON-NLS-2$
                 break;
             case CATEGORY:
-//                Category category = RepCategory.selectById(article.getCategoryId(),
-//                        new RepCategory.TableColumn[]{RepCategory.TableColumn.DESCRIPTION});
                 Category category = categoryDao.getCategory(article.getCategoryId());
                 if (category != null) {
                     locationStr += ", " + category.getDescription(); //$NON-NLS-1$
                 }
                 break;
             case TEAM:
-//                ClubTeam clubTeam = RepClubTeam.selectById(article.getClubTeamId(),
-//                        new RepClubTeam.TableColumn[]{RepClubTeam.TableColumn.NAME});
                 ClubTeam clubTeam = clubTeamDao.getClubTeamById(article.getClubTeamId());
                 if (clubTeam != null) {
                     locationStr += ", " + clubTeam.getName(); //$NON-NLS-1$
@@ -169,12 +170,5 @@ public class ViewArticles extends VerticalLayout implements View, ActionTable.On
         }
         return expirationStr;
     }
-
-    /* PRIVATE */
-    /** Rozhrani pro navigaci webem a aktualizaci webu */
-    private final Navigation navigation;
-
-    /** Komponenty tabulky */
-    private final ActionTable table;
 
 }

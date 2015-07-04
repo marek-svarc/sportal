@@ -1,20 +1,24 @@
-------------------------------
+﻿------------------------------
 -- Dropping tables if exist --
 ------------------------------
 
-drop table if exists T_CLUB_SETTING;
+drop table if exists T_CLUB;
 drop table if exists T_CONTACT;
-drop table if exists T_APPLICANT_FOR_ACTION;
+drop table if exists T_EVENT_APPLICANT;
 drop table if exists T_APPLICANT_FOR_TEAM_TRAINING;
 drop table if exists T_APPLICANT_FOR_TEAM_MATCH;
 drop table if exists T_USER;
 drop table if exists T_PARTICIPANT_OF_TRAINING;
 drop table if exists T_PARTICIPANT_OF_MATCH;
-drop table if exists T_ACTION;
-drop table if exists T_TEAM_TRAINING;
+drop table if exists T_ARTICLE_DISCUSSION_POST;
+drop table if exists T_EVENT_DISCUSSION_POST;
+drop table if exists T_TEAM_TRAINING_DISCUSSION_POST;
+drop table if exists T_TEAM_MATCH_DISCUSSION_POST;
 
 drop view if exists club_member_by_team;
 
+drop table if exists T_TEAM_TRAINING;
+drop table if exists T_EVENT;
 drop table if exists T_TEAM_MEMBER;
 drop table if exists T_CLUB_MEMBER;
 drop table if exists T_TEAM_MATCH;
@@ -28,7 +32,7 @@ drop table if exists T_CATEGORY;
 -- Creating tables --
 ---------------------
 
-CREATE TABLE T_CLUB_SETTING
+CREATE TABLE T_CLUB
 (
     id 		serial,
     title	varchar(200),
@@ -96,8 +100,8 @@ CREATE TABLE T_CONTACT
     id 			serial,
     contact		varchar(100)		not null,
     description		varchar(100),
-    type		smallint		not null,
-    notification	smallint		not null,
+    contact_type		smallint		not null,
+    notification_type	smallint		not null,
     club_member_id	integer			not null,
 
     primary key (id),
@@ -138,6 +142,18 @@ CREATE TABLE T_TEAM_TRAINING
         ON DELETE CASCADE
 );
 
+CREATE TABLE T_TEAM_TRAINING_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    team_training_id 	INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (team_training_id) references t_team_training(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
 CREATE TABLE T_TEAM_MATCH
 (
     id			serial,
@@ -159,7 +175,19 @@ CREATE TABLE T_TEAM_MATCH
 
 );
 
-CREATE TABLE T_ACTION
+CREATE TABLE T_TEAM_MATCH_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    team_match_id 	INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (team_match_id) references t_team_match(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+CREATE TABLE T_EVENT
 (
     id			serial,
     start		timestamp		not null,
@@ -168,6 +196,7 @@ CREATE TABLE T_ACTION
     place		varchar(500),
     description		TEXT,
     sign_participation	boolean,
+    owner_type 		smallint 		NOT NULL DEFAULT 0,
     club_team_id	integer,
     category_id		integer,
 
@@ -181,7 +210,19 @@ CREATE TABLE T_ACTION
 
 );
 
-CREATE TABLE T_APPLICANT_FOR_ACTION
+CREATE TABLE T_EVENT_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    event_id 		INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (event_id) references t_event(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+CREATE TABLE T_EVENT_APPLICANT
 (
     attend		boolean	not null default 'false',
     club_member_id	integer		not null,
@@ -190,7 +231,7 @@ CREATE TABLE T_APPLICANT_FOR_ACTION
     primary key ( club_member_id, action_id ),
     foreign key ( club_member_id ) references T_CLUB_MEMBER( id )
 	ON DELETE CASCADE,
-    foreign key ( action_id ) references T_ACTION ( id )
+    foreign key ( action_id ) references T_EVENT ( id )
 	ON DELETE CASCADE
 );
 
@@ -223,7 +264,7 @@ CREATE TABLE T_APPLICANT_FOR_TEAM_MATCH
 CREATE TABLE T_ARTICLE
 (
     id			serial,
-    location		smallint	not null default 1,
+    location_type		smallint	not null default 1,
     priority		boolean		not null default 'false',
     caption		varchar(2000)	not null,
     summary		TEXT,
@@ -242,18 +283,30 @@ CREATE TABLE T_ARTICLE
     check (((owner_type = 1) AND category_id is not null) OR ((owner_type = 2) AND club_team_id is not null) OR (owner_type <> 1 AND owner_type <> 2))
 );
 
+CREATE TABLE T_ARTICLE_DISCUSSION_POST
+(
+    id            	SERIAL,
+    creation_time 	TIMESTAMP WITH TIME ZONE NOT NULL ,
+    comment 		TEXT NOT NULL ,
+    article_id 		INTEGER NOT NULL,
+
+    primary key (id),
+    foreign key (article_id) references t_article(id)
+	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
 CREATE TABLE T_USER
 (
     id			serial,
-    name		varchar(100)	not null,
+    username		varchar(100)	not null,
     password		varchar(100)	not null,
-    permissions		integer		not null default 0,
+    user_role_type	integer		not null default 0,
     club_member_id	integer,
 
     primary key (id),
     foreign key ( club_member_id ) references T_CLUB_MEMBER ( id )
         ON DELETE CASCADE,
-    unique (name),
+    unique (username),
     unique (id, club_member_id)
 
 );
@@ -312,14 +365,14 @@ FROM    T_TEAM_MEMBER tm
 -- Test data --
 ---------------------
 --------------------------------------------------------------------------------
-INSERT INTO T_CLUB_SETTING (id, title, comment) VALUES
+INSERT INTO T_CLUB (id, title, comment) VALUES
 	(1, 'FC Chvojkovice Brod', 'Zřejmě dobrý oddíl ...'),
 	(2, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
 
 
 -- user name, password (the same as user name)
 -- administrator is the same as admin (admin is shorter to write)
-insert into T_USER (name, password, permissions) values
+insert into T_USER (username, password, user_role_type) values
 	('member', 'ddc721d12cbb3aa9850be6b6b801231f2683b221', 0),
 	('editor', '97475902e4ce16c0d1b96bbe1e9ad6bb2d41c54e', 1),
 	('sportManager', 'a4ae0dc42860d467da627ee8313628f8cc4cc600', 2),
@@ -336,10 +389,76 @@ insert into T_CATEGORY (description, active) values
 insert into T_CLUB_TEAM (name, active, category_id) values
 	('Senioři [týmy]', true, 3),
 	('Mládež [týmy]', true, 3),
-	('Dospělí [týmy]', true, 3);
+	('Dospělí [týmy]', true, 3),
+	('Pokus [týmy]', false, null);
 
-insert into T_CLUB_TEAM (name, active) values
-	('Pokus [týmy]', false);
+insert into t_team_training (start, finish, place, comment, club_team_id) values 
+	(to_timestamp('2015-9-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-14 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-14 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-21 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-21 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-28 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2015-9-9 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-9 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2015-9-16 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-16 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2015-9-23 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-23 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2015-9-30 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-30 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-14 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-14 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-21 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-21 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-28 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
+	(to_timestamp('2016-9-9 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-9 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-16 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-16 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-23 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-23 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-9-30 16:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-30 18:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Trénink povede Petr. V případě špatného počasí se jde do tělocvičny.', 2),
+	(to_timestamp('2016-5-29 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-29 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2016-1-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-6-12 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-6-12 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 1),
+	(to_timestamp('2015-4-15 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-4-15 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 3),
+	(to_timestamp('2016-1-23 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-23 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2015-1-29 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-1-29 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 3),
+	(to_timestamp('2016-11-8 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-11-8 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-2-9 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-9 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 2),
+	(to_timestamp('2016-8-27 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-27 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2015-10-8 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-10-8 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2015-9-8 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-8 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2016-7-6 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-7-6 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 3),
+	(to_timestamp('2016-5-19 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-19 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 2),
+	(to_timestamp('2016-10-23 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-10-23 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-4-13 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-4-13 20:30', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 2),
+	(to_timestamp('2016-2-23 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-23 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2015-6-20 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-20 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-2-25 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-25 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2015-8-16 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-8-16 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2016-2-12 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-2-12 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 2),
+	(to_timestamp('2015-8-14 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-8-14 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2015-6-23 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-23 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2016-6-30 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-6-30 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 2),
+	(to_timestamp('2016-9-3 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-3 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', '', 1),
+	(to_timestamp('2015-12-13 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-12-13 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 1),
+	(to_timestamp('2016-8-2 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-2 19:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 1),
+	(to_timestamp('2015-5-12 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-5-12 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-12-1 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-12-1 20:30', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 1),
+	(to_timestamp('2016-4-1 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-4-1 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', '', 1),
+	(to_timestamp('2015-5-22 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-5-22 20:30', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 1),
+	(to_timestamp('2015-6-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-8-5 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-5 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 2),
+	(to_timestamp('2016-8-28 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-8-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'Příprava na zápas.', 1),
+	(to_timestamp('2016-1-9 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-9 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2016-5-22 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-22 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'Příprava na zápas.', 3),
+	(to_timestamp('2015-4-11 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-4-11 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2016-5-2 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-5-2 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 2),
+	(to_timestamp('2016-11-21 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-11-21 20:30', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě nepříznivého počasí bude trénink zrušen.', 2),
+	(to_timestamp('2016-10-16 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-10-16 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 1),
+	(to_timestamp('2015-3-27 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-3-27 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2016-7-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-7-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'Příprava na zápas.', 2),
+	(to_timestamp('2015-5-6 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-5-6 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2016-9-12 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-9-12 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2015-6-23 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-23 19:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', '', 3),
+	(to_timestamp('2015-7-11 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-7-11 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2016-6-25 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-6-25 20:30', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', '', 3),
+	(to_timestamp('2015-6-6 19:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-6 20:30', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', '', 2),
+	(to_timestamp('2016-1-30 17:00', 'YYYY-MM-DD HH24:MI'), to_timestamp('2016-1-30 19:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 1),
+	(to_timestamp('2015-1-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-1-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
+	(to_timestamp('2015-6-18 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-18 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 3);
 
 insert into T_CLUB_MEMBER (name, surname, birthdate, street, city, code) values
 	('Kryštof', 'Staněk', null, null, null, null),
@@ -458,7 +577,7 @@ BEGIN
 		where rnum <= 20 and rnum > 5	-- offset
 	loop
 		--insert into team_member
-		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 1);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id, functions) values (v_record.id, 1, 1);
 	end loop;
 
 	-- junior team members
@@ -469,7 +588,7 @@ BEGIN
 		where rnum <= 35 and birthdate is not null
 	loop
 		--insert into team_member
-		insert into T_TEAM_MEMBER (club_member_id, club_team_id) values (v_record.id, 2);
+		insert into T_TEAM_MEMBER (club_member_id, club_team_id, functions) values (v_record.id, 2, 1);
 	end loop;
 
 	-- adult team members
@@ -486,8 +605,125 @@ END;
 $$
 ;
 
+insert into t_participant_of_training (club_member_id, team_training_id) values
+	(19, 1), (52, 1), (60, 1), (15, 1), (68, 2), (32, 2), (2, 2), (33, 2), (3, 2), (38, 2), (98, 2), (4, 2), (96, 2), (37, 2), (67, 2), (76, 2), (8, 2), (42, 2), (72, 2), (85, 2), (16, 2), (87, 2), (20, 2), (52, 2), (95, 2), (88, 2), (28, 2), (91, 2), (60, 2), (48, 3), (33, 3), (55, 3), (65, 3), (82, 3), (61, 3), (69, 4), (32, 4), (67, 4), (97, 4), (43, 4), (72, 4), (14, 4), (51, 4), (86, 4), (55, 4), (20, 4), (54, 4), (52, 4), (22, 4), (29, 4), (50, 6), (36, 6), (69, 8), (4, 8), (98, 8), (99, 8), (66, 8), (96, 8), (43, 8), (10, 8), (41, 8), (79, 8), (72, 8), (46, 8), (85, 8), (16, 8), (19, 8), (58, 8), (24, 8), (30, 8), (17, 9), (64, 9), (6, 9), (53, 9), (67, 9), (77, 9), (29, 9), (2, 10), (99, 10), (6, 10), (7, 10), (76, 10), (77, 10), (10, 10), (12, 10), (17, 10), (53, 10), (82, 10), (92, 10), (95, 10), (63, 10), (62, 10), (91, 10), (59, 12), (99, 14), (28, 14), (49, 16), (100, 16), (34, 17), (32, 17), (39, 17), (9, 17), (41, 17), (14, 17), (74, 17), (44, 17), (15, 17), (51, 17), (16, 17), (87, 17), (49, 17), (18, 17), (21, 17), (82, 17), (24, 17), (92, 17), (94, 17), (60, 17), (30, 17), (100, 18), (3, 18), (64, 18), (66, 18), (37, 18), (9, 18), (43, 18), (45, 18), (85, 18), (86, 18), (81, 18), (83, 18), (93, 18), (59, 18), (94, 18), (56, 18), (89, 18), (88, 18), (61, 18), (91, 18), (60, 18), (30, 18), (16, 19), (70, 19), (18, 19), (66, 19), (7, 19), (93, 19), (29, 19), (73, 19), (38, 20), (53, 20), (95, 20), (72, 20), (44, 20), (51, 21), (65, 21), (59, 21), (49, 22), (33, 22), (4, 22), (98, 22), (99, 22), (43, 22), (92, 22), (89, 22), (46, 22), (30, 22), (70, 24), (39, 24), (97, 24), (24, 24), (46, 24), (44, 24), (91, 24), (60, 24), (21, 25), (77, 25), (10, 25), (99, 26), (27, 26), (40, 26), (78, 26), (94, 26), (47, 27), (15, 28), (69, 29), (35, 29), (100, 29), (20, 29), (96, 29), (23, 29), (22, 29), (95, 29), (56, 29), (72, 29), (65, 30), (96, 30), (24, 30), (68, 31), (3, 31), (38, 31), (99, 31), (36, 31), (66, 31), (9, 31), (10, 31), (40, 31), (72, 31), (46, 31), (44, 31), (75, 31), (53, 31), (25, 31), (58, 31), (56, 31), (89, 31), (63, 31), (17, 32), (8, 32), (42, 32), (56, 32), (74, 32), (70, 33), (4, 33), (20, 33), (59, 33), (76, 33), (92, 33), (85, 34), (17, 34), (86, 34), (33, 34), (48, 34), (85, 36), (2, 36), (100, 36), (95, 36), (94, 36), (13, 36), (28, 36), (75, 36), (1, 37), (69, 37), (100, 37), (33, 37), (7, 37), (76, 37), (47, 37), (75, 37), (85, 37), (87, 37), (19, 37), (28, 37), (91, 37), (90, 37), (38, 38), (39, 38), (53, 38), (13, 38), (91, 38), (74, 40), (17, 42), (3, 42), (38, 42), (39, 42), (23, 42), (46, 42), (89, 42), (13, 42), (39, 44), (6, 44), (47, 44), (49, 45), (100, 45), (71, 45), (54, 45), (66, 45), (24, 45), (41, 45), (11, 45), (29, 45), (14, 45), (60, 45), (75, 45), (51, 47), (69, 47), (71, 47), (38, 47), (4, 47), (39, 47), (78, 47), (62, 47), (3, 50), (96, 50), (59, 50), (40, 50), (57, 50), (88, 50), (13, 50), (74, 50);
+
+
+insert into t_contact (contact, description, contact_type, notification_type, club_member_id) values
+	('b3957e8d-4dcd-435f-9c30-0e20f6a4814b@yahoo.com',null, 0, 0, 88),
+	('723223977',null, 1, 2, 84),
+	('727339550',null, 1, 2, 37),
+	('736647158',null, 1, 2, 22),
+	('734928165','popis telefonního kontaktu', 1, 0, 24),
+	('eb764c78-3fdf-4c8b-94c8-458e7ab4c01a@tiscali.cz','popis emailového kontaktu', 0, 2, 13),
+	('f8764bdf-8f2d-4572-8dfd-f7d6a126a2e6@post.cz',null, 0, 2, 8),
+	('776128026',null, 1, 0, 21),
+	('735597181',null, 1, 0, 52),
+	('c2f22586-7ef8-4a7b-8035-6f8134a95b4d@tiscali.cz',null, 0, 1, 29),
+	('90a9fa47-0ddc-42c5-9c39-f27556ea90c6@tiscali.cz',null, 0, 2, 67),
+	('0d822847-5200-4756-8614-5a62f80e3295@centrum.cz',null, 0, 2, 1),
+	('922cc181-231c-4595-87e8-b0011f97aeb4@centrum.cz',null, 0, 1, 65),
+	('721271385',null, 1, 0, 11),
+	('737898966',null, 1, 1, 85),
+	('77f3939b-ed39-41d4-b9ba-90005f24324f@seznam.cz','popis emailového kontaktu', 0, 0, 22),
+	('702259773',null, 1, 1, 78),
+	('6ff9703c-1421-44ed-bd36-64c50351b438@hotmail.com','popis emailového kontaktu', 0, 0, 48),
+	('736061546',null, 1, 1, 70),
+	('e4e75dd5-edc6-4f7e-bdfd-446f2933d47d@post.cz',null, 0, 2, 94),
+	('bad89acc-6ac8-4119-8241-d79abcbb542a@volny.cz',null, 0, 1, 85),
+	('35acff40-945e-4e5c-8dde-7353d17b7623@centrum.cz',null, 0, 2, 58),
+	('bd839e55-ced7-4faf-8597-4fbea87c2873@hotmail.cz','popis emailového kontaktu', 0, 2, 20),
+	('4ff83f61-d38d-42d6-b1c9-1d00ab3a70ba@seznam.cz',null, 0, 0, 85),
+	('c96931b6-b869-4847-b62c-c61bbb842ac9@yahoo.com',null, 0, 1, 67),
+	('720938209',null, 1, 2, 35),
+	('734265623',null, 1, 2, 22),
+	('af5e9c66-59f0-4733-b949-746ded585d8e@seznam.cz','popis emailového kontaktu', 0, 1, 43),
+	('9cde3027-9d6b-4598-a26d-f00f6e98644f@gmail.com','popis emailového kontaktu', 0, 2, 76),
+	('702605874',null, 1, 1, 20),
+	('2d7c6424-3791-47ce-ba6f-0b54a932fa85@tiscali.cz',null, 0, 0, 12),
+	('201b8a48-f2f5-423a-be44-db4cff783922@hotmail.com',null, 0, 0, 51),
+	('1040e46d-1ebf-4507-80dc-65c20c3cdc8a@email.cz',null, 0, 2, 73),
+	('b263d8d7-c678-444b-a47f-a6ee35722c56@post.cz','popis emailového kontaktu', 0, 0, 23),
+	('733569147',null, 1, 0, 74),
+	('ee1289f4-f086-4d2c-b71e-1edef9538283@yahoo.com',null, 0, 1, 6),
+	('272d1f6b-2bee-4ae2-a01e-4d4f49059d69@volny.cz',null, 0, 0, 15),
+	('776500883','popis telefonního kontaktu', 1, 1, 70),
+	('722043131',null, 1, 0, 95),
+	('607847834',null, 1, 1, 89),
+	('790990182',null, 1, 2, 65),
+	('85ccd7bf-990d-4c5a-8664-1d05aa5b9c5a@gmail.com','popis emailového kontaktu', 0, 0, 61),
+	('8a921b1f-39e3-4758-8fd8-f47b4bcb3f2b@hotmail.cz',null, 0, 0, 85),
+	('774054818',null, 1, 2, 48),
+	('5bc442c0-fc7f-418a-886c-56b79e9e848e@post.cz',null, 0, 2, 18),
+	('ac24b470-6371-4fbb-8a30-3369feaac0fa@centrum.cz',null, 0, 2, 66),
+	('7acb9dab-98fb-4228-9661-ca63f856696b@hotmail.cz',null, 0, 0, 80),
+	('3072a3fd-14d9-46de-95aa-969def55be94@hotmail.com',null, 0, 0, 67),
+	('9a5ef6fa-15ba-4b2f-85d9-317522305e3b@yahoo.com',null, 0, 1, 36),
+	('671d7d54-6a2f-45d7-b7b6-36a7018d8aa2@email.cz','popis emailového kontaktu', 0, 2, 42),
+	('720555238','popis telefonního kontaktu', 1, 1, 53),
+	('6c4bb1a8-a2f0-442e-9361-5aa5d1edfd9f@hotmail.com',null, 0, 1, 15),
+	('5479d6d9-7ae9-4384-a392-bc7cc0fa8b28@seznam.cz',null, 0, 1, 93),
+	('11312a3d-0cb0-49ba-b29d-1d6b01e745f8@yahoo.com',null, 0, 0, 56),
+	('720341166',null, 1, 2, 47),
+	('f7c6f1f7-8fa0-4da3-b31a-b922a5e1ae7c@tiscali.cz',null, 0, 0, 26),
+	('5ca725dd-6d1d-4303-a179-41c4a2435530@gmail.com',null, 0, 0, 32),
+	('8f2b9951-c832-4f0a-a848-974fe30fd61b@hotmail.com',null, 0, 0, 19),
+	('cff6e2e9-6f53-468b-b9d8-06ef309efcbd@email.cz',null, 0, 2, 16),
+	('bd019a45-7bcc-42d6-84a4-54cf57a22a94@seznam.cz',null, 0, 1, 57),
+	('e337bd0f-90e3-4c7d-b9c0-b5565e78b377@post.cz','popis emailového kontaktu', 0, 1, 44),
+	('08d19452-848b-487f-a966-dd500c36c131@post.cz','popis emailového kontaktu', 0, 0, 20),
+	('71d1c3a4-0887-403f-b432-31907720ebd1@seznam.cz','popis emailového kontaktu', 0, 0, 89),
+	('295da30e-e4c9-42ff-a092-9ec15bfb318d@yahoo.com',null, 0, 2, 74),
+	('726809626',null, 1, 2, 6),
+	('c0264ca8-59da-4159-ac94-21fe3cb6e777@centrum.cz',null, 0, 2, 77),
+	('065353b3-1d6b-4ffe-b198-0d350bd533ef@hotmail.com',null, 0, 2, 28),
+	('737376519',null, 1, 0, 78),
+	('8db75c8e-9050-4daa-bac8-6a44964285da@hotmail.com',null, 0, 2, 40),
+	('afa43d23-fded-4c20-8314-a6f4fd2a2926@seznam.cz',null, 0, 1, 10),
+	('8b404812-df08-4f01-bbb4-84eaae6a050d@hotmail.com',null, 0, 1, 14),
+	('601167774',null, 1, 0, 17),
+	('946c33f9-ed8e-4c8a-a4ab-36bb87d5cc31@seznam.cz',null, 0, 0, 83),
+	('607163803','popis telefonního kontaktu', 1, 2, 22),
+	('0e8844db-6178-4801-94b6-a5c464c44dc4@seznam.cz','popis emailového kontaktu', 0, 1, 62),
+	('726608161',null, 1, 2, 69),
+	('603601200',null, 1, 2, 53),
+	('fc1531fc-deed-4544-aa46-40852ea87d10@yahoo.com','popis emailového kontaktu', 0, 2, 34),
+	('736651882',null, 1, 0, 100),
+	('721612298',null, 1, 2, 78),
+	('6c7d7007-0d96-48cb-a68b-4d4df26d70d7@hotmail.com',null, 0, 1, 88),
+	('6ec744fe-0981-4b38-8e9b-b7d6b0ced55d@email.cz',null, 0, 1, 41),
+	('7c01d690-8f68-4da2-8b8d-9e40cd529023@volny.cz',null, 0, 1, 24),
+	('725296251',null, 1, 1, 75),
+	('f4e059d8-9a6e-4737-b1db-be4bd6a0b709@hotmail.com','popis emailového kontaktu', 0, 1, 48),
+	('1b238d07-b3dc-45b4-9c4d-ae666b9ff1a2@gmail.com','popis emailového kontaktu', 0, 0, 100),
+	('738628795',null, 1, 2, 91),
+	('8297acce-8995-4149-8f5d-357ba237c4be@volny.cz',null, 0, 1, 59),
+	('2a1073f8-f4c2-41a0-a3ff-970e65533fa0@centrum.cz',null, 0, 1, 72),
+	('2c25ffc2-d71d-4441-9c4d-ada6cf40e8e6@email.cz','popis emailového kontaktu', 0, 2, 9),
+	('6cb3053d-8fb2-4789-8dc9-4627243c3578@post.cz',null, 0, 0, 28),
+	('380f1b25-e449-4fd0-92fc-868825a8b7c3@hotmail.cz',null, 0, 2, 94),
+	('738757759',null, 1, 2, 93),
+	('61017070-4afc-45e0-a770-c45a24b46d27@yahoo.com',null, 0, 1, 60),
+	('d390fe45-b360-406a-b42b-896da049dc65@hotmail.cz','popis emailového kontaktu', 0, 0, 21),
+	('47c88123-80e5-4995-ae36-d0b4f602dae3@hotmail.com',null, 0, 0, 94),
+	('67967321-0c76-4ef0-97d5-9b8285e3c7a4@tiscali.cz','popis emailového kontaktu', 0, 0, 34),
+	('394696fd-35fd-4c16-b05a-df57d0701faa@email.cz',null, 0, 0, 78),
+	('3df04153-6e3a-4783-8227-1aa923742206@volny.cz',null, 0, 1, 27),
+	('606763195','popis telefonního kontaktu', 1, 1, 67),
+	('d926964c-efd9-4175-8491-221b65cf6dbd@tiscali.cz',null, 0, 1, 67),
+	('733924554',null, 1, 1, 94),
+	('e24daee0-2426-4762-8064-9bf852c288e4@gmail.com',null, 0, 0, 53),
+	('ee435b17-41e4-4cf6-83d3-6933504ba8a1@email.cz','popis emailového kontaktu', 0, 2, 63),
+	('a0202cc2-8477-4057-906c-36e12069a5a7@hotmail.com',null, 0, 2, 89),
+	('e7d05e7a-44b7-4deb-9a88-8af0c0a98c80@seznam.cz','popis emailového kontaktu', 0, 0, 87),
+	('19c0a118-c0b7-44fa-b23b-0e23045e8509@hotmail.cz',null, 0, 1, 9),
+	('1d334d0c-1952-4677-aba1-4aa0cf47b388@yahoo.com',null, 0, 1, 64),
+	('6afccde9-0f04-4434-a0d1-b4c1deda7af3@centrum.cz',null, 0, 1, 20),
+	('60e15f09-d436-4220-b808-985807244c89@centrum.cz',null, 0, 1, 67);
+
+
 -- ARTICLES [AKTUALITY]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
 	1,
@@ -600,7 +836,7 @@ insert into T_ARTICLE (location, priority, caption, summary, content, creation_d
 	);
 
 -- ARTICLES [AKTUALITY - PLATNOST DO]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
 	-- aktuality | pouze kategorie
 	(
 	1,
@@ -657,7 +893,7 @@ insert into T_ARTICLE (location, priority, caption, summary, content, creation_d
 	);
 
 -- ARTICLES [NÁSTĚNKA]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, owner_type, club_team_id, category_id) values
 	-- nástěnka | pouze kategorie
 	(
 	0,
@@ -720,7 +956,7 @@ insert into T_ARTICLE (location, priority, caption, summary, content, creation_d
 	);
 
 -- ARTICLES [NÁSTĚNKA - PLATNOST DO]
-insert into T_ARTICLE (location, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
+insert into T_ARTICLE (location_type, priority, caption, summary, content, creation_date, expiration_date, owner_type, club_team_id, category_id) values
 	-- nástěnka | pouze kategorie
 	(
 	0,
@@ -761,6 +997,42 @@ insert into T_CLUB_RIVAL (name, web, gps, street, city, code, icon) values
 	('FC Hradec Králové', 'http://www.fchk.cz/', null, 'Hradec Králové', 'Úprkova', '473', null),
 	('Slovan Liberec', null, null, null, 'Liberec', null, null);
 
+-- TEAM MATCH
+insert into t_team_match (start, score_pos, score_neg, home_court, comment, publish, club_team_id, club_rival_id, club_rival_comment) values 
+	(to_timestamp('2015-5-5 14:00', 'YYYY-MM-DD HH24:MI'), 1, 0, true, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', true, 1, 5, 'A ja jaj'),
+	(to_timestamp('2017-2-25 11:00', 'YYYY-MM-DD HH24:MI'), 4, 1, false, 'Bomba zápas', false, 2, 4, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
+	(to_timestamp('2017-6-18 16:00', 'YYYY-MM-DD HH24:MI'), 1, 0, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', false, 3, 7, ''),
+	(to_timestamp('2014-9-14 16:00', 'YYYY-MM-DD HH24:MI'), 2, 1, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', false, 3, null, ''),
+	(to_timestamp('2014-1-17 16:00', 'YYYY-MM-DD HH24:MI'), 4, 0, false, 'Bomba zápas', false, 3, 3, 'A ja jaj'),
+	(to_timestamp('2015-1-19 15:00', 'YYYY-MM-DD HH24:MI'), 3, 3, false, 'Bomba zápas', false, 3, 3, ''),
+	(to_timestamp('2016-5-18 13:00', 'YYYY-MM-DD HH24:MI'), 0, 4, false, null, false, 3, null, ''),
+	(to_timestamp('2015-1-27 10:00', 'YYYY-MM-DD HH24:MI'), 0, 1, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', true, 3, null, ''),
+	(to_timestamp('2016-6-14 10:00', 'YYYY-MM-DD HH24:MI'), 2, 3, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', false, 1, 8, 'To bude pohodička'),
+	(to_timestamp('2014-5-10 14:00', 'YYYY-MM-DD HH24:MI'), 4, 3, true, 'Super', false, 2, 2, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
+	(to_timestamp('2016-7-25 16:00', 'YYYY-MM-DD HH24:MI'), 1, 1, true, 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', true, 1, 3, 'To bude pohodička'),
+	(to_timestamp('2016-6-5 15:00', 'YYYY-MM-DD HH24:MI'), 3, 0, true, 'Bomba zápas', true, 3, null, null),
+	(to_timestamp('2014-2-19 13:00', 'YYYY-MM-DD HH24:MI'), 0, 1, true, 'Super', false, 2, null, ''),
+	(to_timestamp('2014-1-1 13:00', 'YYYY-MM-DD HH24:MI'), 4, 4, false, 'Vemte si podvlíkačky', false, 2, 6, ''),
+	(to_timestamp('2017-2-17 15:00', 'YYYY-MM-DD HH24:MI'), 2, 2, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', false, 2, 4, ''),
+	(to_timestamp('2015-6-7 13:00', 'YYYY-MM-DD HH24:MI'), 3, 4, true, '', true, 1, 6, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
+	(to_timestamp('2016-7-25 12:00', 'YYYY-MM-DD HH24:MI'), 4, 1, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', true, 2, 9, ''),
+	(to_timestamp('2017-1-27 11:00', 'YYYY-MM-DD HH24:MI'), 3, 2, true, 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', true, 1, 10, ''),
+	(to_timestamp('2014-7-28 13:00', 'YYYY-MM-DD HH24:MI'), 1, 0, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', false, 1, 1, ''),
+	(to_timestamp('2017-9-5 17:00', 'YYYY-MM-DD HH24:MI'), 2, 4, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', false, 1, 4, 'To bude pohodička'),
+	(to_timestamp('2015-9-8 14:00', 'YYYY-MM-DD HH24:MI'), 3, 2, true, '', true, 2, 10, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
+	(to_timestamp('2014-9-27 15:00', 'YYYY-MM-DD HH24:MI'), 3, 2, false, 'Bomba zápas', false, 3, null, ''),
+	(to_timestamp('2014-12-15 11:00', 'YYYY-MM-DD HH24:MI'), 1, 3, true, 'Vemte si podvlíkačky', true, 2, 2, 'Moc se nepředvedli'),
+	(to_timestamp('2017-8-30 16:00', 'YYYY-MM-DD HH24:MI'), 3, 1, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', true, 2, null, ''),
+	(to_timestamp('2017-10-9 14:00', 'YYYY-MM-DD HH24:MI'), 4, 4, true, 'Bomba zápas', false, 2, null, ''),
+	(to_timestamp('2014-5-9 13:00', 'YYYY-MM-DD HH24:MI'), 0, 2, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', true, 3, 10, ''),
+	(to_timestamp('2017-6-13 17:00', 'YYYY-MM-DD HH24:MI'), 3, 3, false, '', true, 1, 8, ''),
+	(to_timestamp('2016-4-16 16:00', 'YYYY-MM-DD HH24:MI'), 0, 4, false, 'Bomba zápas', false, 2, 10, 'To bude pohodička'),
+	(to_timestamp('2017-7-25 17:00', 'YYYY-MM-DD HH24:MI'), 3, 2, true, 'Vemte si podvlíkačky', false, 2, null, null),
+	(to_timestamp('2016-6-19 11:00', 'YYYY-MM-DD HH24:MI'), 4, 1, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', true, 3, 4, 'To bude pohodička');
+
+-- PARTICIPANT OF MATCH
+insert into t_participant_of_match values 
+	(0, 0, 0, 34, 1), (0, 1, 1, 1, 1), (0, 0, 0, 32, 1), (1, 2, 1, 71, 1), (1, 0, 0, 98, 1), (0, 0, 1, 96, 1), (2, 2, 0, 78, 1), (1, 0, 1, 73, 1), (1, 0, 0, 85, 1), (2, 1, 1, 51, 1), (1, 2, 1, 87, 1), (1, 2, 0, 49, 1), (1, 1, 1, 21, 1), (1, 1, 1, 52, 1), (1, 0, 0, 94, 1), (1, 2, 1, 62, 1), (0, 2, 1, 100, 2), (0, 0, 1, 3, 2), (0, 2, 1, 38, 2), (1, 0, 1, 6, 2), (2, 0, 1, 43, 2), (0, 0, 1, 9, 2), (2, 0, 1, 78, 2), (2, 1, 1, 11, 2), (1, 0, 1, 45, 2), (2, 1, 0, 85, 2), (2, 1, 1, 87, 2), (2, 2, 0, 86, 2), (0, 0, 1, 54, 2), (0, 0, 0, 53, 2), (2, 1, 1, 58, 2), (0, 1, 0, 27, 2), (2, 1, 0, 57, 2), (1, 1, 1, 30, 2), (1, 2, 0, 2, 3), (0, 1, 0, 32, 3), (2, 2, 0, 100, 3), (2, 2, 1, 6, 3), (1, 2, 0, 67, 3), (0, 2, 1, 37, 3), (0, 2, 0, 77, 3), (0, 1, 0, 41, 3), (2, 1, 0, 13, 3), (2, 0, 0, 44, 3), (0, 1, 0, 14, 3), (1, 2, 1, 51, 3), (2, 2, 1, 87, 3), (2, 1, 0, 21, 3), (2, 0, 0, 83, 3), (2, 2, 1, 22, 3), (1, 1, 1, 25, 3), (1, 0, 0, 27, 3), (2, 0, 1, 29, 3), (1, 2, 1, 28, 3), (2, 0, 0, 35, 4), (2, 2, 1, 96, 4), (0, 0, 1, 37, 4), (0, 0, 0, 7, 4), (2, 0, 1, 67, 4), (0, 1, 1, 76, 4), (2, 0, 0, 79, 4), (2, 1, 1, 14, 4), (2, 2, 1, 45, 4), (2, 1, 0, 50, 4), (0, 0, 0, 80, 4), (1, 1, 0, 83, 4), (2, 0, 1, 59, 4), (2, 2, 1, 57, 4), (0, 1, 1, 95, 4), (2, 0, 1, 28, 4), (0, 0, 0, 31, 4), (2, 0, 0, 91, 4), (1, 0, 0, 30, 4), (2, 2, 0, 34, 5), (1, 1, 0, 69, 5), (2, 1, 0, 33, 5), (0, 1, 0, 3, 5), (0, 2, 0, 67, 5), (2, 0, 0, 76, 5), (0, 2, 1, 43, 5), (0, 1, 1, 12, 5), (0, 1, 0, 47, 5), (0, 0, 0, 13, 5), (1, 0, 0, 44, 5), (1, 1, 1, 51, 5), (0, 0, 1, 55, 5), (2, 0, 1, 81, 5), (2, 1, 1, 54, 5), (1, 2, 0, 53, 5), (2, 2, 1, 59, 5), (2, 2, 0, 88, 5), (0, 0, 0, 34, 6), (1, 1, 1, 99, 6), (1, 1, 1, 37, 6), (0, 1, 0, 97, 6), (0, 2, 1, 7, 6), (1, 2, 0, 10, 6), (0, 1, 1, 11, 6), (2, 2, 1, 47, 6), (2, 1, 1, 75, 6), (0, 2, 0, 85, 6), (0, 0, 0, 87, 6), (2, 2, 0, 54, 6), (0, 1, 0, 83, 6), (0, 2, 1, 22, 6), (0, 0, 0, 24, 6), (1, 1, 1, 26, 6), (1, 1, 0, 90, 6), (1, 1, 1, 2, 7), (0, 0, 1, 98, 7), (0, 0, 1, 65, 7), (2, 1, 1, 99, 7), (1, 1, 0, 6, 7), (0, 1, 1, 36, 7), (1, 2, 1, 96, 7), (2, 0, 0, 97, 7), (2, 1, 0, 42, 7), (1, 1, 1, 77, 7), (0, 2, 0, 43, 7), (2, 0, 1, 74, 7), (0, 2, 1, 14, 7), (2, 0, 0, 19, 7), (2, 1, 0, 18, 7), (2, 2, 1, 86, 7), (0, 1, 1, 53, 7), (1, 0, 0, 93, 7), (0, 0, 0, 59, 7), (0, 1, 0, 1, 8), (2, 0, 0, 36, 8), (1, 2, 0, 42, 8), (1, 1, 1, 12, 8), (1, 1, 1, 73, 8), (2, 2, 1, 14, 8), (2, 2, 1, 44, 8), (2, 1, 1, 15, 8), (2, 1, 0, 87, 8), (2, 0, 1, 48, 8), (1, 2, 1, 82, 8), (0, 1, 0, 93, 8), (1, 1, 0, 95, 8), (0, 1, 1, 56, 8), (1, 1, 1, 63, 8), (2, 2, 1, 88, 8), (1, 1, 0, 31, 8), (1, 1, 1, 90, 8), (1, 1, 1, 30, 8), (0, 1, 1, 34, 9), (2, 0, 0, 71, 9), (1, 2, 0, 38, 9), (0, 1, 1, 6, 9), (1, 2, 1, 7, 9), (0, 0, 0, 76, 9), (2, 2, 0, 43, 9), (1, 1, 1, 9, 9), (1, 2, 0, 78, 9), (1, 0, 0, 74, 9), (1, 2, 1, 44, 9), (2, 1, 0, 16, 9), (0, 0, 0, 19, 9), (0, 0, 1, 55, 9), (1, 1, 1, 20, 9), (2, 2, 1, 54, 9), (2, 2, 0, 82, 9), (2, 1, 0, 59, 9), (2, 2, 1, 24, 9), (1, 0, 1, 90, 9), (2, 2, 0, 32, 10), (2, 1, 0, 4, 10), (1, 0, 0, 64, 10), (2, 0, 1, 66, 10), (0, 2, 1, 67, 10), (0, 1, 1, 11, 10), (0, 0, 0, 47, 10), (1, 1, 1, 44, 10), (2, 2, 0, 19, 10), (0, 1, 0, 23, 10), (2, 0, 0, 59, 10), (1, 0, 0, 25, 10), (0, 0, 0, 57, 10), (2, 0, 1, 95, 10), (0, 2, 1, 56, 10), (0, 2, 0, 28, 10), (0, 0, 1, 31, 10), (1, 0, 1, 60, 10), (2, 0, 0, 3, 11), (1, 1, 1, 71, 11), (1, 0, 1, 38, 11), (0, 1, 1, 42, 11), (0, 0, 0, 11, 11), (0, 0, 0, 73, 11), (1, 0, 1, 13, 11), (1, 0, 1, 16, 11), (0, 1, 0, 49, 11), (1, 2, 1, 87, 11), (0, 0, 0, 21, 11), (2, 2, 0, 23, 11), (0, 1, 0, 24, 11), (2, 0, 1, 27, 11), (2, 1, 0, 95, 11), (0, 1, 1, 26, 11), (0, 2, 1, 29, 11), (1, 1, 1, 28, 11), (0, 1, 1, 61, 11), (2, 0, 0, 90, 11), (0, 2, 0, 68, 12), (1, 0, 0, 33, 12), (2, 1, 0, 4, 12), (0, 1, 0, 98, 12), (1, 1, 0, 42, 12), (2, 0, 0, 78, 12), (1, 1, 1, 11, 12), (2, 2, 0, 74, 12), (1, 2, 1, 51, 12), (0, 2, 1, 84, 12), (0, 0, 1, 16, 12), (0, 1, 0, 83, 12), (1, 0, 1, 92, 12), (0, 2, 0, 57, 12), (0, 1, 0, 56, 12), (2, 2, 1, 26, 12), (0, 0, 1, 62, 12), (2, 2, 1, 88, 12), (0, 2, 0, 30, 12), (0, 0, 0, 69, 14), (1, 2, 0, 71, 14), (1, 2, 0, 6, 14), (2, 0, 0, 7, 14), (2, 1, 0, 97, 14), (0, 0, 0, 78, 14), (2, 0, 1, 74, 14), (2, 2, 0, 15, 14), (1, 2, 0, 16, 14), (1, 2, 0, 19, 14), (0, 1, 0, 86, 14), (2, 0, 0, 81, 14), (0, 1, 1, 20, 14), (0, 2, 0, 92, 14), (2, 1, 1, 56, 14), (2, 2, 1, 30, 14), (2, 2, 0, 90, 14), (0, 0, 1, 68, 15), (2, 1, 1, 34, 15), (0, 2, 0, 35, 15), (0, 2, 1, 71, 15), (2, 2, 1, 99, 15), (2, 1, 0, 76, 15), (0, 2, 1, 42, 15), (0, 1, 1, 15, 15), (2, 1, 0, 51, 15), (2, 0, 0, 19, 15), (1, 2, 0, 49, 15), (1, 0, 0, 54, 15), (1, 0, 1, 82, 15), (0, 2, 0, 95, 15), (1, 1, 1, 63, 15), (2, 1, 1, 29, 15), (1, 1, 0, 89, 15), (2, 0, 0, 30, 15), (1, 0, 1, 90, 15), (2, 2, 1, 69, 18), (2, 2, 0, 2, 18), (1, 1, 0, 32, 18), (2, 1, 1, 98, 18), (1, 1, 1, 4, 18), (1, 0, 1, 99, 18), (0, 2, 0, 5, 18), (2, 0, 0, 36, 18), (1, 2, 0, 7, 18), (2, 0, 1, 8, 18), (0, 0, 0, 77, 18), (2, 1, 1, 85, 18), (0, 1, 0, 17, 18), (0, 0, 1, 50, 18), (0, 0, 1, 16, 18), (0, 0, 1, 87, 18), (2, 1, 1, 48, 18), (2, 1, 1, 26, 18), (1, 2, 1, 89, 18), (2, 0, 1, 68, 19), (0, 2, 0, 32, 19), (1, 1, 1, 3, 19), (0, 2, 0, 38, 19), (2, 1, 0, 64, 19), (2, 1, 1, 97, 19), (0, 1, 1, 13, 19), (2, 0, 0, 74, 19), (0, 2, 1, 14, 19), (2, 0, 1, 15, 19), (0, 0, 0, 75, 19), (0, 1, 1, 85, 19), (2, 1, 0, 51, 19), (1, 2, 1, 87, 19), (1, 0, 0, 83, 19), (1, 0, 0, 92, 19), (1, 1, 1, 58, 19), (0, 0, 1, 26, 19), (1, 0, 0, 31, 19), (2, 1, 1, 35, 20), (1, 1, 0, 100, 20), (2, 2, 1, 98, 20), (0, 2, 1, 40, 20), (0, 2, 1, 41, 20), (0, 0, 0, 74, 20), (1, 2, 1, 15, 20), (0, 1, 0, 75, 20), (1, 0, 1, 16, 20), (2, 1, 0, 81, 20), (2, 0, 0, 80, 20), (2, 0, 1, 20, 20), (2, 2, 0, 83, 20), (0, 2, 1, 82, 20), (1, 0, 0, 93, 20), (0, 2, 1, 92, 20), (1, 1, 1, 31, 20), (1, 2, 1, 60, 20), (2, 1, 0, 68, 21), (1, 1, 0, 1, 21), (0, 0, 0, 65, 21), (1, 1, 0, 96, 21), (0, 0, 0, 7, 21), (2, 0, 1, 76, 21), (1, 0, 1, 12, 21), (1, 2, 1, 85, 21), (2, 1, 0, 17, 21), (1, 1, 1, 84, 21), (2, 0, 0, 21, 21), (1, 1, 0, 80, 21), (2, 2, 0, 20, 21), (0, 0, 1, 54, 21), (1, 2, 1, 22, 21), (2, 0, 0, 93, 21), (2, 2, 1, 92, 21), (0, 0, 1, 61, 21), (2, 2, 0, 100, 22), (1, 1, 1, 33, 22), (0, 2, 0, 37, 22), (0, 2, 1, 43, 22), (1, 1, 0, 77, 22), (1, 1, 1, 40, 22), (0, 0, 0, 74, 22), (0, 2, 0, 15, 22), (0, 0, 1, 75, 22), (2, 2, 1, 17, 22), (2, 2, 0, 19, 22), (2, 0, 1, 49, 22), (1, 2, 0, 18, 22), (2, 1, 1, 48, 22), (2, 1, 0, 81, 22), (1, 2, 0, 80, 22), (0, 0, 0, 93, 22), (2, 0, 0, 58, 22), (0, 1, 0, 57, 22), (2, 2, 0, 88, 22), (1, 2, 0, 71, 23), (1, 1, 1, 3, 23), (2, 0, 0, 38, 23), (1, 2, 1, 4, 23), (1, 1, 0, 66, 23), (0, 1, 0, 41, 23), (2, 0, 1, 51, 23), (0, 2, 1, 50, 23), (0, 0, 1, 87, 23), (2, 2, 1, 80, 23), (2, 1, 0, 53, 23), (1, 0, 1, 83, 23), (2, 1, 1, 23, 23), (1, 1, 1, 25, 23), (2, 1, 1, 94, 23), (2, 0, 0, 63, 23), (1, 0, 1, 62, 23), (1, 0, 0, 30, 23), (2, 1, 1, 70, 24), (2, 0, 0, 3, 24), (0, 1, 1, 64, 24), (1, 2, 1, 7, 24), (0, 2, 0, 43, 24), (0, 2, 1, 10, 24), (1, 2, 0, 40, 24), (0, 2, 0, 72, 24), (0, 1, 1, 13, 24), (0, 2, 1, 73, 24), (2, 2, 0, 44, 24), (0, 2, 1, 85, 24), (0, 2, 1, 80, 24), (0, 0, 1, 53, 24), (2, 2, 0, 24, 24), (2, 1, 1, 27, 24), (2, 0, 0, 57, 24), (2, 2, 1, 62, 24), (2, 2, 0, 31, 24), (2, 0, 1, 32, 25), (0, 1, 1, 64, 25), (2, 2, 1, 38, 25), (0, 2, 1, 36, 25), (0, 0, 0, 96, 25), (0, 2, 0, 43, 25), (2, 2, 1, 79, 25), (2, 1, 1, 73, 25), (1, 2, 0, 74, 25), (0, 1, 1, 15, 25), (0, 1, 0, 75, 25), (2, 0, 0, 24, 25), (1, 0, 0, 29, 25), (2, 1, 0, 89, 25), (2, 0, 0, 91, 25), (1, 2, 0, 61, 25), (2, 2, 1, 60, 25), (0, 2, 1, 30, 25), (0, 1, 0, 1, 26), (1, 2, 1, 2, 26), (2, 1, 0, 33, 26), (0, 2, 0, 7, 26), (2, 0, 1, 77, 26), (1, 2, 0, 10, 26), (1, 2, 1, 78, 26), (2, 2, 1, 12, 26), (2, 1, 1, 14, 26), (1, 1, 1, 45, 26), (2, 2, 0, 51, 26), (0, 2, 1, 48, 26), (0, 2, 0, 55, 26), (1, 0, 1, 54, 26), (1, 2, 0, 82, 26), (2, 1, 1, 56, 26), (2, 1, 1, 89, 26), (0, 1, 0, 62, 26), (0, 0, 1, 68, 27), (2, 1, 1, 1, 27), (2, 0, 0, 98, 27), (1, 1, 1, 97, 27), (2, 0, 1, 7, 27), (2, 0, 1, 78, 27), (2, 0, 0, 14, 27), (1, 2, 1, 45, 27), (2, 2, 0, 17, 27), (1, 2, 1, 50, 27), (2, 0, 0, 25, 27), (0, 2, 0, 92, 27), (0, 1, 1, 56, 27), (0, 0, 1, 63, 27), (2, 2, 0, 89, 27), (2, 2, 0, 62, 27), (0, 0, 0, 28, 27), (1, 0, 1, 61, 27), (2, 0, 0, 60, 27), (2, 2, 0, 35, 28), (2, 2, 1, 1, 28), (1, 1, 0, 32, 28), (0, 1, 1, 4, 28), (1, 2, 0, 5, 28), (1, 0, 1, 7, 28), (2, 2, 1, 42, 28), (2, 0, 0, 43, 28), (2, 0, 0, 40, 28), (1, 1, 0, 79, 28), (1, 0, 1, 74, 28), (2, 1, 1, 49, 28), (1, 2, 1, 55, 28), (1, 2, 0, 21, 28), (2, 2, 0, 82, 28), (0, 2, 0, 62, 28), (2, 0, 0, 30, 28), (2, 0, 1, 2, 30), (0, 1, 1, 36, 30), (1, 2, 0, 96, 30), (2, 0, 0, 7, 30), (2, 2, 0, 67, 30), (0, 1, 1, 77, 30), (0, 2, 1, 9, 30), (1, 1, 1, 41, 30), (1, 0, 0, 15, 30), (0, 0, 0, 85, 30), (0, 2, 0, 80, 30), (2, 0, 1, 82, 30), (1, 1, 1, 24, 30), (1, 0, 0, 92, 30), (2, 0, 1, 94, 30), (2, 1, 1, 63, 30), (2, 2, 0, 88, 30), (1, 1, 0, 91, 30);
 
 -- CREATE FUNCTION FOR IMPORTING PICTURES
 create or replace function bytea_import(photo_path text, photo_result out bytea) language plpgsql  as $$
@@ -780,7 +1052,7 @@ $$;
 -- INSERT LOGO TO THE CLUB SETTING
 do $$
 begin
-	update T_CLUB_SETTING set logo = (select bytea_import('clubeek_pictures/club_logo.png')) where id = 1;
+	update T_CLUB set logo = (select bytea_import('clubeek_pictures/club_logo.png')) where id = 1;
 end;
 $$;
 
@@ -847,11 +1119,11 @@ $$;
 
 
 ----------------------------------------------------------------------
--- Location
+-- Location type
 ---- 1 aktuality
 ---- 0 nástěnka
 
--- Owner
+-- Owner type
 ---- 3 celý web
 ---- 2 pouze tým
 ---- 1 pouze kategorie

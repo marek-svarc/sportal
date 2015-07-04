@@ -5,7 +5,7 @@ import java.util.List;
 import com.clubeek.dao.ContactDao;
 import com.clubeek.dao.impl.ownframework.rep.RepContact;
 import com.clubeek.model.Contact;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 
 public class ContactDaoImpl implements ContactDao {
 
@@ -37,5 +37,15 @@ public class ContactDaoImpl implements ContactDao {
     @Override
     public List<Contact> getContactsByClubMemberId(int clubMemberId) {
         return RepContact.selectByClubMemberId(clubMemberId, null);
+    }
+
+    @Override
+    public List<Contact> getAllContacts() {
+        throw new UnsupportedOperationException(); 
+    }
+
+    @Override
+    public void deleteRows(List<Contact> objects) {
+        throw new UnsupportedOperationException("Not supported.");
     }
 }

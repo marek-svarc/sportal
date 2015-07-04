@@ -6,8 +6,8 @@ import java.util.List;
 import com.clubeek.dao.TeamMatchDao;
 import com.clubeek.dao.impl.ownframework.TeamMatchDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepTeamMatch;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.TeamMatch;
-import com.clubeek.model.User.Role;
 import com.clubeek.service.SecurityService;
 import com.clubeek.service.impl.SecurityServiceImpl;
 import com.clubeek.ui.ModalDialog;
@@ -21,13 +21,20 @@ import com.vaadin.data.Container;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
+@Component
+@Scope("prototype")
 public class ViewTeamMatches extends VerticalLayout implements View, ActionTable.OnActionListener {
 	// TODO vitfo, created on 11. 6. 2015 
-	private SecurityService securityService = new SecurityServiceImpl();
-	// TODO vitfo, created on 11. 6. 2015 
-	private TeamMatchDao teamMatchDao = new TeamMatchDaoImpl();
+    @Autowired
+	private SecurityService securityService;
+	// TODO vitfo, created on 11. 6. 2015
+    @Autowired
+	private TeamMatchDao teamMatchDao;
 
     public enum Columns {
 
@@ -54,7 +61,7 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
     @Override
     public void enter(ViewChangeEvent event) {
 
-    	securityService.authorize(Role.SPORT_MANAGER);
+    	securityService.authorize(UserRoleType.SPORT_MANAGER);
 
         table.removeAllRows();
 
@@ -125,7 +132,7 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
     private int teamId = -1;
 
     /** Table component */
-    private final ActionTable table;
+    private ActionTable table;
 
     /** Seznam vsech zapasu pro jeden tym */
     private List<TeamMatch> games = null;

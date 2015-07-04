@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.clubeek.model.ModelTools;
-import com.clubeek.model.Unique;
+import com.clubeek.model.IUnique;
 
 public class Admin {
 
@@ -26,7 +26,7 @@ public class Admin {
         }
     }
 
-    public static <T extends Unique> List<T> query(Class<T> dataClass, String sql, Object[] columns, Repository<T> reader) {
+    public static <T extends IUnique> List<T> query(Class<T> dataClass, String sql, Object[] columns, Repository<T> reader) {
         List<T> valueList = new ArrayList<>();
         try (Connection connection = getConnection()) {
 
@@ -191,7 +191,7 @@ public class Admin {
      * @param newValues seznam novych kontaktu
      * @throws SQLException
      */
-    public static <T extends Unique> void synchronize(List<T> oldValues, List<T> newValues, Repository<T> reader) {
+    public static <T extends IUnique> void synchronize(List<T> oldValues, List<T> newValues, Repository<T> reader) {
         T value;
 
         // pridavani novych, uprava stavajicich

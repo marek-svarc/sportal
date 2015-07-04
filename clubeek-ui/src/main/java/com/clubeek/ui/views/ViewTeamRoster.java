@@ -3,10 +3,8 @@ package com.clubeek.ui.views;
 import java.util.List;
 
 import com.clubeek.dao.TeamMemberDao;
-import com.clubeek.dao.impl.ownframework.TeamMemberDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
+import com.clubeek.enums.TeamFunctionType;
 import com.clubeek.model.TeamMember;
-import com.clubeek.model.TeamMember.TeamFunction;
 import com.clubeek.ui.Tools;
 import com.clubeek.ui.components.TeamMemberPanel;
 import com.vaadin.annotations.PreserveOnRefresh;
@@ -17,30 +15,37 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * View for team members for tab panel named "Team".
  *
- * @author marek
- * @author lukas
+ * @author Marek Svarc
+ * @author Lukas Janacek
  */
 @SuppressWarnings("serial")
 @PreserveOnRefresh
+@Component
+@Scope("prototype")
 public class ViewTeamRoster extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015 
-    private TeamMemberDao teamMemberDao = new TeamMemberDaoImpl();
+    
+    /* PRIVATE */
+    @Autowired
+    private TeamMemberDao teamMemberDao;
 
-    private final String cssTeamMembersList = "teamMembersList"; //$NON-NLS-1$
+    /** Application navigation provider */
+    private Navigation navigation;
 
-    /** Navigation administrator */
-    private final Navigation navigation;
-
-    // management upper layout
+    /** Management upper layout */
     private final CssLayout layoutManagement;
 
-    // players bottom layout
+    /** Players bottom layout */
     private final CssLayout layoutPlayers;
 
+    private final String cssTeamMembersList = "teamMembersList"; //$NON-NLS-1$
+    
     /**
      * Adds caption label for team members layout.
      *
@@ -60,10 +65,10 @@ public class ViewTeamRoster extends VerticalLayout implements View {
      * @param teamFunctions array of team positions specific for layout
      * @param layout layout for member info panels
      */
-    private void addMembers(List<TeamMember> members, TeamFunction[] teamFunctions, CssLayout layout) {
+    private void addMembers(List<TeamMember> members, TeamFunctionType[] teamFunctions, CssLayout layout) {
 
         layout.removeAllComponents();
-        for (TeamFunction f : teamFunctions) {
+        for (TeamFunctionType f : teamFunctions) {
             for (final TeamMember m : members) {
                 if (m.isFunction(f) && (m.getClubMember() != null)) {
 
@@ -83,8 +88,11 @@ public class ViewTeamRoster extends VerticalLayout implements View {
         }
     }
 
-    public ViewTeamRoster(Navigation navigation) {
-        this.navigation = navigation;
+    public ViewTeamRoster() {
+        setSizeFull();
+        setSpacing(true);
+        setMargin(true);
+        
         this.setCaption(Messages.getString("team"));
 
         addMembersLabel(Messages.getString("SupportTeam"));
@@ -102,20 +110,20 @@ public class ViewTeamRoster extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
+        this.navigation = (Navigation) getUI().getContent();
+        
         int teamId = Tools.Strings.analyzeParameters(event);
 
         layoutManagement.removeAllComponents();
         layoutPlayers.removeAllComponents();
 
         if (teamId >= 0) {
-            // load all team members
-//            List<TeamMember> members = RepTeamMember.selectByTeamId(teamId, null);
             List<TeamMember> members = teamMemberDao.getTeamMembersByTeamId(teamId);
             // divide members to groups for layouts
             if (members != null) {
-                addMembers(members, new TeamFunction[]{TeamFunction.COACH, TeamFunction.COACH_ASSISTANT,
-                    TeamFunction.TEAM_LEADERSHIP}, layoutManagement);
-                addMembers(members, new TeamFunction[]{TeamFunction.PLAYER}, layoutPlayers);
+                addMembers(members, new TeamFunctionType[]{TeamFunctionType.COACH, TeamFunctionType.COACH_ASSISTANT,
+                    TeamFunctionType.TEAM_LEADERSHIP}, layoutManagement);
+                addMembers(members, new TeamFunctionType[]{TeamFunctionType.PLAYER}, layoutPlayers);
             }
         }
     }

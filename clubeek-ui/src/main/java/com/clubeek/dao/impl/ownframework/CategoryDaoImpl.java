@@ -43,4 +43,9 @@ public class CategoryDaoImpl implements CategoryDao {
         RepCategory.exchange(idA, idB);        
     }
 
+    @Override
+    public void deleteRows(List<Category> objects) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

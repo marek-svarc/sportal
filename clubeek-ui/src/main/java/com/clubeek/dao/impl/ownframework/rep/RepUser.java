@@ -5,10 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
-import com.clubeek.dao.impl.ownframework.rep.RepTeamMember.TableColumn;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.TeamMember;
 import com.clubeek.model.User;
-import com.clubeek.model.User.Role;
 
 public class RepUser implements Repository<User> {
 
@@ -19,9 +18,9 @@ public class RepUser implements Repository<User> {
     public static enum TableColumn {
 
         ID("id"),
-        NAME("name"),
+        NAME("username"),
         PASSWORD("password"),
-        PERMISSIONS("permissions"),
+        PERMISSIONS("user_role_type"),
         CLUB_MEMBER_ID("club_member_id");
 
         private TableColumn(String dbColumnName) {
@@ -47,7 +46,7 @@ public class RepUser implements Repository<User> {
      * @param user informace o uzivateli
      */
     public static void insert(User user) {
-        insert(user.getName(), user.GetHashPassword(), user.getRole(), user.getClubMemberId());
+        insert(user.getUsername(), user.GetHashPassword(), user.getUserRoleType(), user.getClubMemberId());
     }
 
     /**
@@ -57,7 +56,7 @@ public class RepUser implements Repository<User> {
      * @param password heslo uzivatele
      * @param role uzivatelska role
      */
-    public static void insert(String name, String password, Role role, int clubMemberId) {
+    public static void insert(String name, String password, UserRoleType role, int clubMemberId) {
         // sestaveni sql prikazu
         String sql = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES ( ? , ? , ? , ? )", tableName, TableColumn.NAME,
                 TableColumn.PASSWORD, TableColumn.PERMISSIONS, TableColumn.CLUB_MEMBER_ID);
@@ -73,7 +72,7 @@ public class RepUser implements Repository<User> {
      * @param user data uzivatele
      */
     public static void update(User user) {
-        update(user.getId(), user.getRole(), user.GetHashPassword());
+        update(user.getId(), user.getUserRoleType(), user.GetHashPassword());
     }
 
     /**
@@ -83,7 +82,7 @@ public class RepUser implements Repository<User> {
      * @param role uzivatelska role
      * @param clubMemberId id clena klubu asociovaneho s uzivatelem
      */
-    public static void update(int id, Role role, String password) {
+    public static void update(int id, UserRoleType role, String password) {
         if (password != null) {
             // sestaveni sql prikazu
             String sql = String.format("UPDATE %s SET %s = ?, %s = ? WHERE %s = %d", tableName, TableColumn.PERMISSIONS,
@@ -157,7 +156,7 @@ public class RepUser implements Repository<User> {
     public static List<User> selectAllAdministrators(TableColumn[] columns) {
         columns = getColumns(columns);
         return Admin.query(User.class, String.format("SELECT %s FROM %s WHERE %s = %s", Admin.createSelectParams(columns),
-                tableName, TableColumn.PERMISSIONS, User.Role.ADMINISTRATOR.ordinal()), columns, getInstance());
+                tableName, TableColumn.PERMISSIONS, UserRoleType.ADMINISTRATOR.ordinal()), columns, getInstance());
     }
 
     /**
@@ -200,13 +199,13 @@ public class RepUser implements Repository<User> {
                     data.setId(result.getInt(resultsColumnId));
                     break;
                 case NAME:
-                    data.setName(result.getString(resultsColumnId));
+                    data.setUsername(result.getString(resultsColumnId));
                     break;
                 case PASSWORD:
                     data.setPassword(result.getString(resultsColumnId));
                     break;
                 case PERMISSIONS:
-                    data.setRole(Role.values()[result.getInt(resultsColumnId)]);
+                    data.setUserRoleType(UserRoleType.values()[result.getInt(resultsColumnId)]);
                     break;
                 case CLUB_MEMBER_ID:
                     data.setClubMemberId(result.getInt(resultsColumnId));

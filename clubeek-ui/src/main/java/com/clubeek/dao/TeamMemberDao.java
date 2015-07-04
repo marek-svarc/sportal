@@ -2,8 +2,6 @@ package com.clubeek.dao;
 
 import java.util.List;
 
-import com.clubeek.dao.impl.ownframework.rep.RepTeamMember;
-import com.clubeek.model.Article;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.TeamMember;
 

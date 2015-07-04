@@ -5,8 +5,9 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Owner;
 
 /**
  * Mapper for {@link Article} model object.
@@ -20,16 +21,18 @@ public class ArticleMapper implements RowMapper<Article> {
         Article a = new Article();
         
         a.setId(rs.getInt("id"));
-        a.setLocation(Article.Location.values()[rs.getInt("location")]);
+        a.setLocationType(LocationType.values()[rs.getInt("location_type")]);
         a.setPriority(rs.getBoolean("priority"));
         a.setCaption(rs.getString("caption"));
         a.setSummary(rs.getString("summary"));
         a.setContent(rs.getString("content"));
         a.setCreationDate(rs.getTimestamp("creation_date"));
         a.setExpirationDate(rs.getDate("expiration_date"));
-        a.setOwner(Owner.values()[rs.getInt("owner_type")]);
-        a.setClubTeamId(rs.getInt("club_team_id"));
-        a.setCategoryId(rs.getInt("category_id"));
+        a.setOwnerType(OwnerType.values()[rs.getInt("owner_type")]);
+        a.setClubTeamId((Integer)rs.getObject("club_team_id"));
+        a.setCategoryId((Integer)rs.getObject("category_id"));
+//        a.setClubTeamId(rs.getInt("club_team_id"));
+//        a.setCategoryId(rs.getInt("category_id"));
         
         return a;
     }

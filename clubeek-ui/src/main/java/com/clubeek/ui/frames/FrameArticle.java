@@ -8,13 +8,11 @@ import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.ClubTeamDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepCategory;
-import com.clubeek.dao.impl.ownframework.rep.RepClubTeam;
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
 import com.clubeek.model.Category;
 import com.clubeek.model.ClubTeam;
-import com.clubeek.model.Article.Location;
-import com.clubeek.model.Article.Owner;
 import com.clubeek.ui.ModalInput;
 import com.clubeek.ui.Tools;
 import com.vaadin.annotations.Theme;
@@ -69,9 +67,9 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 	private DateField dfExpiration;
 
 	private void updateControls() {
-		Article.Owner owner = (Article.Owner) nsOwner.getValue();
-		nsCategories.setVisible(owner == Owner.CATEGORY);
-		nsTeams.setVisible(owner == Owner.TEAM);
+		OwnerType owner = (OwnerType) nsOwner.getValue();
+		nsCategories.setVisible(owner == OwnerType.CATEGORY);
+		nsTeams.setVisible(owner == OwnerType.TEAM);
 	}
 
 	/** Vytvori a inicializuje layout pro vodorovne rozmisteni komponent */
@@ -99,13 +97,13 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 
 		// sestaveni seznamu moznych vlastniku clanku
 
-		List<Article.Owner> owners = new ArrayList<>();
-		owners.add(Article.Owner.CLUB_ALL);
-		owners.add(Article.Owner.CLUB);
+		List<OwnerType> owners = new ArrayList<>();
+		owners.add(OwnerType.CLUB_ALL);
+		owners.add(OwnerType.CLUB);
 		if ((categories != null) && (categories.size() > 0))
-			owners.add(Article.Owner.CATEGORY);
+			owners.add(OwnerType.CATEGORY);
 		if ((teams != null) && (teams.size() > 0))
-			owners.add(Article.Owner.TEAM);
+			owners.add(OwnerType.TEAM);
 
 		// vytvoreni komponent
 
@@ -115,7 +113,7 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 		taContent = new RichTextArea(Messages.getString("articleContent")); //$NON-NLS-1$
 		taContent.setNullSettingAllowed(true);
 		taContent.setWidth(700, Unit.PIXELS);
-		nsLocation = Tools.Components.createNativeSelect(null, java.util.Arrays.asList(Article.Location.values()));
+		nsLocation = Tools.Components.createNativeSelect(null, java.util.Arrays.asList(LocationType.values()));
 		nsOwner = Tools.Components.createNativeSelect(null, owners);
 		nsOwner.addValueChangeListener(new ValueChangeListener() {
 
@@ -163,8 +161,8 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 		tfCaption.setValue(data.getCaption());
 		taSummary.setValue(data.getSummary());
 		taContent.setValue(data.getContent());
-		nsLocation.setValue(data.getLocation());
-		nsOwner.setValue(data.getOwner());
+		nsLocation.setValue(data.getLocationType());
+		nsOwner.setValue(data.getOwnerType());
 		Tools.Components.initSelection(nsCategories, data.getCategoryId());
 		Tools.Components.initSelection(nsTeams, data.getClubTeamId());
 		cbPriority.setValue(data.getPriority());
@@ -172,6 +170,7 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 	}
 	
 	@Override
+	// TODO vitfo, created on 1. 7. 2015 xxx - change id setting.
 	public void inputToData(Article data) {
 		tfCaption.validate();
 		
@@ -181,9 +180,9 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 			data.setContent(taContent.getValue());
 		else
 			data.setContent(null);
-		data.setLocation((Location) nsLocation.getValue());
-		data.setOwner((Article.Owner) nsOwner.getValue());
-		switch (data.getOwner()) {
+		data.setLocationType((LocationType) nsLocation.getValue());
+		data.setOwnerType((OwnerType) nsOwner.getValue());
+		switch (data.getOwnerType()) {
 		case CLUB:
 		case CLUB_ALL:
 			data.setCategoryId(0);

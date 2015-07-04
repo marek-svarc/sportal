@@ -5,7 +5,7 @@ package com.clubeek.model;
  * 
  * @author Marek Svarc
  */
-public class Category  extends Model{
+public class Category extends Model{
 
 	// Hodnoty vlastnosti
 
@@ -16,42 +16,35 @@ public class Category  extends Model{
 	private Boolean active = true;
 
 	/** priorita zobrazeni (vyssi cislo => vetsi priorita) */
-	private int sorting = 0;
+	private int sorting;
 
-	// Konstruktor
-
-	/** Vytvori prazdnou instanci tridy "Category" */
-	public Category() {
-	}
-
-	// Vlastnosti
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-	
-	public int getSorting() {
-		return sorting;
-	}
-	
-	public void setSorting(int sorting) {
-		this.sorting = sorting;
-	}
 
 	@Override
 	public String toString() {
 		return description;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public int getSorting() {
+        return sorting;
+    }
+
+    public void setSorting(int sorting) {
+        this.sorting = sorting;
+    }
 }

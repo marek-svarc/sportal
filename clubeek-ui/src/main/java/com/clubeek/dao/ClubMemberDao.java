@@ -14,5 +14,9 @@ public interface ClubMemberDao extends Dao<ClubMember> {
     
     public List<ClubMember> getAllClubMembers();
     
+    public List<ClubMember> getClubMembersByTeamTrainingId(int teamTrainingId);
+    
     public void updateClubMember(ClubMember clubMember);
+    
+    public void addClubMemberToTeamTraining(int clubMemberId, int teamTrainingId);
 }

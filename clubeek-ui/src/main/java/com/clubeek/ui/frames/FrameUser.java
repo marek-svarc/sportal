@@ -7,8 +7,7 @@ import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.dao.impl.ownframework.ClubMemberDaoImpl;
 import com.clubeek.dao.impl.ownframework.UserDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepClubMember;
-import com.clubeek.dao.impl.ownframework.rep.RepUser;
+import com.clubeek.enums.UserRoleType;
 import com.clubeek.model.ClubMember;
 import com.clubeek.model.User;
 import com.clubeek.ui.ModalInput;
@@ -37,8 +36,8 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 		this.setWidth(300, Unit.PIXELS);
 		
 		tfName = Tools.Components.createTextField("Uživatelské jméno", true, "Je třeba zadata uživatelské jméno.");
-		nsClubMember = Tools.Components.createNativeSelect("Člen klubu", Arrays.asList(User.Role.values()));
-		nsRole = Tools.Components.createNativeSelect("Oprávnění", Arrays.asList(User.Role.values()));
+		nsClubMember = Tools.Components.createNativeSelect("Člen klubu", Arrays.asList(UserRoleType.values()));
+		nsRole = Tools.Components.createNativeSelect("Oprávnění", Arrays.asList(UserRoleType.values()));
 		
 		cbChangePassword = Tools.Components.createCheckBox("Změnit heslo");
 		cbChangePassword.setValue(false);
@@ -67,7 +66,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			    
 			Tools.Components.initNativeSelect(nsClubMember, clubMembers, true);
 
-			nsRole.setValue(data.getRole());
+			nsRole.setValue(data.getUserRoleType());
 			tfNewPassword1.setRequired(true);
 			tfNewPassword2.setRequired(true);
 
@@ -75,7 +74,7 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 					createComponentsPanel("Přihlašovací údaje", tfName, tfNewPassword1, tfNewPassword2));
 		} else {
 
-			nsRole.setValue(data.getRole());
+			nsRole.setValue(data.getUserRoleType());
 			this.addComponent(new FormLayout(nsRole));
 			this.addComponent(cbChangePassword);
 			FormLayout flPassword = new FormLayout(tfNewPassword1, tfNewPassword2);
@@ -102,16 +101,16 @@ public class FrameUser extends VerticalLayout implements ModalInput<User> {
 			testClubMember();
 
 			// prirazeni dat
-			data.setRole((User.Role) nsRole.getValue());
+			data.setUserRoleType((UserRoleType) nsRole.getValue());
 			Object clubMemberId = nsClubMember.getValue();
 			if (clubMemberId != null) {
 				data.setClubMemberId((int) clubMemberId);
 			}
-			data.setName(tfName.getValue());
+			data.setUsername(tfName.getValue());
 			data.setPassword(tfNewPassword1.getValue());
 
 		} else {
-			data.setRole((User.Role) nsRole.getValue());
+			data.setUserRoleType((UserRoleType) nsRole.getValue());
 			if (cbChangePassword.getValue()) {
 				
 				// kontroly vstupu

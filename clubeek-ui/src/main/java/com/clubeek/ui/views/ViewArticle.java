@@ -2,11 +2,10 @@ package com.clubeek.ui.views;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.impl.ownframework.ArticleDaoImpl;
-import com.clubeek.dao.impl.ownframework.rep.RepArticle;
 import com.clubeek.model.Article;
 import com.clubeek.ui.Tools;
-import com.clubeek.util.DateTime.DateStyle;
 import com.clubeek.util.DateTime;
+import com.clubeek.util.DateTime.DateStyle;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -14,12 +13,18 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("serial")
 @Theme("baseTheme")
+@Component
+@Scope("prototype")
 public class ViewArticle extends VerticalLayout implements View {
-    // TODO vitfo, created on 11. 6. 2015 
-    private ArticleDao articleDao = new ArticleDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015
+    @Autowired
+    private ArticleDao articleDao;
 
     /* PRIVATE */
     /** Label pro vypis nadpisu clanku */
@@ -63,8 +68,8 @@ public class ViewArticle extends VerticalLayout implements View {
         }
 
         if (articleId > 0) {
-//            Article article = RepArticle.selectById(articleId, new RepArticle.TableColumn[]{RepArticle.TableColumn.CAPTION,
-//                RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE});
+            // Article article = RepArticle.selectById(articleId, new RepArticle.TableColumn[]{RepArticle.TableColumn.CAPTION,
+            // RepArticle.TableColumn.CONTENT, RepArticle.TableColumn.CREATION_DATE});
             Article article = articleDao.getArticleById(articleId);
             laCaption.setValue(article.getCaption());
             laCreationDate.setValue(String.format("%s %s", Messages.getString("ViewArticle.6"),

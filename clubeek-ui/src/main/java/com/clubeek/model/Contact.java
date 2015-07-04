@@ -1,11 +1,14 @@
 package com.clubeek.model;
 
+import com.clubeek.enums.ContactType;
+import com.clubeek.enums.NotificationType;
+
 public class Contact extends Model implements Cloneable {
 
 	/* PRIVATE */
 
 	/** Typ kontaktu */
-	private ContactType type;
+	private ContactType contactType;
 
 	/** Popis kontaktu */
 	private String description;
@@ -14,7 +17,7 @@ public class Contact extends Model implements Cloneable {
 	private String contact;
 
 	/** Zpusob zasilani zprav */
-	private NotificationType notifiction;
+	private NotificationType notifictionType;
 
 	/** identifikator asociovaneho clena klubu */
 	private int clubMemberId;
@@ -24,47 +27,47 @@ public class Contact extends Model implements Cloneable {
 	// Datove typy
 
 	/** Popisuje typ kontaktu */
-	public enum ContactType {
-		EMAIL, PHONE;
+//	public enum ContactType {
+//		EMAIL, PHONE;
+//
+//		public String toString() {
+//			switch (ordinal()) {
+//			case 0:
+//				return Messages.getString("email"); //$NON-NLS-1$
+//			case 1:
+//				return Messages.getString("phone"); //$NON-NLS-1$
+//			default:
+//				return ""; //$NON-NLS-1$
+//			}
+//		};
+//	}
 
-		public String toString() {
-			switch (ordinal()) {
-			case 0:
-				return Messages.getString("email"); //$NON-NLS-1$
-			case 1:
-				return Messages.getString("phone"); //$NON-NLS-1$
-			default:
-				return ""; //$NON-NLS-1$
-			}
-		};
-	}
-
-	/** Zpusob oznamovani zprav */
-	public enum NotificationType {
-		NEVER, ALWAYS, ONLY_IMPORTANT;
-
-		public String toString() {
-			switch (ordinal()) {
-			case 0:
-				return Messages.getString("no"); //$NON-NLS-1$
-			case 1:
-				return Messages.getString("yesAlways"); //$NON-NLS-1$
-			case 2:
-				return Messages.getString("yesSignificantOnly"); //$NON-NLS-1$
-			default:
-				return ""; //$NON-NLS-1$
-			}
-		};
-	}
+//	/** Zpusob oznamovani zprav */
+//	public enum NotificationType {
+//		NEVER, ALWAYS, ONLY_IMPORTANT;
+//
+//		public String toString() {
+//			switch (ordinal()) {
+//			case 0:
+//				return Messages.getString("no"); //$NON-NLS-1$
+//			case 1:
+//				return Messages.getString("yesAlways"); //$NON-NLS-1$
+//			case 2:
+//				return Messages.getString("yesSignificantOnly"); //$NON-NLS-1$
+//			default:
+//				return ""; //$NON-NLS-1$
+//			}
+//		};
+//	}
 
 	// Vlastnosti
 
-	public ContactType getType() {
-		return type;
+	public ContactType getContactType() {
+		return contactType;
 	}
 
-	public void setType(ContactType type) {
-		this.type = type;
+	public void setContactType(ContactType contactType) {
+		this.contactType = contactType;
 	}
 
 	public String getDescription() {
@@ -83,12 +86,12 @@ public class Contact extends Model implements Cloneable {
 		this.contact = contact;
 	}
 
-	public NotificationType getNotification() {
-		return notifiction;
+	public NotificationType getNotificationType() {
+		return notifictionType;
 	}
 
-	public void setNotification(NotificationType notification) {
-		this.notifiction = notification;
+	public void setNotificationType(NotificationType notificationType) {
+		this.notifictionType = notificationType;
 	}
 
 	public int getClubMemberId() {
@@ -103,8 +106,8 @@ public class Contact extends Model implements Cloneable {
 	public boolean equals(Object obj) {
 		if (obj instanceof Contact) {
 			Contact with = (Contact) obj;
-			return (getId() == with.getId()) && (type == with.type) && description.equals(with.description)
-					&& (contact.equals(with.contact)) && (notifiction == with.notifiction) && (clubMemberId == with.clubMemberId);
+			return (getId() == with.getId()) && (contactType == with.contactType) && description.equals(with.description)
+					&& (contact.equals(with.contact)) && (notifictionType == with.notifictionType) && (clubMemberId == with.clubMemberId);
 		} else {
 			return false;
 		}

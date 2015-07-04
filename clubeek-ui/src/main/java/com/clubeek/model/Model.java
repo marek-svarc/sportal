@@ -3,7 +3,7 @@ package com.clubeek.model;
 /**
  * Spolecny predek pro objekty modelu
  */
-public class Model implements Unique {
+public class Model implements IUnique {
 
 	/** Jednoznacny identifikator */
 	private int id;

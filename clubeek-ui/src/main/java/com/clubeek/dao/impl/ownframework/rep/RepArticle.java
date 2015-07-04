@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.clubeek.dao.impl.ownframework.rep.Admin.ColumnData;
+import com.clubeek.enums.LocationType;
+import com.clubeek.enums.OwnerType;
 import com.clubeek.model.Article;
-import com.clubeek.model.Article.Location;
-import com.clubeek.model.Article.Owner;
 
 public class RepArticle implements Repository<Article> {
 
@@ -19,7 +19,7 @@ public class RepArticle implements Repository<Article> {
     public static enum TableColumn {
 
         ID("id"),
-        LOCATION("location"),
+        LOCATION("location_type"),
         PRIORITY("priority"),
         CAPTION("caption"),
         SUMMARY("summary"),
@@ -55,8 +55,8 @@ public class RepArticle implements Repository<Article> {
      *
      */
     public static void insert(Article article) {
-        insert(article.getLocation(), article.getPriority(), article.getCaption(), article.getSummary(), article.getContent(),
-                article.getCreationDate(), article.getExpirationDate(), article.getOwner(), article.getClubTeamId(),
+        insert(article.getLocationType(), article.getPriority(), article.getCaption(), article.getSummary(), article.getContent(),
+                article.getCreationDate(), article.getExpirationDate(), article.getOwnerType(), article.getClubTeamId(),
                 article.getCategoryId());
     }
 
@@ -70,8 +70,8 @@ public class RepArticle implements Repository<Article> {
      * @param creationDate Datum vytvoreni/posledni zmeny clanku
      * @param expirationDate Datum znepristupneni clanku
      */
-    public static void insert(Article.Location location, boolean priority, String caption, String summary, String content,
-            Date creationDate, Date expirationDate, Owner owner, int clubTeamId, int categoryId) {
+    public static void insert(LocationType location, boolean priority, String caption, String summary, String content,
+            Date creationDate, Date expirationDate, OwnerType owner, int clubTeamId, int categoryId) {
         // sestaveni sql prikazu
         String sql = String.format(
                 "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ( ? , ? ,? ,? , ? , ?, ?, ?, ?, ?)", tableName,
@@ -93,8 +93,8 @@ public class RepArticle implements Repository<Article> {
      * @param article data, ktera budou zapsana do databaze
      */
     public static void update(Article article) {
-        update(article.getId(), article.getLocation(), article.getPriority(), article.getCaption(), article.getSummary(),
-                article.getContent(), article.getCreationDate(), article.getExpirationDate(), article.getOwner(),
+        update(article.getId(), article.getLocationType(), article.getPriority(), article.getCaption(), article.getSummary(),
+                article.getContent(), article.getCreationDate(), article.getExpirationDate(), article.getOwnerType(),
                 article.getClubTeamId(), article.getCategoryId());
     }
 
@@ -110,8 +110,8 @@ public class RepArticle implements Repository<Article> {
      * @param expirationDate Datum znepristupneni clanku
      *
      */
-    public static void update(int id, Article.Location location, boolean priority, String caption, String summary,
-            String content, Date creationDate, Date expirationDate, Owner owner, int clubTeamId, int categoryId) {
+    public static void update(int id, LocationType location, boolean priority, String caption, String summary,
+            String content, Date creationDate, Date expirationDate, OwnerType owner, int clubTeamId, int categoryId) {
         // sestaveni sql prikazu
         String sql = String
                 .format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = %d",
@@ -139,7 +139,7 @@ public class RepArticle implements Repository<Article> {
      * @return seznam v�ech radek tabulky
      *
      */
-    public static List<Article> select(int clubTeamId, int categoryId, Location location, TableColumn[] columns) {
+    public static List<Article> select(int clubTeamId, int categoryId, LocationType location, TableColumn[] columns) {
         columns = getColumns(columns);
         String str = String.format("SELECT %s FROM %s WHERE %s AND %s AND %s ORDER BY %s DESC, %s DESC",
                 Admin.createSelectParams(columns), tableName, sqlOwnerCondition(clubTeamId, categoryId),
@@ -209,7 +209,7 @@ public class RepArticle implements Repository<Article> {
                     data.setId(result.getInt(resultsColumnId));
                     break;
                 case LOCATION:
-                    data.setLocation(Article.Location.values()[result.getInt(resultsColumnId)]);
+                    data.setLocationType(LocationType.values()[result.getInt(resultsColumnId)]);
                     break;
                 case PRIORITY:
                     data.setPriority(result.getBoolean(resultsColumnId));
@@ -230,7 +230,7 @@ public class RepArticle implements Repository<Article> {
                     data.setExpirationDate(result.getDate(resultsColumnId));
                     break;
                 case OWNER_TYPE:
-                    data.setOwner(Owner.values()[result.getInt(resultsColumnId)]);
+                    data.setOwnerType(OwnerType.values()[result.getInt(resultsColumnId)]);
                     break;
                 case CLUB_TEAM_ID:
                     data.setClubTeamId(result.getInt(resultsColumnId));
@@ -246,7 +246,7 @@ public class RepArticle implements Repository<Article> {
 
     /* PRIVATE */
     /** Podminka pro vyber clanku dle umisteni na jedne strance */
-    private static String sqlLocationCondition(Location location) {
+    private static String sqlLocationCondition(LocationType location) {
         return String.format("(%s = %d)", TableColumn.LOCATION, location.ordinal());
     }
 
@@ -254,10 +254,10 @@ public class RepArticle implements Repository<Article> {
     private static String sqlOwnerCondition(int clubTeamId, int categoryId) {
         if ((clubTeamId > 0) || (categoryId > 0)) {
             return String.format("((%s = %d) OR (%s = %d) OR (%s = %d))", TableColumn.CLUB_TEAM_ID, clubTeamId,
-                    TableColumn.CATEGORY_ID, categoryId, TableColumn.OWNER_TYPE, Owner.CLUB_ALL.ordinal());
+                    TableColumn.CATEGORY_ID, categoryId, TableColumn.OWNER_TYPE, OwnerType.CLUB_ALL.ordinal());
         } else {
-            return String.format("((%s = %d) OR (%s = %d))", TableColumn.OWNER_TYPE, Owner.CLUB_ALL.ordinal(),
-                    TableColumn.OWNER_TYPE, Owner.CLUB.ordinal());
+            return String.format("((%s = %d) OR (%s = %d))", TableColumn.OWNER_TYPE, OwnerType.CLUB_ALL.ordinal(),
+                    TableColumn.OWNER_TYPE, OwnerType.CLUB.ordinal());
         }
     }
 

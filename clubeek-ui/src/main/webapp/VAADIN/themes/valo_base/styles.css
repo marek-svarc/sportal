@@ -12655,7 +12655,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .valo_base .v-panel-detail {
 	margin: 4px;
-	padding: 0px;
+}
+
+.valo_base .v-panel-detail .v-panel-captionwrap {
+	padding: 4px;
 }
 
 .valo_base .v-panel-caption-detail {
@@ -12770,6 +12773,10 @@ div.v-layout.v-horizontal.v-widget {
 	height: 52px;
 	font-size: 40px;
 	font-weight: bold;
+}
+
+.valo_base .v-tabsheet-framed > .v-tabsheet-content > div {
+	border-bottom: 1px solid #dfdfdf;
 }
 
 .valo_base .horzMenuAbsOnTop {

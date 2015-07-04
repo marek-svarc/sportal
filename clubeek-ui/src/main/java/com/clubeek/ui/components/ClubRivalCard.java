@@ -7,10 +7,14 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 /**
+ * Shows informations about club
  *
  * @author Marek Svarc
  */
 public class ClubRivalCard extends VerticalLayout {
+
+    /** Application navigation */
+    private Navigation navigation;
 
     /** Club data */
     private ClubRival clubRival;
@@ -22,15 +26,14 @@ public class ClubRivalCard extends VerticalLayout {
         lblTitle.setValue(clubRival.getName());
     }
 
-    public ClubRivalCard(Navigation navigation) {
-
+    public ClubRivalCard() {
         lblTitle = new Label();
         lblTitle.setContentMode(ContentMode.HTML);
         this.addComponent(lblTitle);
-
     }
 
-    public void setClubRival(ClubRival clubRival) {
+    public void update(Navigation navigation, ClubRival clubRival) {
+        this.navigation = navigation;
         if (this.clubRival != clubRival) {
             this.clubRival = clubRival;
             Refresh();
