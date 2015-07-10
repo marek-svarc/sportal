@@ -185,15 +185,16 @@ public class FrameArticle extends VerticalLayout implements ModalInput<Article> 
 		switch (data.getOwnerType()) {
 		case CLUB:
 		case CLUB_ALL:
-			data.setCategoryId(0);
-			data.setClubTeamId(0);
+		    // category and club team id are null - there is no need to set them to zero
+//			data.setCategoryId(0);
+//			data.setClubTeamId(0);
 			break;
 		case CATEGORY:
 			data.setCategoryId((int) nsCategories.getValue());
-			data.setClubTeamId(0);
+//			data.setClubTeamId(0);
 			break;
 		case TEAM:
-			data.setCategoryId(0);
+//			data.setCategoryId(0);
 			data.setClubTeamId((int) nsTeams.getValue());
 			break;
 		}

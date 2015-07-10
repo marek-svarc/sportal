@@ -36,7 +36,8 @@ public class ArticleDaoImpl extends DaoImpl implements ArticleDao {
                 + "expiration_date = ?, "
                 + "owner_type = ?, "
                 + "club_team_id = ?, "
-                + "category_id = ?"
+                + "category_id = ? "
+                + "where id = ?"
                 , new Object[] {
                         object.getLocationType().ordinal(),
                         object.getPriority(),
@@ -47,7 +48,8 @@ public class ArticleDaoImpl extends DaoImpl implements ArticleDao {
                         object.getExpirationDate(),
                         object.getOwnerType().ordinal(),
                         object.getClubTeamId(),
-                        object.getCategoryId()
+                        object.getCategoryId(),
+                        object.getId()
                 });
     }
 
