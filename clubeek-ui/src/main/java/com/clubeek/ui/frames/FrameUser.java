@@ -26,174 +26,202 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Runo;
 
 @SuppressWarnings("serial")
+@org.springframework.stereotype.Component
 public class FrameUser extends VerticalLayout implements ModalInput<User> {
-	// TODO vitfo, created on 11. 6. 2015 
-	private UserDao userDao = new UserDaoImpl();
-	// TODO vitfo, created on 11. 6. 2015 
+
+    // TODO vitfo, created on 11. 6. 2015 
+
+    private UserDao userDao = new UserDaoImpl();
+    // TODO vitfo, created on 11. 6. 2015 
     private ClubMemberDao clubMemberDao = new ClubMemberDaoImpl();
 
-	public FrameUser() {
-		this.setWidth(300, Unit.PIXELS);
-		
-		tfName = Tools.Components.createTextField("Uživatelské jméno", true, "Je třeba zadata uživatelské jméno.");
-		nsClubMember = Tools.Components.createNativeSelect("Člen klubu", Arrays.asList(UserRoleType.values()));
-		nsRole = Tools.Components.createNativeSelect("Oprávnění", Arrays.asList(UserRoleType.values()));
-		
-		cbChangePassword = Tools.Components.createCheckBox("Změnit heslo");
-		cbChangePassword.setValue(false);
-		cbChangePassword.addValueChangeListener(new ValueChangeListener() {
+    public FrameUser() {
+        this.setWidth(300, Unit.PIXELS);
 
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				updatePasswordComponents();
-			}
-		});
-		
-		tfNewPassword1 = Tools.Components.createPasswordField("Heslo");
-		tfNewPassword2 = Tools.Components.createPasswordField("Heslo znovu");
-	}
+        tfName = Tools.Components.createTextField("Uživatelské jméno", true, "Je třeba zadata uživatelské jméno.");
+        nsClubMember = Tools.Components.createNativeSelect("Člen klubu", Arrays.asList(UserRoleType.values()));
+        nsRole = Tools.Components.createNativeSelect("Oprávnění", Arrays.asList(UserRoleType.values()));
 
-	@Override
-	public void dataToInput(User data) {
-		boolean insert = data.getId() < 1;
+        cbChangePassword = Tools.Components.createCheckBox("Změnit heslo");
+        cbChangePassword.setValue(false);
+        cbChangePassword.addValueChangeListener(new ValueChangeListener() {
 
-		if (insert) {
-			List<ClubMember> clubMembers = null;
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                updatePasswordComponents();
+            }
+        });
+
+        tfNewPassword1 = Tools.Components.createPasswordField("Heslo");
+        tfNewPassword1.setEnabled(false);
+        tfNewPassword2 = Tools.Components.createPasswordField("Heslo znovu");
+        tfNewPassword2.setEnabled(false);
+    }
+
+    @Override
+    public void dataToInput(User data) {
+        boolean insert = data.getId() < 1;
+
+        if (insert) {
+            List<ClubMember> clubMembers = null;
 //                        clubMembers = RepClubMember.selectAll(new RepClubMember.TableColumn[] { RepClubMember.TableColumn.ID,
 //                            RepClubMember.TableColumn.NAME, RepClubMember.TableColumn.SURNAME, RepClubMember.TableColumn.BIRTHDATE });
-			    // TODO vitfo, created on 11. 6. 2015 - zkontrolovat, zda funguje bez zadání sloupců
-			    clubMembers = clubMemberDao.getAllClubMembers();
-			    
-			Tools.Components.initNativeSelect(nsClubMember, clubMembers, true);
+            // TODO vitfo, created on 11. 6. 2015 - zkontrolovat, zda funguje bez zadání sloupců
+            clubMembers = clubMemberDao.getAllClubMembers();
 
-			nsRole.setValue(data.getUserRoleType());
-			tfNewPassword1.setRequired(true);
-			tfNewPassword2.setRequired(true);
+            Tools.Components.initNativeSelect(nsClubMember, clubMembers, true);
 
-			this.addComponents(createComponentsPanel("Vlastnosti uživatele", nsRole, nsClubMember),
-					createComponentsPanel("Přihlašovací údaje", tfName, tfNewPassword1, tfNewPassword2));
-		} else {
+            nsRole.setValue(data.getUserRoleType());
+            if (cbChangePassword.getValue()) {
+                tfNewPassword1.setRequired(true);
+                tfNewPassword2.setRequired(true);
+            }
 
-			nsRole.setValue(data.getUserRoleType());
-			this.addComponent(new FormLayout(nsRole));
-			this.addComponent(cbChangePassword);
-			FormLayout flPassword = new FormLayout(tfNewPassword1, tfNewPassword2);
-			flPassword.addStyleName("topborder"); //$NON-NLS-1$
-			this.addComponents(flPassword);
-			updatePasswordComponents();
-		}
-	}
+            this.addComponents(createComponentsPanel("Vlastnosti uživatele", nsRole, nsClubMember),
+                    createComponentsPanel("Přihlašovací údaje", tfName, tfNewPassword1, tfNewPassword2));
+        } else {
 
-	@Override
-	public void inputToData(User data) {
-		boolean insertMode = data.getId() < 1;
+            nsRole.setValue(data.getUserRoleType());
+            this.addComponent(new FormLayout(nsRole));
+            this.addComponent(cbChangePassword);
+            FormLayout flPassword = new FormLayout(tfNewPassword1, tfNewPassword2);
+            flPassword.addStyleName("topborder"); //$NON-NLS-1$
+            this.addComponents(flPassword);
+            updatePasswordComponents();
+        }
+    }
 
-		if (insertMode) {
+    @Override
+    public void inputToData(User data) {
+        boolean insertMode = data.getId() < 1;
 
-			// zakladni kontroly vstupu
-			tfName.validate();
-			tfNewPassword1.validate();
-			tfNewPassword2.validate();
+        if (insertMode) {
 
-			// pokrocilejsi kontroly vstupu
-			testNewPassword();
-			testUserName();
-			testClubMember();
+            // zakladni kontroly vstupu
+            tfName.validate();
+            tfNewPassword1.validate();
+            tfNewPassword2.validate();
 
-			// prirazeni dat
-			data.setUserRoleType((UserRoleType) nsRole.getValue());
-			Object clubMemberId = nsClubMember.getValue();
-			if (clubMemberId != null) {
-				data.setClubMemberId((int) clubMemberId);
-			}
-			data.setUsername(tfName.getValue());
-			data.setPassword(tfNewPassword1.getValue());
+            // pokrocilejsi kontroly vstupu
+            testNewPassword();
+            testUserName();
+            testClubMember();
 
-		} else {
-			data.setUserRoleType((UserRoleType) nsRole.getValue());
-			if (cbChangePassword.getValue()) {
-				
-				// kontroly vstupu
-				tfNewPassword1.validate();
-				tfNewPassword2.validate();
-				testNewPassword();
-				
-				data.setPassword(tfNewPassword1.getValue());
-			}else{
-				data.setPassword(null);
-			}
-		}
-	}
+            // prirazeni dat
+            data.setUserRoleType((UserRoleType) nsRole.getValue());
+            Object clubMemberId = nsClubMember.getValue();
+            if (clubMemberId != null) {
+                data.setClubMemberId((int) clubMemberId);
+            }
+            data.setUsername(tfName.getValue());
+            data.setPassword(tfNewPassword1.getValue());
 
-	/* PRIVATE */
+        } else {
+            data.setUserRoleType((UserRoleType) nsRole.getValue());
+            if (cbChangePassword.getValue()) {
 
+                // kontroly vstupu
+                tfNewPassword1.validate();
+                tfNewPassword2.validate();
+                testNewPassword();
+
+                data.setPassword(tfNewPassword1.getValue());
+            } else {
+                data.setPassword(data.getPassword());
+            }
+        }
+    }
+
+    /* PRIVATE */
 	// testy platnosti
-	
-	/** testuje spravne zadani noveho pristupoveho hesla */
-	private void testNewPassword() {
-		if (!tfNewPassword1.getValue().equals(tfNewPassword2.getValue()))
-			throw new Validator.EmptyValueException("Jsou zadaná různá hesla.");
-	}
+    /**
+     * testuje spravne zadani noveho pristupoveho hesla
+     */
+    private void testNewPassword() {
+        if (!tfNewPassword1.getValue().equals(tfNewPassword2.getValue())) {
+            throw new Validator.EmptyValueException("Jsou zadaná různá hesla.");
+        }
+    }
 
-	/** testuje zda zadane uzivatelske jmeno jiz neexistuje */
-	private void testUserName() {
+    /**
+     * testuje zda zadane uzivatelske jmeno jiz neexistuje
+     */
+    private void testUserName() {
 //            if (RepUser.selectByName(tfName.getValue(), false, null) != null)
-			if (userDao.getUserByName(tfName.getValue(), false) != null)
-                throw new Validator.EmptyValueException(String.format("Uživatel %s již existuje.", tfName.getValue()));
-	}
+        if (userDao.getUserByName(tfName.getValue(), false) != null) {
+            throw new Validator.EmptyValueException(String.format("Uživatel %s již existuje.", tfName.getValue()));
+        }
+    }
 
-	/** Testuje zda clen klubu jiz nema vytvoreny ucet */
-	private void testClubMember() {
-		if (nsClubMember.getValue() != null) {
-			User user = null;
+    /**
+     * Testuje zda clen klubu jiz nema vytvoreny ucet
+     */
+    private void testClubMember() {
+        if (nsClubMember.getValue() != null) {
+            User user = null;
 //                        user = RepUser.selectByClubMemberId((int) nsClubMember.getValue(), new RepUser.TableColumn[] {
 //                            RepUser.TableColumn.ID, RepUser.TableColumn.CLUB_MEMBER_ID });
-						user = userDao.getUserByClubMemberId((int) nsClubMember.getValue());
-                        if (user != null){
+            user = userDao.getUserByClubMemberId((int) nsClubMember.getValue());
+            if (user != null) {
 //                            user.setClubMember(RepClubMember.selectById(user.getClubMemberId(), null));
-                            user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
-                            throw new Validator.EmptyValueException(String.format("Člen klubu '%s' již má přiřazen účet.", user
-                                    .getClubMember().toString()));
-				}
-		}
+                user.setClubMember(clubMemberDao.getClubMember(user.getClubMemberId()));
+                throw new Validator.EmptyValueException(String.format("Člen klubu '%s' již má přiřazen účet.", user
+                        .getClubMember().toString()));
+            }
+        }
 
-	}
+    }
 
 	// aktualizace komponent
+    /**
+     * Aktualizuje komponenty pro zadavani hesla
+     */
+    private void updatePasswordComponents() {
+        boolean enabled = cbChangePassword.getValue();
+        tfNewPassword1.setEnabled(enabled);
+        tfNewPassword1.setRequired(enabled);
+        tfNewPassword2.setEnabled(enabled);
+        tfNewPassword2.setRequired(enabled);
+    }
 
-	/** Aktualizuje komponenty pro zadavani hesla */
-	private void updatePasswordComponents() {
-		boolean enabled = cbChangePassword.getValue();
-		tfNewPassword1.setEnabled(enabled);
-		tfNewPassword1.setRequired(enabled);
-		tfNewPassword2.setEnabled(enabled);
-		tfNewPassword2.setRequired(enabled);
-	}
+    /**
+     * Vytvori panel pro zadavani skupiny polozek
+     */
+    private Panel createComponentsPanel(String caption, Component... components) {
+        Panel pn = new Panel(caption, new FormLayout(components));
+        pn.setStyleName(Runo.PANEL_LIGHT);
+        pn.addStyleName("medium");
+        return pn;
+    }
 
-	/** Vytvori panel pro zadavani skupiny polozek */
-	private Panel createComponentsPanel(String caption, Component... components) {
-		Panel pn = new Panel(caption, new FormLayout(components));
-		pn.setStyleName(Runo.PANEL_LIGHT);
-		pn.addStyleName("medium");
-		return pn;
-	}
+    /**
+     * Textove pole pro zadavani uzivatelskeho jmena
+     */
+    private TextField tfName;
 
-	/** Textove pole pro zadavani uzivatelskeho jmena */
-	private TextField tfName;
+    /**
+     * Prepinac pro povoleni zmeny hesla
+     */
+    private CheckBox cbChangePassword;
 
-	/** Prepinac pro povoleni zmeny hesla */
-	private CheckBox cbChangePassword;
+    /**
+     * Textove pole pro zadani hesla
+     */
+    private PasswordField tfNewPassword1;
 
-	/** Textove pole pro zadani hesla */
-	private PasswordField tfNewPassword1;
+    /**
+     * Textove pole pro overeni zadaneho hesla
+     */
+    private PasswordField tfNewPassword2;
 
-	/** Textove pole pro overeni zadaneho hesla */
-	private PasswordField tfNewPassword2;
+    /**
+     * Seznam pro vyber role
+     */
+    private NativeSelect nsRole;
 
-	/** Seznam pro vyber role */
-	private NativeSelect nsRole;
-
-	/** Seznam pro vyber asociovaneho uzivatele */
-	private NativeSelect nsClubMember;
+    /**
+     * Seznam pro vyber asociovaneho uzivatele
+     */
+    private NativeSelect nsClubMember;
 
 }
