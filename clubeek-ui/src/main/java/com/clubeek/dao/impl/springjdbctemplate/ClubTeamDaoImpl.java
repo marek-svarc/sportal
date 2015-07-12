@@ -21,23 +21,36 @@ public class ClubTeamDaoImpl extends DaoImpl implements ClubTeamDao {
 
     @Override
     public void updateRow(ClubTeam object) {
-        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("update t_club_team set "
-                + "name = :name, "
-                + "active = :active, "
-                + "sorting = :sorting, "
-                + "category_id = :categoryId "
-                + "where id = :id"
-                , source);        
+        template.getJdbcOperations().update("update t_club_team set "
+                + "name = ?, "
+                + "sport_type = ?, "
+                + "active = ?, "
+                + "sorting = ?, "
+                + "category_id = ? "
+                + "where id = ?"
+                , new Object[] {
+                        object.getName(),
+                        object.getSportType().ordinal(),
+                        object.getActive(),
+                        object.getSorting(),
+                        object.getCategoryId(),
+                        object.getId()
+                });        
     }
 
     @Override
     public void insertRow(ClubTeam object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("insert into t_club_team "
-                + "( name,  active,  sorting,  category_id, club_id) values "
-                + "(:name, :active, :sorting, :categoryId,  :clubId)"
-                , source);
+        template.getJdbcOperations().update("insert into t_club_team "
+                + "( name, sport_type,  active,  sorting,  category_id, club_id) values (?, ?, ?, ?, ?, ?)"
+                , new Object[] {
+                        object.getName(),
+                        object.getSportType().ordinal(),
+                        object.getActive(),
+                        object.getSorting(),
+                        object.getCategoryId(),
+                        object.getClubId()
+                });   
     }
 
     @Override

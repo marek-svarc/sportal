@@ -17,6 +17,7 @@ import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamTrainingDao;
+import com.clubeek.enums.SportType;
 import com.clubeek.model.TeamTraining;
 
 /**
@@ -98,7 +99,7 @@ public class TeamTrainingDaoImplTest {
     
     public void insertTeamTraining(TeamTrainingDao teamTrainingDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubDao clubDao, Date start, Date end, String place, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, clubDao, "My team");
+        clubTeamTest.insertClubTeam(clubTeamDao, clubDao, "My team", SportType.UNKNOWN);
         
         TeamTraining tt = new TeamTraining();
         tt.setStart(start);

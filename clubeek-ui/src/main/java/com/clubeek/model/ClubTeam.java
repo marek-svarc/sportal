@@ -4,6 +4,7 @@ package com.clubeek.model;
 import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.impl.ownframework.CategoryDaoImpl;
 import com.clubeek.dao.impl.ownframework.rep.RepCategory;
+import com.clubeek.enums.SportType;
 
 public class ClubTeam extends Model {
     // TODO vitfo, created on 11. 6. 2015 
@@ -13,6 +14,9 @@ public class ClubTeam extends Model {
 
 	/** nazev tymu */
 	private String name = ""; //$NON-NLS-1$
+	
+	/** Type of sport */
+	private SportType sportType;
 
 	/** priznak zda je tym aktivni */
 	private Boolean active = true;
@@ -42,8 +46,16 @@ public class ClubTeam extends Model {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public SportType getSportType() {
+        return sportType;
+    }
 
-	/** Vraci priznak zda je tym aktivni */
+    public void setSportType(SportType sportType) {
+        this.sportType = sportType;
+    }
+
+    /** Vraci priznak zda je tym aktivni */
 	public Boolean getActive() {
 		return active;
 	}

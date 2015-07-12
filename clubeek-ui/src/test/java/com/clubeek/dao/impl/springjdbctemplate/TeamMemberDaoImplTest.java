@@ -14,6 +14,7 @@ import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamMemberDao;
+import com.clubeek.enums.SportType;
 import com.clubeek.model.TeamMember;
 
 /**
@@ -80,7 +81,7 @@ public class TeamMemberDaoImplTest {
         clubMemberTest.insertClubMembers(clubMemberDao, clubDao, 1);
         int idClubMember = clubMemberDao.getAllClubMembers().get(0).getId();
         
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", true, 10);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", SportType.BASEBALL, true, 10);
         int idClubTeam = clubTeamDao.getAllClubTeams().get(0).getId();
         
         TeamMember tm = new TeamMember();

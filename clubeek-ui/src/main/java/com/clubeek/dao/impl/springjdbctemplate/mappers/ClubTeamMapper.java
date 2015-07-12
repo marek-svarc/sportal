@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.clubeek.enums.SportType;
 import com.clubeek.model.ClubTeam;
 
 /**
@@ -19,6 +20,7 @@ public class ClubTeamMapper implements RowMapper<ClubTeam> {
         ClubTeam ct = new ClubTeam();
         
         ct.setId(rs.getInt("id"));
+        ct.setSportType(SportType.values()[rs.getInt("sport_type")]);
         ct.setActive(rs.getBoolean("active"));
         ct.setCategoryId(rs.getInt("category_id"));
         ct.setClubId(rs.getInt("club_id"));

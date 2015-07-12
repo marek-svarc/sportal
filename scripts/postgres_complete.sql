@@ -100,6 +100,7 @@ CREATE TABLE T_CLUB_TEAM
 (
     id			serial,
     name		varchar(100)		not null,
+    sport_type		smallint		not null,
     active		boolean,
     sorting		integer 		not null  default 0,
     category_id		integer	        	default null,
@@ -407,11 +408,11 @@ insert into T_CATEGORY (description, active) values
 	('Oddíly [kategorie]', true),
 	('Pokus', false);
 
-insert into T_CLUB_TEAM (name, active, category_id, club_id) values
-	('Senioři [týmy]', true, 3, 1),
-	('Mládež [týmy]', true, 3, 1),
-	('Dospělí [týmy]', true, 3, 1),
-	('Pokus [týmy]', false, null, 1);
+insert into T_CLUB_TEAM (name, sport_type, active, category_id, club_id) values
+	('Senioři [týmy]', 1, true, 3, 1),
+	('Mládež [týmy]', 1, true, 3, 1),
+	('Dospělí [týmy]', 1, true, 3, 1),
+	('Pokus [týmy]', 1, false, null, 1);
 
 insert into t_team_training (start, finish, place, comment, club_team_id) values 
 	(to_timestamp('2015-9-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),

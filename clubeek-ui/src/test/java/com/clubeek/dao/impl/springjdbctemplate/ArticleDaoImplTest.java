@@ -21,6 +21,7 @@ import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.enums.LocationType;
 import com.clubeek.enums.OwnerType;
+import com.clubeek.enums.SportType;
 import com.clubeek.model.Article;
 import com.clubeek.model.DiscussionPost;
 
@@ -125,8 +126,8 @@ public class ArticleDaoImplTest {
         
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
         clubTeamTest.deleteAll(clubTeamDao);
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", true, 5);
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, "My other club team", true, 5);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", SportType.BASEBALL, true, 5);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, "My other club team", SportType.BASEBALL, true, 5);
         int clubTeamId = clubTeamDao.getActiveClubTeams().get(0).getId();
         int clubTeamIdOther = clubTeamDao.getActiveClubTeams().get(1).getId();
         

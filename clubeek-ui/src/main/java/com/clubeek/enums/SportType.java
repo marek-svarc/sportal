@@ -6,10 +6,17 @@ package com.clubeek.enums;
  * @author Marek Svarc
  */
 public enum SportType {
-
-    UNKNOWN("neznámý"), FOOTBALL("fotbal"), HOCKEY("hokej"), BASKETBALL("basketbal"),
-    VOLLEYBALL("volejbal"), BEACH_VOLLEYBALL("plážový volejbal"), FLOORBALL("florbal"),
-    BASEBALL("baseball"), SOFTBALL("softball"), TENNIS("tenis");
+                                            // ordinal number
+    UNKNOWN("neznámý"),                     // 0 
+    FOOTBALL("fotbal"),                     // 1
+    HOCKEY("hokej"),                        // 2
+    BASKETBALL("basketbal"),                // 3
+    VOLLEYBALL("volejbal"),                 // 4
+    BEACH_VOLLEYBALL("plážový volejbal"),   // 5
+    FLOORBALL("florbal"),                   // 6
+    BASEBALL("baseball"),                   // 7
+    SOFTBALL("softball"),                   // 8
+    TENNIS("tenis");                        // 9
 
     private final String text;
 

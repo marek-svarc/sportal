@@ -18,6 +18,7 @@ import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamMatchDao;
+import com.clubeek.enums.SportType;
 import com.clubeek.model.TeamMatch;
 
 /**
@@ -98,7 +99,7 @@ public class TeamMatchDaoImplTest {
 
     public void insertTeamMatch(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubRivalDao clubRivalDao, Date start, int scorePos, int scoreNeg, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", true, 9);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", SportType.BASEBALL, true, 9);
         int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
         
         ClubRivalDaoImplTest clubRivalTest = new ClubRivalDaoImplTest();
@@ -117,7 +118,7 @@ public class TeamMatchDaoImplTest {
     
     public void insertTeamMatch(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, Date start, int scorePos, int scoreNeg, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, clubDao, "My club team");
+        clubTeamTest.insertClubTeam(clubTeamDao, clubDao, "My club team", SportType.FOOTBALL);
         int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
         
         TeamMatch t = new TeamMatch();

@@ -16,6 +16,7 @@ import com.clubeek.dao.CategoryDao;
 import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.enums.LicenceType;
+import com.clubeek.enums.SportType;
 import com.clubeek.model.ClubTeam;
 
 /**
@@ -48,11 +49,15 @@ public class ClubTeamDaoImplTest {
     public void test() {
         assertTrue(clubTeamDao.getAllClubTeams().size() == 0);
         
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", true, 10);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", SportType.FLOORBALL, true, 10);
         assertTrue(clubTeamDao.getAllClubTeams().size() == 1);
+        ClubTeam ct = clubTeamDao.getAllClubTeams().get(0);
+        assertTrue(ct.getActive());
+        assertTrue(ct.getName().equals("My club team"));
+        assertTrue(ct.getSportType().equals(SportType.FLOORBALL));
         
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", true, 10);
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", false, 10);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", SportType.BEACH_VOLLEYBALL, true, 10);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", SportType.BEACH_VOLLEYBALL, false, 10);
         assertTrue(clubTeamDao.getAllClubTeams().size() == 3);
         assertTrue(clubTeamDao.getActiveClubTeams().size() == 2);
         
@@ -81,17 +86,17 @@ public class ClubTeamDaoImplTest {
 
     @Test
     public void testGetActiveAndAllClubTeams() {
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 1", true, 7);
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 2", true, 7);
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 3", false, 7);
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 4", false, 9);
-        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 5", true, 11);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 1", SportType.BASKETBALL, true, 7);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 2", SportType.BASKETBALL, true, 7);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 3", SportType.BASKETBALL, false, 7);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 4", SportType.BASKETBALL, false, 9);
+        insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "Club team 5", SportType.BASKETBALL, true, 11);
         
         assertTrue(clubTeamDao.getActiveClubTeams().size() == 3);
         assertTrue(clubTeamDao.getAllClubTeams().size() == 5);
     }
 
-    public void insertClubTeam(ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubDao clubDao, String name, boolean active, int sorting) {
+    public void insertClubTeam(ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubDao clubDao, String name, SportType sportType, boolean active, int sorting) {
         ClubDaoImplTest clubTest = new ClubDaoImplTest();
         clubTest.insertClub(clubDao, LicenceType.FREE, "Title", "Comment", null);
         int clubId = clubDao.getAllClubs().get(0).getId();
@@ -100,6 +105,7 @@ public class ClubTeamDaoImplTest {
         ct.setClubId(clubId);
         ct.setActive(active);
         ct.setName(name);
+        ct.setSportType(sportType);
         ct.setSorting(sorting);
         
         int categoryId = categoryDao.getAllCategories().get(0).getId();
@@ -107,7 +113,7 @@ public class ClubTeamDaoImplTest {
         clubTeamDao.insertRow(ct);
     }
     
-    public void insertClubTeam(ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubDao clubDao, boolean insertCategory, String name, boolean active, int sorting) {
+    public void insertClubTeam(ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubDao clubDao, boolean insertCategory, String name, SportType sportType, boolean active, int sorting) {
         if (clubDao.getAllClubs().size() == 0) {
             ClubDaoImplTest clubTest = new ClubDaoImplTest();
             clubTest.insertClub(clubDao, LicenceType.FREE, "Title", "Comment", null);
@@ -118,6 +124,7 @@ public class ClubTeamDaoImplTest {
         ct.setClubId(clubId);
         ct.setActive(active);
         ct.setName(name);
+        ct.setSportType(sportType);
         ct.setSorting(sorting);
         
         if (insertCategory) {
@@ -129,7 +136,7 @@ public class ClubTeamDaoImplTest {
         clubTeamDao.insertRow(ct);
     }
     
-    public void insertClubTeam(ClubTeamDao clubTeamDao, ClubDao clubDao, String name) {
+    public void insertClubTeam(ClubTeamDao clubTeamDao, ClubDao clubDao, String name, SportType sportType) {
         if (clubDao.getAllClubs().size() == 0) {
             ClubDaoImplTest clubTest = new ClubDaoImplTest();
             clubTest.insertClub(clubDao, LicenceType.FREE, "Title", "Comment", null);
@@ -138,6 +145,7 @@ public class ClubTeamDaoImplTest {
         
         ClubTeam ct = new ClubTeam();
         ct.setName(name);
+        ct.setSportType(sportType);
         ct.setClubId(clubId);
         clubTeamDao.insertRow(ct);
     }
@@ -147,7 +155,8 @@ public class ClubTeamDaoImplTest {
             insertClubTeam(
                     clubTeamDao, 
                     clubDao,
-                    UUID.randomUUID().toString());
+                    UUID.randomUUID().toString(),
+                    SportType.VOLLEYBALL);
         }
     }
     
