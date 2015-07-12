@@ -4,7 +4,10 @@ import com.clubeek.model.Messages;
 
 public enum OwnerType {
 
-    CLUB, CATEGORY, TEAM, CLUB_ALL;
+    CLUB, 
+    CATEGORY, 
+    TEAM, 
+    CLUB_ALL;
 
     @Override
     public String toString() {

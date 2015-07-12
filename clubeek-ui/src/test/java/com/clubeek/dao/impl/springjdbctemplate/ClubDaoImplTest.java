@@ -34,7 +34,7 @@ public class ClubDaoImplTest {
     
     @Before
     public void deleteAllClubs() {
-        deleteAll(clubDao);
+        deleteAll(clubDao, clubTeamDao, clubMemberDao);
     }
     
     /**
@@ -82,7 +82,7 @@ public class ClubDaoImplTest {
         clubDao.addClub(cs);
     }
     
-    public void deleteAll(ClubDao clubDao) {
+    public void deleteAll(ClubDao clubDao, ClubTeamDao clubTeamDao, ClubMemberDao clubMemberDao) {
         // delete all rows from tables that may have reference (foreign key) to this table.
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
         clubTeamTest.deleteAll(clubTeamDao);

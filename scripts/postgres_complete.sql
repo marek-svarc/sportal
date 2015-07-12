@@ -2,7 +2,6 @@
 -- Dropping tables if exist --
 ------------------------------
 
-drop table if exists T_CLUB;
 drop table if exists T_CONTACT;
 drop table if exists T_EVENT_APPLICANT;
 drop table if exists T_APPLICANT_FOR_TEAM_TRAINING;
@@ -14,6 +13,7 @@ drop table if exists T_ARTICLE_DISCUSSION_POST;
 drop table if exists T_EVENT_DISCUSSION_POST;
 drop table if exists T_TEAM_TRAINING_DISCUSSION_POST;
 drop table if exists T_TEAM_MATCH_DISCUSSION_POST;
+drop table if exists T_CLUB_URL;
 
 drop view if exists club_member_by_team;
 
@@ -26,6 +26,7 @@ drop table if exists T_CLUB_RIVAL;
 drop table if exists T_ARTICLE;
 drop table if exists T_CLUB_TEAM;
 drop table if exists T_CATEGORY;
+drop table if exists T_CLUB;
 
 
 ---------------------
@@ -34,12 +35,23 @@ drop table if exists T_CATEGORY;
 
 CREATE TABLE T_CLUB
 (
-    id 		serial,
-    title	varchar(200),
-    comment	varchar(200),
-    logo	bytea,
+    id 			serial,
+    licence_type	smallint not null,	
+    title		varchar(200),
+    comment		varchar(200),
+    logo		bytea,
 
     primary key (id)
+);
+
+CREATE TABLE T_CLUB_URL
+(
+    id			serial,
+    url 		character varying(100) not null,
+    club_id		integer not null,
+
+    primary key (id),
+    foreign key (club_id) references T_CLUB (id)
 );
 
 CREATE TABLE T_CATEGORY
@@ -64,8 +76,10 @@ CREATE TABLE T_CLUB_MEMBER
     city		varchar(100),
     code		varchar(20),
     photo		bytea,
+    club_id		integer			not null,
 
-    primary key (id)
+    primary key (id),
+    foreign key (club_id) references T_CLUB (id)
 );
 
 CREATE TABLE T_CLUB_RIVAL
@@ -89,10 +103,12 @@ CREATE TABLE T_CLUB_TEAM
     active		boolean,
     sorting		integer 		not null  default 0,
     category_id		integer	        	default null,
+    club_id		integer			not null,
 
     primary key (id),
     foreign key (category_id) references T_CATEGORY (id)
-        ON DELETE SET NULL
+        ON DELETE SET NULL,
+    foreign key (club_id) references T_CLUB (id)
 );
 
 CREATE TABLE T_CONTACT
@@ -100,7 +116,7 @@ CREATE TABLE T_CONTACT
     id 			serial,
     contact		varchar(100)		not null,
     description		varchar(100),
-    contact_type		smallint		not null,
+    contact_type	smallint		not null,
     notification_type	smallint		not null,
     club_member_id	integer			not null,
 
@@ -365,10 +381,15 @@ FROM    T_TEAM_MEMBER tm
 -- Test data --
 ---------------------
 --------------------------------------------------------------------------------
-INSERT INTO T_CLUB (id, title, comment) VALUES
-	(1, 'FC Chvojkovice Brod', 'Zřejmě dobrý oddíl ...'),
-	(2, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
+INSERT INTO T_CLUB (licence_type, title, comment) VALUES
+	(0, 'FC Chvojkovice Brod', 'Zřejmě dobrý oddíl ...'),
+	(1, 'Testovací superklub', 'Komentář testovacího klubu, který vyhraje superpohár.');
 
+INSERT INTO T_CLUB_URL (url, club_id) VALUES 
+	('fc-chojkovice-brod', 1),
+	('fcchvojkovice', 1),
+	('chvojkovicebrod', 1),
+	('testklub', 2);
 
 -- user name, password (the same as user name)
 -- administrator is the same as admin (admin is shorter to write)
@@ -386,11 +407,11 @@ insert into T_CATEGORY (description, active) values
 	('Oddíly [kategorie]', true),
 	('Pokus', false);
 
-insert into T_CLUB_TEAM (name, active, category_id) values
-	('Senioři [týmy]', true, 3),
-	('Mládež [týmy]', true, 3),
-	('Dospělí [týmy]', true, 3),
-	('Pokus [týmy]', false, null);
+insert into T_CLUB_TEAM (name, active, category_id, club_id) values
+	('Senioři [týmy]', true, 3, 1),
+	('Mládež [týmy]', true, 3, 1),
+	('Dospělí [týmy]', true, 3, 1),
+	('Pokus [týmy]', false, null, 1);
 
 insert into t_team_training (start, finish, place, comment, club_team_id) values 
 	(to_timestamp('2015-9-7 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-9-7 17:00', 'YYYY-MM-DD HH24:MI'), 'Horní hřiště', 'Trénink povede Standa.', 2),
@@ -460,107 +481,107 @@ insert into t_team_training (start, finish, place, comment, club_team_id) values
 	(to_timestamp('2015-1-30 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-1-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Dolní hřiště', 'V případě špatného počasí se půjde do tělocvičny.', 3),
 	(to_timestamp('2015-6-18 15:30', 'YYYY-MM-DD HH24:MI'), to_timestamp('2015-6-18 17:00', 'YYYY-MM-DD HH24:MI'), 'Tělocvična', 'V případě špatného počasí se půjde do tělocvičny.', 3);
 
-insert into T_CLUB_MEMBER (name, surname, birthdate, street, city, code) values
-	('Kryštof', 'Staněk', null, null, null, null),
-	('Marian', 'Pavlík', to_date('1968-04-04', 'YYYY-MM-DD'), 'Dr. Slabihoudka 988', 'Mladá Boleslav', '29301'),
-	('Kristýna', 'Sedláčková', to_date('1953-10-04', 'YYYY-MM-DD'), 'Wattova 172', 'Cheb', '35002'),
-	('Dana', 'Kolářová', to_date('2002-11-08', 'YYYY-MM-DD'), 'Nálepkovo náměstí 573', 'Jablonec nad Nisou', '46601'),
-	('Božena', 'Jandová', to_date('1922-10-26', 'YYYY-MM-DD'), 'Žofínská 0', 'Znojmo', '67181'),
-	('Václav', 'Vávra', to_date('2004-11-07', 'YYYY-MM-DD'), 'Hlubinská 184', 'Olomouc', '77200'),
-	('Patrik', 'Hájek', to_date('1975-06-02', 'YYYY-MM-DD'), 'Porážková 331', 'Karlovy Vary', '36001'),
-	('Jitka', 'Pokorná', to_date('1941-06-20', 'YYYY-MM-DD'), 'Horní 572', 'Valašské Meziříčí', '75701'),
-	('Ludmila', 'Králová', to_date('1938-05-18', 'YYYY-MM-DD'), 'Františka a Anny Ryšových 18', 'Český Těšín', '73701'),
-	('Martina', 'Kadlecová', to_date('1975-03-16', 'YYYY-MM-DD'), 'nám. Boženy Němcové 534', 'České Budějovice', '37001'),
-	('Marcela', 'Poláková', to_date('1940-04-21', 'YYYY-MM-DD'), 'Žerotínova 998', 'Liberec', '46008'),
-	('Ivan', 'Sedláček', null, 'Lechowiczova 761', 'Pardubice', '53012'),
-	('Eliška', 'Šimková', to_date('1920-07-20', 'YYYY-MM-DD'), '1. května 676', 'Ostrava', '70900'),
-	('Otakar', 'Doležal', to_date('1981-06-10', 'YYYY-MM-DD'), null, null, null),
-	('Jarmila', 'Kučerová', null, 'Pod Tratí 750', 'Kladno', '27201'),
-	('Radovan', 'Staněk', to_date('1972-12-30', 'YYYY-MM-DD'), 'Dolní 111', 'Jihlava', '58601'),
-	('Vlasta', 'Mašková', to_date('1954-09-28', 'YYYY-MM-DD'), 'Edisonova 767', 'Valašské Meziříčí', '75701'),
-	('Richard', 'Pavlík', null, 'Čapkova 264', 'Pardubice', '53012'),
-	('Alexandr', 'Doležal', to_date('1930-10-25', 'YYYY-MM-DD'), 'Soukenická 448', 'Havířov', '73601'),
-	('Jaroslava', 'Musilová', to_date('1944-07-04', 'YYYY-MM-DD'), 'Hornopolní 477', 'Hradec Králové', '50008'),
-	('Zuzana', 'Malá', to_date('1978-03-06', 'YYYY-MM-DD'), 'Výškovická 827', 'Znojmo', '67181'),
-	('Ludmila', 'Dostálová', to_date('1959-03-28', 'YYYY-MM-DD'), 'Hollarova 509', 'Písek', '39701'),
-	('Petra', 'Fialová', to_date('2013-08-06', 'YYYY-MM-DD'), 'Palackého 511', 'Karlovy Vary', '36001'),
-	('Eduard', 'Dostál', null, 'Opavská 956', 'Příbram', '26101'),
-	('Eliška', 'Benešová', to_date('1918-06-10', 'YYYY-MM-DD'), '17. listopadu 488', 'Český Těšín', '73701'),
-	('Vratislav', 'Bláha', null, 'Harantova 629', 'Karviná', '73506'),
-	('Dana', 'Ševčíková', to_date('1970-04-06', 'YYYY-MM-DD'), 'Husovo náměstí 73', 'Mladá Boleslav', '29301'),
-	('Jaroslava', 'Machová', to_date('2000-12-19', 'YYYY-MM-DD'), 'Dr. Slabihoudka 119', 'Nový Jičín', '74101'),
-	('Martina', 'Procházková', to_date('1957-08-22', 'YYYY-MM-DD'), 'nám. Dr. E. Beneše 257', 'Třinec', '73961'),
-	('Marta', 'Ševčíková', to_date('1944-03-15', 'YYYY-MM-DD'), 'Jurečkova 747', 'Praha', '11800'),
-	('Andrea', 'Vávrová', to_date('1977-03-18', 'YYYY-MM-DD'), 'Zkrácená 525', 'Teplice', '41501'),
-	('Stanislav', 'Kučera', to_date('1921-04-17', 'YYYY-MM-DD'), 'Záblatská 210', 'Kolín', '28123'),
-	('Lenka', 'Svobodová', null, null, null, null),
-	('Božena', 'Sýkorová', to_date('2012-04-25', 'YYYY-MM-DD'), null, null, null),
-	('Alena', 'Jelínková', to_date('1971-10-25', 'YYYY-MM-DD'), 'Koněvova 972', 'Opava', '74601'),
-	('Dalibor', 'Mareš', to_date('1988-11-06', 'YYYY-MM-DD'), 'Bieblova 200', 'Jihlava', '58601'),
-	('Barbora', 'Růžičková', to_date('1942-07-15', 'YYYY-MM-DD'), null, null, null),
-	('Aleš', 'Marek', to_date('1976-02-20', 'YYYY-MM-DD'), 'Radvanická 394', 'Tábor', '39003'),
-	('Markéta', 'Hrubá', to_date('1942-01-29', 'YYYY-MM-DD'), 'Španihelova 632', 'Frýdek-Místek', '73801'),
-	('Roman', 'Kříž', to_date('1969-02-21', 'YYYY-MM-DD'), 'K Myslivně 964', 'Vsetín', '75501'),
-	('Libuše', 'Kopecká', null, 'Pod Landekem 657', 'Ústí nad Labem', '40011'),
-	('Petra', 'Ševčíková', to_date('1957-08-10', 'YYYY-MM-DD'), null, null, null),
-	('Hana', 'Staňková', to_date('1972-05-01', 'YYYY-MM-DD'), 'Balcarova 999', 'Litvínov', '43601'),
-	('Lucie', 'Kopecká', to_date('1937-01-01', 'YYYY-MM-DD'), 'Muzejní 186', 'Litvínov', '43601'),
-	('Radovan', 'Bureš', to_date('1955-01-06', 'YYYY-MM-DD'), 'Heřmanická 236', 'Přerov', '75003'),
-	('Jindřich', 'Polák', null, 'Provaznická 640', 'Most', '43401'),
-	('Tereza', 'Nguyen', to_date('1920-06-07', 'YYYY-MM-DD'), 'Gregorova 167', 'Uherské Hradiště', '68606'),
-	('Jozef', 'Novotný', null, 'Umělecká 586', 'Nový Jičín', '74101'),
-	('Veronika', 'Tichá', to_date('1922-06-10', 'YYYY-MM-DD'), 'Bartovická 312', 'Plzeň', '31700'),
-	('Veronika', 'Marková', to_date('1996-02-20', 'YYYY-MM-DD'), 'U Koupaliště 658', 'Valašské Meziříčí', '75701'),
-	('Marta', 'Kučerová', null, 'Fišerova 315', 'Frýdek-Místek', '73801'),
-	('Luboš', 'Sýkora', to_date('2005-06-25', 'YYYY-MM-DD'), 'Lechowiczova 307', 'Prostějov', '79604'),
-	('Radovan', 'Kříž', to_date('1991-03-24', 'YYYY-MM-DD'), null, null, null),
-	('Radek', 'Bartoš', to_date('1973-08-22', 'YYYY-MM-DD'), 'Horova 285', 'Vsetín', '75501'),
-	('Martin', 'Nguyen', to_date('1932-09-25', 'YYYY-MM-DD'), null, null, null),
-	('Vlastimil', 'Kovář', to_date('1971-02-26', 'YYYY-MM-DD'), null, null, null),
-	('Božena', 'Svobodová', to_date('1988-07-24', 'YYYY-MM-DD'), 'Fryštátská 803', 'Mladá Boleslav', '29301'),
-	('Ján', 'Horák', null, 'Karla Svobody 731', 'Krnov', '79401'),
-	('Eduard', 'Čermák', to_date('1924-07-12', 'YYYY-MM-DD'), 'Mongolská 179', 'Brno', '63800'),
-	('Jindřich', 'Hrubý', to_date('2011-05-29', 'YYYY-MM-DD'), 'Slavíčkova 869', 'Hradec Králové', '50002'),
-	('Andrea', 'Pavlíková', null, 'Dr. Slabihoudka 263', 'Frýdek-Místek', '73801'),
-	('Miloš', 'Sedláček', to_date('1988-03-21', 'YYYY-MM-DD'), 'Zelená 3', 'Brno', '60200'),
-	('Anna', 'Bartošová', to_date('2010-11-12', 'YYYY-MM-DD'), 'Dostojevského 383', 'Liberec', '46008'),
-	('Eliška', 'Nguyenová', to_date('1922-12-27', 'YYYY-MM-DD'), 'Michalské náměstí 709', 'Opava', '74601'),
-	('Roman', 'Štěpánek', to_date('1958-07-26', 'YYYY-MM-DD'), 'Záblatská 831', 'Krnov', '79401'),
-	('Lenka', 'Kovářová', to_date('1940-10-04', 'YYYY-MM-DD'), 'Vrbka 3', 'Frýdek-Místek', '73801'),
-	('Miroslava', 'Vlčková', to_date('1990-08-29', 'YYYY-MM-DD'), 'Aleje 529', 'Krnov', '79401'),
-	('Lenka', 'Veselá', null, 'Gregorova 545', 'Karlovy Vary', '36001'),
-	('Denis', 'Staněk', null, null, null, null),
-	('Lucie', 'Jelínková', to_date('2015-06-28', 'YYYY-MM-DD'), 'Karvinská 740', 'Znojmo', '66902'),
-	('Vlasta', 'Lišková', to_date('1993-10-07', 'YYYY-MM-DD'), 'Pustkovecká 888', 'Příbram', '26101'),
-	('Tadeáš', 'Pospíšil', to_date('1928-09-19', 'YYYY-MM-DD'), null, null, null),
-	('Jarmila', 'Šťastná', to_date('1989-04-25', 'YYYY-MM-DD'), 'Janovská 161', 'Tábor', '39003'),
-	('Radek', 'Novák', to_date('1969-07-03', 'YYYY-MM-DD'), 'Plechanovova 927', 'Frýdek-Místek', '73801'),
-	('Marcela', 'Moravcová', to_date('1924-12-19', 'YYYY-MM-DD'), 'Stodolní 730', 'Ostrava', '70200'),
-	('Michael', 'Čech', null, 'Husovo náměstí 789', 'Frýdek-Místek', '73801'),
-	('Marta', 'Matoušková', null, null, null, null),
-	('Vlasta', 'Sýkorová', to_date('2012-01-07', 'YYYY-MM-DD'), 'Kubínova 48', 'Ostrava', '71800'),
-	('Matyáš', 'Kadlec', to_date('1997-10-06', 'YYYY-MM-DD'), 'Mojmírovců 781', 'Mladá Boleslav', '29301'),
-	('Jaroslava', 'Černá', to_date('1926-04-15', 'YYYY-MM-DD'), 'Milíčova 807', 'Třebíč', '67401'),
-	('Ludmila', 'Ševčíková', to_date('1958-03-29', 'YYYY-MM-DD'), 'Husovo náměstí 675', 'Český Těšín', '73701'),
-	('Matěj', 'Konečný', to_date('1951-09-15', 'YYYY-MM-DD'), 'Halasova 291', 'Tábor', '39002'),
-	('Vratislav', 'Havlíček', to_date('1966-11-06', 'YYYY-MM-DD'), null, null, null),
-	('Kryštof', 'Šťastný', to_date('1976-06-21', 'YYYY-MM-DD'), 'Přemyslovců 307', 'Sokolov', '35601'),
-	('Břetislav', 'Procházka', to_date('1981-08-28', 'YYYY-MM-DD'), 'K Myslivně 384', 'Šumperk', '78701'),
-	('Michal', 'Malý', to_date('2004-02-24', 'YYYY-MM-DD'), 'Stanislavského 442', 'České Budějovice', '37008'),
-	('Pavla', 'Musilová', null, 'Slavíkova 114', 'Litoměřice', '41201'),
-	('Ivo', 'Liška', to_date('1962-05-07', 'YYYY-MM-DD'), 'Muzejní 839', 'Orlová', '73511'),
-	('Monika', 'Čechová', null, 'Janovská 623', 'Přerov', '75003'),
-	('Zuzana', 'Veselá', to_date('1966-01-01', 'YYYY-MM-DD'), 'Šenovská 588', 'Český Těšín', '73701'),
-	('Zdeňka', 'Pospíšilová', to_date('1985-06-26', 'YYYY-MM-DD'), 'Rudná 357', 'Nový Jičín', '74101'),
-	('Jaromír', 'Tichý', to_date('1958-07-10', 'YYYY-MM-DD'), 'Bráfova 301', 'Liberec', '46008'),
-	('Miloslav', 'Horák', null, 'Soukenická 789', 'Karlovy Vary', '36001'),
-	('Kryštof', 'Čech', null, null, null, null),
-	('Martina', 'Fialová', to_date('1995-10-10', 'YYYY-MM-DD'), null, null, null),
-	('Marcela', 'Staňková', to_date('1986-04-30', 'YYYY-MM-DD'), 'Dobrovského 414', 'Most', '43401'),
-	('René', 'Bureš', to_date('1980-09-24', 'YYYY-MM-DD'), 'Na Karolíně 871', 'Olomouc', '77900'),
-	('Viktor', 'Hrubý', to_date('1996-07-18', 'YYYY-MM-DD'), 'Cingrova 12', 'Ústí nad Labem', '40011'),
-	('Pavla', 'Pavlíková', to_date('1984-07-29', 'YYYY-MM-DD'), 'Vrbka 365', 'Karviná', '73503'),
-	('Luboš', 'Růžička', null, 'Rychvaldská 259', 'Mladá Boleslav', '29301');
+insert into T_CLUB_MEMBER (club_id, name, surname, birthdate, street, city, code) values
+	(1, 'Kryštof', 'Staněk', null, null, null, null),
+	(1, 'Marian', 'Pavlík', to_date('1968-04-04', 'YYYY-MM-DD'), 'Dr. Slabihoudka 988', 'Mladá Boleslav', '29301'),
+	(1, 'Kristýna', 'Sedláčková', to_date('1953-10-04', 'YYYY-MM-DD'), 'Wattova 172', 'Cheb', '35002'),
+	(1, 'Dana', 'Kolářová', to_date('2002-11-08', 'YYYY-MM-DD'), 'Nálepkovo náměstí 573', 'Jablonec nad Nisou', '46601'),
+	(1, 'Božena', 'Jandová', to_date('1922-10-26', 'YYYY-MM-DD'), 'Žofínská 0', 'Znojmo', '67181'),
+	(1, 'Václav', 'Vávra', to_date('2004-11-07', 'YYYY-MM-DD'), 'Hlubinská 184', 'Olomouc', '77200'),
+	(1, 'Patrik', 'Hájek', to_date('1975-06-02', 'YYYY-MM-DD'), 'Porážková 331', 'Karlovy Vary', '36001'),
+	(1, 'Jitka', 'Pokorná', to_date('1941-06-20', 'YYYY-MM-DD'), 'Horní 572', 'Valašské Meziříčí', '75701'),
+	(1, 'Ludmila', 'Králová', to_date('1938-05-18', 'YYYY-MM-DD'), 'Františka a Anny Ryšových 18', 'Český Těšín', '73701'),
+	(1, 'Martina', 'Kadlecová', to_date('1975-03-16', 'YYYY-MM-DD'), 'nám. Boženy Němcové 534', 'České Budějovice', '37001'),
+	(1, 'Marcela', 'Poláková', to_date('1940-04-21', 'YYYY-MM-DD'), 'Žerotínova 998', 'Liberec', '46008'),
+	(1, 'Ivan', 'Sedláček', null, 'Lechowiczova 761', 'Pardubice', '53012'),
+	(1, 'Eliška', 'Šimková', to_date('1920-07-20', 'YYYY-MM-DD'), '1. května 676', 'Ostrava', '70900'),
+	(1, 'Otakar', 'Doležal', to_date('1981-06-10', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Jarmila', 'Kučerová', null, 'Pod Tratí 750', 'Kladno', '27201'),
+	(1, 'Radovan', 'Staněk', to_date('1972-12-30', 'YYYY-MM-DD'), 'Dolní 111', 'Jihlava', '58601'),
+	(1, 'Vlasta', 'Mašková', to_date('1954-09-28', 'YYYY-MM-DD'), 'Edisonova 767', 'Valašské Meziříčí', '75701'),
+	(1, 'Richard', 'Pavlík', null, 'Čapkova 264', 'Pardubice', '53012'),
+	(1, 'Alexandr', 'Doležal', to_date('1930-10-25', 'YYYY-MM-DD'), 'Soukenická 448', 'Havířov', '73601'),
+	(1, 'Jaroslava', 'Musilová', to_date('1944-07-04', 'YYYY-MM-DD'), 'Hornopolní 477', 'Hradec Králové', '50008'),
+	(1, 'Zuzana', 'Malá', to_date('1978-03-06', 'YYYY-MM-DD'), 'Výškovická 827', 'Znojmo', '67181'),
+	(1, 'Ludmila', 'Dostálová', to_date('1959-03-28', 'YYYY-MM-DD'), 'Hollarova 509', 'Písek', '39701'),
+	(1, 'Petra', 'Fialová', to_date('2013-08-06', 'YYYY-MM-DD'), 'Palackého 511', 'Karlovy Vary', '36001'),
+	(1, 'Eduard', 'Dostál', null, 'Opavská 956', 'Příbram', '26101'),
+	(1, 'Eliška', 'Benešová', to_date('1918-06-10', 'YYYY-MM-DD'), '17. listopadu 488', 'Český Těšín', '73701'),
+	(1, 'Vratislav', 'Bláha', null, 'Harantova 629', 'Karviná', '73506'),
+	(1, 'Dana', 'Ševčíková', to_date('1970-04-06', 'YYYY-MM-DD'), 'Husovo náměstí 73', 'Mladá Boleslav', '29301'),
+	(1, 'Jaroslava', 'Machová', to_date('2000-12-19', 'YYYY-MM-DD'), 'Dr. Slabihoudka 119', 'Nový Jičín', '74101'),
+	(1, 'Martina', 'Procházková', to_date('1957-08-22', 'YYYY-MM-DD'), 'nám. Dr. E. Beneše 257', 'Třinec', '73961'),
+	(1, 'Marta', 'Ševčíková', to_date('1944-03-15', 'YYYY-MM-DD'), 'Jurečkova 747', 'Praha', '11800'),
+	(1, 'Andrea', 'Vávrová', to_date('1977-03-18', 'YYYY-MM-DD'), 'Zkrácená 525', 'Teplice', '41501'),
+	(1, 'Stanislav', 'Kučera', to_date('1921-04-17', 'YYYY-MM-DD'), 'Záblatská 210', 'Kolín', '28123'),
+	(1, 'Lenka', 'Svobodová', null, null, null, null),
+	(1, 'Božena', 'Sýkorová', to_date('2012-04-25', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Alena', 'Jelínková', to_date('1971-10-25', 'YYYY-MM-DD'), 'Koněvova 972', 'Opava', '74601'),
+	(1, 'Dalibor', 'Mareš', to_date('1988-11-06', 'YYYY-MM-DD'), 'Bieblova 200', 'Jihlava', '58601'),
+	(1, 'Barbora', 'Růžičková', to_date('1942-07-15', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Aleš', 'Marek', to_date('1976-02-20', 'YYYY-MM-DD'), 'Radvanická 394', 'Tábor', '39003'),
+	(1, 'Markéta', 'Hrubá', to_date('1942-01-29', 'YYYY-MM-DD'), 'Španihelova 632', 'Frýdek-Místek', '73801'),
+	(1, 'Roman', 'Kříž', to_date('1969-02-21', 'YYYY-MM-DD'), 'K Myslivně 964', 'Vsetín', '75501'),
+	(1, 'Libuše', 'Kopecká', null, 'Pod Landekem 657', 'Ústí nad Labem', '40011'),
+	(1, 'Petra', 'Ševčíková', to_date('1957-08-10', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Hana', 'Staňková', to_date('1972-05-01', 'YYYY-MM-DD'), 'Balcarova 999', 'Litvínov', '43601'),
+	(1, 'Lucie', 'Kopecká', to_date('1937-01-01', 'YYYY-MM-DD'), 'Muzejní 186', 'Litvínov', '43601'),
+	(1, 'Radovan', 'Bureš', to_date('1955-01-06', 'YYYY-MM-DD'), 'Heřmanická 236', 'Přerov', '75003'),
+	(1, 'Jindřich', 'Polák', null, 'Provaznická 640', 'Most', '43401'),
+	(1, 'Tereza', 'Nguyen', to_date('1920-06-07', 'YYYY-MM-DD'), 'Gregorova 167', 'Uherské Hradiště', '68606'),
+	(1, 'Jozef', 'Novotný', null, 'Umělecká 586', 'Nový Jičín', '74101'),
+	(1, 'Veronika', 'Tichá', to_date('1922-06-10', 'YYYY-MM-DD'), 'Bartovická 312', 'Plzeň', '31700'),
+	(1, 'Veronika', 'Marková', to_date('1996-02-20', 'YYYY-MM-DD'), 'U Koupaliště 658', 'Valašské Meziříčí', '75701'),
+	(1, 'Marta', 'Kučerová', null, 'Fišerova 315', 'Frýdek-Místek', '73801'),
+	(1, 'Luboš', 'Sýkora', to_date('2005-06-25', 'YYYY-MM-DD'), 'Lechowiczova 307', 'Prostějov', '79604'),
+	(1, 'Radovan', 'Kříž', to_date('1991-03-24', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Radek', 'Bartoš', to_date('1973-08-22', 'YYYY-MM-DD'), 'Horova 285', 'Vsetín', '75501'),
+	(1, 'Martin', 'Nguyen', to_date('1932-09-25', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Vlastimil', 'Kovář', to_date('1971-02-26', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Božena', 'Svobodová', to_date('1988-07-24', 'YYYY-MM-DD'), 'Fryštátská 803', 'Mladá Boleslav', '29301'),
+	(1, 'Ján', 'Horák', null, 'Karla Svobody 731', 'Krnov', '79401'),
+	(1, 'Eduard', 'Čermák', to_date('1924-07-12', 'YYYY-MM-DD'), 'Mongolská 179', 'Brno', '63800'),
+	(1, 'Jindřich', 'Hrubý', to_date('2011-05-29', 'YYYY-MM-DD'), 'Slavíčkova 869', 'Hradec Králové', '50002'),
+	(1, 'Andrea', 'Pavlíková', null, 'Dr. Slabihoudka 263', 'Frýdek-Místek', '73801'),
+	(1, 'Miloš', 'Sedláček', to_date('1988-03-21', 'YYYY-MM-DD'), 'Zelená 3', 'Brno', '60200'),
+	(1, 'Anna', 'Bartošová', to_date('2010-11-12', 'YYYY-MM-DD'), 'Dostojevského 383', 'Liberec', '46008'),
+	(1, 'Eliška', 'Nguyenová', to_date('1922-12-27', 'YYYY-MM-DD'), 'Michalské náměstí 709', 'Opava', '74601'),
+	(1, 'Roman', 'Štěpánek', to_date('1958-07-26', 'YYYY-MM-DD'), 'Záblatská 831', 'Krnov', '79401'),
+	(1, 'Lenka', 'Kovářová', to_date('1940-10-04', 'YYYY-MM-DD'), 'Vrbka 3', 'Frýdek-Místek', '73801'),
+	(1, 'Miroslava', 'Vlčková', to_date('1990-08-29', 'YYYY-MM-DD'), 'Aleje 529', 'Krnov', '79401'),
+	(1, 'Lenka', 'Veselá', null, 'Gregorova 545', 'Karlovy Vary', '36001'),
+	(1, 'Denis', 'Staněk', null, null, null, null),
+	(1, 'Lucie', 'Jelínková', to_date('2015-06-28', 'YYYY-MM-DD'), 'Karvinská 740', 'Znojmo', '66902'),
+	(1, 'Vlasta', 'Lišková', to_date('1993-10-07', 'YYYY-MM-DD'), 'Pustkovecká 888', 'Příbram', '26101'),
+	(1, 'Tadeáš', 'Pospíšil', to_date('1928-09-19', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Jarmila', 'Šťastná', to_date('1989-04-25', 'YYYY-MM-DD'), 'Janovská 161', 'Tábor', '39003'),
+	(1, 'Radek', 'Novák', to_date('1969-07-03', 'YYYY-MM-DD'), 'Plechanovova 927', 'Frýdek-Místek', '73801'),
+	(1, 'Marcela', 'Moravcová', to_date('1924-12-19', 'YYYY-MM-DD'), 'Stodolní 730', 'Ostrava', '70200'),
+	(1, 'Michael', 'Čech', null, 'Husovo náměstí 789', 'Frýdek-Místek', '73801'),
+	(1, 'Marta', 'Matoušková', null, null, null, null),
+	(1, 'Vlasta', 'Sýkorová', to_date('2012-01-07', 'YYYY-MM-DD'), 'Kubínova 48', 'Ostrava', '71800'),
+	(1, 'Matyáš', 'Kadlec', to_date('1997-10-06', 'YYYY-MM-DD'), 'Mojmírovců 781', 'Mladá Boleslav', '29301'),
+	(1, 'Jaroslava', 'Černá', to_date('1926-04-15', 'YYYY-MM-DD'), 'Milíčova 807', 'Třebíč', '67401'),
+	(1, 'Ludmila', 'Ševčíková', to_date('1958-03-29', 'YYYY-MM-DD'), 'Husovo náměstí 675', 'Český Těšín', '73701'),
+	(1, 'Matěj', 'Konečný', to_date('1951-09-15', 'YYYY-MM-DD'), 'Halasova 291', 'Tábor', '39002'),
+	(1, 'Vratislav', 'Havlíček', to_date('1966-11-06', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Kryštof', 'Šťastný', to_date('1976-06-21', 'YYYY-MM-DD'), 'Přemyslovců 307', 'Sokolov', '35601'),
+	(1, 'Břetislav', 'Procházka', to_date('1981-08-28', 'YYYY-MM-DD'), 'K Myslivně 384', 'Šumperk', '78701'),
+	(1, 'Michal', 'Malý', to_date('2004-02-24', 'YYYY-MM-DD'), 'Stanislavského 442', 'České Budějovice', '37008'),
+	(1, 'Pavla', 'Musilová', null, 'Slavíkova 114', 'Litoměřice', '41201'),
+	(1, 'Ivo', 'Liška', to_date('1962-05-07', 'YYYY-MM-DD'), 'Muzejní 839', 'Orlová', '73511'),
+	(1, 'Monika', 'Čechová', null, 'Janovská 623', 'Přerov', '75003'),
+	(1, 'Zuzana', 'Veselá', to_date('1966-01-01', 'YYYY-MM-DD'), 'Šenovská 588', 'Český Těšín', '73701'),
+	(1, 'Zdeňka', 'Pospíšilová', to_date('1985-06-26', 'YYYY-MM-DD'), 'Rudná 357', 'Nový Jičín', '74101'),
+	(1, 'Jaromír', 'Tichý', to_date('1958-07-10', 'YYYY-MM-DD'), 'Bráfova 301', 'Liberec', '46008'),
+	(1, 'Miloslav', 'Horák', null, 'Soukenická 789', 'Karlovy Vary', '36001'),
+	(1, 'Kryštof', 'Čech', null, null, null, null),
+	(1, 'Martina', 'Fialová', to_date('1995-10-10', 'YYYY-MM-DD'), null, null, null),
+	(1, 'Marcela', 'Staňková', to_date('1986-04-30', 'YYYY-MM-DD'), 'Dobrovského 414', 'Most', '43401'),
+	(1, 'René', 'Bureš', to_date('1980-09-24', 'YYYY-MM-DD'), 'Na Karolíně 871', 'Olomouc', '77900'),
+	(1, 'Viktor', 'Hrubý', to_date('1996-07-18', 'YYYY-MM-DD'), 'Cingrova 12', 'Ústí nad Labem', '40011'),
+	(1, 'Pavla', 'Pavlíková', to_date('1984-07-29', 'YYYY-MM-DD'), 'Vrbka 365', 'Karviná', '73503'),
+	(1, 'Luboš', 'Růžička', null, 'Rychvaldská 259', 'Mladá Boleslav', '29301');
 
 
 -- TEAM_MEMBER TABLE
