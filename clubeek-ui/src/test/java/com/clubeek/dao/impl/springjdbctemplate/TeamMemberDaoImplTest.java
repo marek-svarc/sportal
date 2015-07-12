@@ -1,6 +1,6 @@
 package com.clubeek.dao.impl.springjdbctemplate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamMemberDao;
@@ -33,6 +34,8 @@ public class TeamMemberDaoImplTest {
     ClubTeamDao clubTeamDao;
     @Autowired
     CategoryDao categoryDao;
+    @Autowired
+    ClubDao clubDao;
     
     private ClubMemberDaoImplTest clubMemberTest = new ClubMemberDaoImplTest();
     private ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
@@ -74,10 +77,10 @@ public class TeamMemberDaoImplTest {
     }
 
     public void insertTeamMember(ClubMemberDao clubMemberDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao) {
-        clubMemberTest.insertClubMembers(clubMemberDao, 1);
+        clubMemberTest.insertClubMembers(clubMemberDao, clubDao, 1);
         int idClubMember = clubMemberDao.getAllClubMembers().get(0).getId();
         
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, true, "My club team", true, 10);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", true, 10);
         int idClubTeam = clubTeamDao.getAllClubTeams().get(0).getId();
         
         TeamMember tm = new TeamMember();

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.clubeek.enums.LicenceType;
 import com.clubeek.model.Club;
 
 public class ClubMapper implements RowMapper<Club> {
@@ -14,6 +15,7 @@ public class ClubMapper implements RowMapper<Club> {
         Club cs = new Club();
         
         cs.setId(rs.getInt("id"));
+        cs.setLicenceType(LicenceType.values()[rs.getInt("licence_type")]);
         cs.setTitle(rs.getString("title"));
         cs.setComment(rs.getString("comment"));
         cs.setLogo(rs.getBytes("logo"));

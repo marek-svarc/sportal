@@ -5,13 +5,13 @@ package com.clubeek.enums;
  *
  * @author Marek Svarc
  */
-public enum LicenseType {
+public enum LicenceType {
     
     FREE("volná"), STANDARD("standardní"), PROFESSIONAL("profesionální");
     
     private final String text;
 
-    private LicenseType(String text) {
+    private LicenceType(String text) {
         this.text = text;
     }
 

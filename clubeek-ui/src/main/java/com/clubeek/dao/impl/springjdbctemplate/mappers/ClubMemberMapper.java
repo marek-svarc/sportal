@@ -23,6 +23,7 @@ public class ClubMemberMapper implements RowMapper<ClubMember> {
         cm.setCity(rs.getString("city"));
         cm.setCode(rs.getString("code"));
         cm.setPhoto(rs.getBytes("photo"));
+        cm.setClubId(rs.getInt("club_id"));
         
         return cm;
     }

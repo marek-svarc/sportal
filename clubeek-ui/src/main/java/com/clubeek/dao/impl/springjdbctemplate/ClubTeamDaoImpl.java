@@ -2,11 +2,7 @@ package com.clubeek.dao.impl.springjdbctemplate;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
@@ -39,8 +35,8 @@ public class ClubTeamDaoImpl extends DaoImpl implements ClubTeamDao {
     public void insertRow(ClubTeam object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
         template.update("insert into t_club_team "
-                + "( name,  active,  sorting,  category_id) values "
-                + "(:name, :active, :sorting, :categoryId)"
+                + "( name,  active,  sorting,  category_id, club_id) values "
+                + "(:name, :active, :sorting, :categoryId,  :clubId)"
                 , source);
     }
 
@@ -73,7 +69,5 @@ public class ClubTeamDaoImpl extends DaoImpl implements ClubTeamDao {
     public void deleteRows(List<ClubTeam> objects) {
         SqlParameterSource[] sources = new SqlParameterSourceUtils().createBatch(objects.toArray());
         template.batchUpdate("delete from t_club_team where id = :id", sources);   
-        
     }
-
 }

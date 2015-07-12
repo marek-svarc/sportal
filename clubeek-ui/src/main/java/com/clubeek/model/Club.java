@@ -1,9 +1,14 @@
 package com.clubeek.model;
 
+import com.clubeek.enums.LicenceType;
+
 public class Club extends Model {
 
 	/* PRIVATE */
 
+    /** Type of the club licence */
+    private LicenceType licenceType;
+    
 	/** Nazev klubu */
 	private String title;
 
@@ -45,4 +50,11 @@ public class Club extends Model {
 		this.logo = logo;
 	}
 
+    public LicenceType getLicenceType() {
+        return licenceType;
+    }
+
+    public void setLicenceType(LicenceType licenceType) {
+        this.licenceType = licenceType;
+    }
 }

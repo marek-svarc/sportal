@@ -19,6 +19,9 @@ public class ClubTeam extends Model {
 
 	/** identifikator kategorie do ktere je tym zarazen */
 	private Integer categoryId;
+	
+	/** Id of the club the team belongs. It cannot be null. */
+	private int clubId;
 
 	/** data kategorie do ktere je tym zarazen */
 	private Category category;
@@ -89,4 +92,11 @@ public class ClubTeam extends Model {
 		return name;
 	}
 
+    public int getClubId() {
+        return clubId;
+    }
+
+    public void setClubId(int clubId) {
+        this.clubId = clubId;
+    }
 }

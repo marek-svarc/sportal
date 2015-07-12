@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.UserDao;
 import com.clubeek.enums.UserRoleType;
@@ -29,9 +30,10 @@ public class UserDaoImplTest {
     
     @Autowired
     UserDao userDao;
-    
     @Autowired
     ClubMemberDao clubMemberDao;
+    @Autowired
+    ClubDao clubDao;
     
     @Before
     public void deleteAllUsers() {
@@ -98,6 +100,7 @@ public class UserDaoImplTest {
         ClubMemberDaoImplTest clubMemberTest = new ClubMemberDaoImplTest();
         clubMemberTest.insertClubMember(
                 clubMemberDao, 
+                clubDao,
                 UUID.randomUUID().toString(), 
                 UUID.randomUUID().toString(), 
                 new Date(1_000_000L));

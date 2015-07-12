@@ -15,11 +15,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamTrainingDao;
+import com.clubeek.enums.LicenceType;
 import com.clubeek.model.ClubMember;
-import com.clubeek.model.ClubTeam;
 
 /**
  * Class that tests ClubMemberDaoImpl.
@@ -32,15 +33,14 @@ public class ClubMemberDaoImplTest {
     
     @Autowired
     ClubMemberDao clubMemberDao;
-    
     @Autowired
     ClubTeamDao clubTeamDao;
-    
     @Autowired
     TeamTrainingDao teamTrainingDao;
-    
     @Autowired
     CategoryDao categoryDao;
+    @Autowired
+    ClubDao clubDao;
     
     @Before
     public void deleteAllClubMembers() {
@@ -57,11 +57,11 @@ public class ClubMemberDaoImplTest {
         Calendar cal = new GregorianCalendar();
         cal.setTime(new Date(0L));
         cal.set(1970, 1, 1, 0, 0);
-        insertClubMember(clubMemberDao, "František", "Koudelka", cal.getTime());
+        insertClubMember(clubMemberDao, clubDao, "František", "Koudelka", cal.getTime());
         assertTrue(clubMemberDao.getAllClubMembers().size() == 1);
         
         int clubMemberId = clubMemberDao.getAllClubMembers().get(0).getId();
-        insertClubMembers(clubMemberDao, 5);
+        insertClubMembers(clubMemberDao, clubDao, 5);
         assertTrue(clubMemberDao.getAllClubMembers().size() == 6);
         
         ClubMember cm = clubMemberDao.getClubMember(clubMemberId);
@@ -87,17 +87,17 @@ public class ClubMemberDaoImplTest {
         Calendar cal01 = new GregorianCalendar();
         cal01.setTime(new Date(0L));
         cal01.set(1980, 2, 25, 0, 0);
-        insertClubMember(clubMemberDao, "Jiří", "Novák", cal01.getTime());
+        insertClubMember(clubMemberDao, clubDao, "Jiří", "Novák", cal01.getTime());
         
         Calendar cal02 = new GregorianCalendar();
         cal02.setTime(new Date(0L));
         cal02.set(1985, 5, 27, 0, 0);
-        insertClubMember(clubMemberDao, "František", "Koudelka", cal02.getTime());
+        insertClubMember(clubMemberDao, clubDao, "František", "Koudelka", cal02.getTime());
         
         Calendar cal03 = new GregorianCalendar();
         cal03.setTime(new Date(0L));
         cal03.set(1990, 11, 29, 0, 0);
-        insertClubMember(clubMemberDao, "Petra", "Zelená", cal03.getTime());
+        insertClubMember(clubMemberDao, clubDao, "Petra", "Zelená", cal03.getTime());
         
         assertTrue(clubMemberDao.getAllClubMembers().size() == 3);
         assertTrue(clubMemberDao.getClubMembersByDateOfBirth(2000, 2010).size() == 0);
@@ -112,7 +112,7 @@ public class ClubMemberDaoImplTest {
     public void testGetAllClubMembers() {
         assertTrue(clubMemberDao.getAllClubMembers().size() == 0);
         
-        insertClubMembers(clubMemberDao, 7);
+        insertClubMembers(clubMemberDao, clubDao, 7);
         assertTrue(clubMemberDao.getAllClubMembers().size() == 7);
     }
     
@@ -121,12 +121,12 @@ public class ClubMemberDaoImplTest {
      */
     @Test
     public void getClubMembersByTeamTrainingIdTest() {
-        insertClubMembers(clubMemberDao, 5);
+        insertClubMembers(clubMemberDao, clubDao, 5);
         assertTrue(clubMemberDao.getAllClubMembers().size() == 5);
         
         TeamTrainingDaoImplTest teamTrainingTest = new TeamTrainingDaoImplTest();
-        teamTrainingTest.insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, new Date(), new Date(), "Hřiště", "Comment");
-        teamTrainingTest.insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, new Date(), new Date(), "Tělocvična", "Other comment");
+        teamTrainingTest.insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, clubDao, new Date(), new Date(), "Hřiště", "Comment");
+        teamTrainingTest.insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, clubDao, new Date(), new Date(), "Tělocvična", "Other comment");
         int teamTrainingId1 = teamTrainingDao.getAllTeamTrainings().get(0).getId();
         int teamTrainingId2 = teamTrainingDao.getAllTeamTrainings().get(1).getId();
         List<ClubMember> clubMembers = clubMemberDao.getAllClubMembers();
@@ -146,24 +146,38 @@ public class ClubMemberDaoImplTest {
     public void deleteRowsTest() {
         assertTrue(clubMemberDao.getAllClubMembers().size() == 0);
         
-        insertClubMembers(clubMemberDao, 10);
+        insertClubMembers(clubMemberDao, clubDao, 10);
         assertTrue(clubMemberDao.getAllClubMembers().size() == 10);
         List<ClubMember> clubMembersToDelete = clubMemberDao.getAllClubMembers().subList(4, 9);
         clubMemberDao.deleteRows(clubMembersToDelete);
         assertTrue(clubMemberDao.getAllClubMembers().size() == 5);
     }
     
-    public void insertClubMember(ClubMemberDao clubMemberDao, String name, String surname, Date birthdate) {
+    public void insertClubMember(ClubMemberDao clubMemberDao, ClubDao clubDao, String name, String surname, Date birthdate) {
+        if (clubDao.getAllClubs().size() == 0) {
+            ClubDaoImplTest clubTest = new ClubDaoImplTest();
+            clubTest.insertClub(clubDao, LicenceType.PROFESSIONAL, "My title", "My comment", null);
+        }
+        int clubId = clubDao.getAllClubs().get(0).getId();
+        
         ClubMember cm = new ClubMember();
+        cm.setClubId(clubId);
         cm.setName(name);
         cm.setSurname(surname);
         cm.setBirthdate(birthdate);
         clubMemberDao.insertRow(cm);
     }
     
-    public void insertClubMembers(ClubMemberDao clubMemberDao, int numOfClubMembers) {
+    public void insertClubMembers(ClubMemberDao clubMemberDao, ClubDao clubDao, int numOfClubMembers) {
+        if (clubDao.getAllClubs().size() == 0) {
+            ClubDaoImplTest clubTest = new ClubDaoImplTest();
+            clubTest.insertClub(clubDao, LicenceType.PROFESSIONAL, "My title", "My comment", null);
+        }
+        int clubId = clubDao.getAllClubs().get(0).getId();
+        
         for (int i = 0; i < numOfClubMembers; i++) {
             ClubMember cm = new ClubMember();
+            cm.setClubId(clubId);
             cm.setName("John");
             cm.setSurname("Smith");
             clubMemberDao.insertRow(cm);

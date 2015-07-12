@@ -18,6 +18,9 @@ public class ClubMember extends Model {
     private ContactDao contactDao = new ContactDaoImpl();
 
 	/* PRIVATE */
+    
+    /** Id of the club the member belongs. It cannot be null. */
+    private int clubId;
 
 	/** Rodne cislo */
 	private String idPersonal = ""; //$NON-NLS-1$
@@ -58,11 +61,19 @@ public class ClubMember extends Model {
 	
 	// Vlastnosti
 
+    public int getClubId() {
+        return clubId;
+    }
+
+    public void setClubId(int clubId) {
+        this.clubId = clubId;
+    }
+
 	public String getIdPersonal() {
 		return idPersonal;
 	}
 
-	public void setIdPersonal(String idPersonal) {
+    public void setIdPersonal(String idPersonal) {
 		this.idPersonal = idPersonal;
 	}
 
@@ -146,7 +157,7 @@ public class ClubMember extends Model {
 		this.photo = image;
 	}
         
-        public String getMemberFullName() {
-            return name + " " + surname;
-        }
+    public String getMemberFullName() {
+        return name + " " + surname;
+    }
 }

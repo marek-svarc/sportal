@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubRivalDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamMatchDao;
@@ -39,6 +40,9 @@ public class TeamMatchDaoImplTest {
     
     @Autowired
     ClubRivalDao clubRivalDao;
+    
+    @Autowired
+    ClubDao clubDao;
     
     @Before
     public void deleteAllTeamMatches() {
@@ -94,7 +98,7 @@ public class TeamMatchDaoImplTest {
 
     public void insertTeamMatch(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubRivalDao clubRivalDao, Date start, int scorePos, int scoreNeg, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, true, "My club team", true, 9);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, true, "My club team", true, 9);
         int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
         
         ClubRivalDaoImplTest clubRivalTest = new ClubRivalDaoImplTest();
@@ -113,7 +117,7 @@ public class TeamMatchDaoImplTest {
     
     public void insertTeamMatch(TeamMatchDao teamMatchDao, ClubTeamDao clubTeamDao, Date start, int scorePos, int scoreNeg, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, "My club team");
+        clubTeamTest.insertClubTeam(clubTeamDao, clubDao, "My club team");
         int clubTeamId = clubTeamDao.getAllClubTeams().get(0).getId();
         
         TeamMatch t = new TeamMatch();

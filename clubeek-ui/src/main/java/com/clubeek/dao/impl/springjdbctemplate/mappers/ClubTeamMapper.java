@@ -21,6 +21,7 @@ public class ClubTeamMapper implements RowMapper<ClubTeam> {
         ct.setId(rs.getInt("id"));
         ct.setActive(rs.getBoolean("active"));
         ct.setCategoryId(rs.getInt("category_id"));
+        ct.setClubId(rs.getInt("club_id"));
         ct.setName(rs.getString("name"));
         ct.setSorting(rs.getInt("sorting"));
         

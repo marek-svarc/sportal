@@ -19,14 +19,20 @@ public class ClubDaoImpl extends DaoImpl implements ClubDao {
 
     @Override
     public void updateClub(Club club) {
-        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(club);
-        template.update(""
+        template.getJdbcOperations().update(""
                 + "update t_club set "
-                + "title = :title, "
-                + "comment = :comment, "
-                + "logo = :logo "
-                + "where id = :id", 
-                source);       
+                + "licence_type = ?, "
+                + "title = ?, "
+                + "comment = ?, "
+                + "logo = ? "
+                + "where id = ?", 
+                new Object[] {
+                     club.getLicenceType().ordinal(),
+                     club.getTitle(),
+                     club.getComment(),
+                     club.getLogo(),
+                     club.getId()
+                });       
     }
 
     @Override
@@ -41,11 +47,18 @@ public class ClubDaoImpl extends DaoImpl implements ClubDao {
 
     @Override
     public void addClub(Club club) {
-        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(club);
-        template.update("insert into t_club "
-                + "(title, comment, logo) values "
-                + "(:title, :comment, :logo)", 
-                source);        
+        template.getJdbcOperations().update("insert into t_club "
+                + "("
+                + "licence_type, "
+                + "title, "
+                + "comment, "
+                + "logo) values (?, ?, ?, ?)", 
+                new Object[] {
+                        club.getLicenceType().ordinal(),
+                        club.getTitle(),
+                        club.getComment(),
+                        club.getLogo()
+                });        
     }
 
 }

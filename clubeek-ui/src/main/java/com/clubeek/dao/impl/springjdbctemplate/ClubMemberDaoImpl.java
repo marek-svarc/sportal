@@ -34,8 +34,8 @@ public class ClubMemberDaoImpl extends DaoImpl implements ClubMemberDao {
     public void insertRow(ClubMember object) {
         BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
         template.update("insert into t_club_member "
-                + "(id_personal, id_registration, name, surname, birthdate, street, city, code, photo) values "
-                + "(:idPersonal, :idRegistration, :name, :surname, :birthdate, :street, :city, :code, :photo)"
+                + "(id_personal, id_registration, name, surname, birthdate, street, city, code, photo, club_id) values "
+                + "(:idPersonal, :idRegistration, :name, :surname, :birthdate, :street, :city, :code, :photo, :clubId)"
                 , source);
     }
 

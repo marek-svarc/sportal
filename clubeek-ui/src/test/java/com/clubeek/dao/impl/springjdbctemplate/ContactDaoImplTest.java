@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubMemberDao;
 import com.clubeek.dao.ContactDao;
 import com.clubeek.enums.ContactType;
@@ -31,6 +32,8 @@ public class ContactDaoImplTest {
     ContactDao contactDao;
     @Autowired
     ClubMemberDao clubMemberDao;
+    @Autowired
+    ClubDao clubDao;
     
     @Before
     public void deleteAllContacts() {
@@ -141,7 +144,7 @@ public class ContactDaoImplTest {
     
     public void insertContact(ContactDao contactDao, String contact, String description, ContactType contactType, NotificationType notificationType) {
         ClubMemberDaoImplTest clubMemberTest = new ClubMemberDaoImplTest();
-        clubMemberTest.insertClubMembers(clubMemberDao, 1);
+        clubMemberTest.insertClubMembers(clubMemberDao, clubDao, 1);
         int clubMemberId = clubMemberDao.getAllClubMembers().get(0).getId();
         
         Contact c = new Contact();

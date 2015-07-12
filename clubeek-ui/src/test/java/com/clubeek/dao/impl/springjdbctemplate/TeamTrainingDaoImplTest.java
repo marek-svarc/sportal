@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.dao.TeamTrainingDao;
 import com.clubeek.model.TeamTraining;
@@ -34,6 +35,8 @@ public class TeamTrainingDaoImplTest {
     ClubTeamDao clubTeamDao;
     @Autowired
     CategoryDao categoryDao;
+    @Autowired
+    ClubDao clubDao;
     
     @Before
     public void deleteAllTeamTrainings() {
@@ -55,7 +58,7 @@ public class TeamTrainingDaoImplTest {
         endTime.set(2015, 9, 11, 17, 00);
         
         // insert
-        insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
+        insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, clubDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
         assertTrue(teamTrainingDao.getAllTeamTrainings().size() == 1);
         
         // get all
@@ -70,7 +73,7 @@ public class TeamTrainingDaoImplTest {
         assertTrue(teamTrainingDao.getAllTeamTrainings().size() == 0);
         
         // update
-        insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
+        insertTeamTraining(teamTrainingDao, clubTeamDao, categoryDao, clubDao, startTime.getTime(), endTime.getTime(), "Tělocvična", "Vede František Koudelka");
         TeamTraining t = teamTrainingDao.getAllTeamTrainings().get(0);
         
         Calendar startTime2 = new GregorianCalendar();
@@ -93,9 +96,9 @@ public class TeamTrainingDaoImplTest {
         
     }
     
-    public void insertTeamTraining(TeamTrainingDao teamTrainingDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, Date start, Date end, String place, String comment) {
+    public void insertTeamTraining(TeamTrainingDao teamTrainingDao, ClubTeamDao clubTeamDao, CategoryDao categoryDao, ClubDao clubDao, Date start, Date end, String place, String comment) {
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, true, "My test club", true, 0);
+        clubTeamTest.insertClubTeam(clubTeamDao, clubDao, "My team");
         
         TeamTraining tt = new TeamTraining();
         tt.setStart(start);

@@ -8,8 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
-import javax.validation.constraints.AssertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.clubeek.dao.ArticleDao;
 import com.clubeek.dao.CategoryDao;
+import com.clubeek.dao.ClubDao;
 import com.clubeek.dao.ClubTeamDao;
 import com.clubeek.enums.LocationType;
 import com.clubeek.enums.OwnerType;
@@ -40,6 +39,8 @@ public class ArticleDaoImplTest {
     CategoryDao categoryDao;
     @Autowired
     ClubTeamDao clubTeamDao;
+    @Autowired
+    ClubDao clubDao;
     
     /**
      * Deletes all articles before each test.
@@ -124,8 +125,8 @@ public class ArticleDaoImplTest {
         
         ClubTeamDaoImplTest clubTeamTest = new ClubTeamDaoImplTest();
         clubTeamTest.deleteAll(clubTeamDao);
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, "My club team", true, 5);
-        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, "My other club team", true, 5);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, "My club team", true, 5);
+        clubTeamTest.insertClubTeam(clubTeamDao, categoryDao, clubDao, "My other club team", true, 5);
         int clubTeamId = clubTeamDao.getActiveClubTeams().get(0).getId();
         int clubTeamIdOther = clubTeamDao.getActiveClubTeams().get(1).getId();
         
