@@ -1,42 +1,86 @@
 package com.clubeek.dao.impl.springjdbctemplate;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.stereotype.Repository;
 
 import com.clubeek.dao.TeamMatchDao;
 import com.clubeek.dao.impl.springjdbctemplate.mappers.TeamMatchMapper;
 import com.clubeek.model.TeamMatch;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class TeamMatchDaoImpl extends DaoImpl implements TeamMatchDao {
 
     @Override
     public void updateRow(TeamMatch object) {
-        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("update t_team_match set "
-                + "start = :start, "
-                + "score_pos = :scorePos, "
-                + "score_neg = :scoreNeg, "
-                + "home_court = :homeCourt, "
-                + "comment = :comment, "
-                + "publish = :publish, "
-                + "club_team_id = :clubTeamId, "
-                + "club_rival_id = :clubRivalId, "
-                + "club_rival_comment = :clubRivalComment "
-                + "where id = :id", source);
+        template.getJdbcOperations().update("update t_team_match set "
+                + "is_home_match = ?, "
+                + "match_type = ?, "
+                + "start = ?, "
+                + "comment = ?, "
+                + "club_rival_comment = ?, "
+                + "publish = ?, "
+                + "score_A = ?, "
+                + "score_B = ?, "
+                + "score_detail = ?, "
+                
+                + "season_id = ?, "
+                + "club_team_id = ?, "
+                + "club_rival_id = ? "
+                + "where id = ?", new Object[]{
+                        object.isHomeMatch(),
+                        object.getMatchType().ordinal(),
+                        object.getStart(),
+                        object.getComment(),
+                        object.getClubRivalComment(),
+                        object.getPublish(),
+                        object.getScoreA(),
+                        object.getScoreB(),
+                        object.getScoreDetail(),
+                        
+                        object.getSeasonId(),
+                        object.getClubTeamId(),
+                        object.getClubRivalId(),
+                        object.getId()
+                });
         
     }
 
     @Override
     public void insertRow(TeamMatch object) {
-        BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(object);
-        template.update("insert into t_team_match "
-                + "(start, score_pos, score_neg, home_court, comment, publish, club_team_id, club_rival_id, club_rival_comment) values "
-                + "(:start, :scorePos, :scoreNeg, :homeCourt, :comment, :publish, :clubTeamId, :clubRivalId, :clubRivalComment)", source);        
+        template.getJdbcOperations().update("insert into t_team_match ("
+                + "is_home_match, "
+                + "match_type, "
+                + "start , "
+                + "comment, "
+                + "club_rival_comment, "
+                + "publish, "
+                + "score_A, "
+                + "score_B, "
+                + "score_detail, "
+                
+                + "season_id, "
+                + "club_team_id, "
+                + "club_rival_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{
+                        object.isHomeMatch(),
+                        object.getMatchType().ordinal(),
+                        object.getStart(),
+                        object.getComment(),
+                        object.getClubRivalComment(),
+                        object.getPublish(),
+                        object.getScoreA(),
+                        object.getScoreB(),
+                        object.getScoreDetail(),
+                        
+                        object.getSeasonId(),
+                        object.getClubTeamId(),
+                        object.getClubRivalId()
+                });
     }
 
     @Override
@@ -59,4 +103,25 @@ public class TeamMatchDaoImpl extends DaoImpl implements TeamMatchDao {
     public List<TeamMatch> getAllTeamMatches() {
         return template.query("select * from t_team_match", new TeamMatchMapper());
     }
+
+    @Override
+    public List<TeamMatch> getAllTeamMatchesForClubTeam(int clubTeamId) {
+        return template.getJdbcOperations().query("select * from t_team_match where club_team_id = ?", new Object[]{clubTeamId}, new TeamMatchMapper());
+    }
+
+    @Override
+    public List<TeamMatch> getAllPublishableTeamMatchesForClubTeam(int clubTeamId) {
+        return template.getJdbcOperations().query("select * from t_team_match where club_team_id = ? and publish = true", new Object[]{clubTeamId}, new TeamMatchMapper());
+    }
+
+    @Override
+    public List<TeamMatch> getAllPublishableHomeTeamMatchesForClubTeam(int clubTeamId, int monthLimit) {
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MONTH, - monthLimit);
+        return template.getJdbcOperations().query(
+                "select * from t_team_match where club_team_id = ? and publish = true and start > ?", 
+                new Object[]{clubTeamId, cal.getTime()}, new TeamMatchMapper());
+    }
+
+
 }

@@ -15,6 +15,11 @@ drop table if exists T_TEAM_TRAINING_DISCUSSION_POST;
 drop table if exists T_TEAM_MATCH_DISCUSSION_POST;
 drop table if exists T_CLUB_URL;
 
+drop table if exists T_STAT_SCORE_BASE;
+drop table if exists T_STAT_SCORE_FULL;
+drop table if exists T_STAT_SUBSTITUTION;
+drop table if exists T_STAT_PENALTY;
+
 drop view if exists club_member_by_team;
 
 drop table if exists T_TEAM_TRAINING;
@@ -23,6 +28,7 @@ drop table if exists T_TEAM_MEMBER;
 drop table if exists T_CLUB_MEMBER;
 drop table if exists T_TEAM_MATCH;
 drop table if exists T_CLUB_RIVAL;
+drop table if exists T_SEASON;
 drop table if exists T_ARTICLE;
 drop table if exists T_CLUB_TEAM;
 drop table if exists T_CATEGORY;
@@ -51,7 +57,7 @@ CREATE TABLE T_CLUB_URL
     club_id		integer not null,
 
     primary key (id),
-    foreign key (club_id) references T_CLUB (id)
+    foreign key (club_id) references T_CLUB (id) ON DELETE CASCADE
 );
 
 CREATE TABLE T_CATEGORY
@@ -79,7 +85,7 @@ CREATE TABLE T_CLUB_MEMBER
     club_id		integer			not null,
 
     primary key (id),
-    foreign key (club_id) references T_CLUB (id)
+    foreign key (club_id) references T_CLUB (id) ON DELETE CASCADE
 );
 
 CREATE TABLE T_CLUB_RIVAL
@@ -171,25 +177,92 @@ CREATE TABLE T_TEAM_TRAINING_DISCUSSION_POST
 	MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
-CREATE TABLE T_TEAM_MATCH
+CREATE TABLE T_SEASON
 (
     id			serial,
-    start		timestamp	not null,
-    score_pos		smallint,
-    score_neg		smallint,
-    home_court		boolean 	not null,
-    comment		TEXT,
-    publish		boolean 	not null default 'false',
-    club_team_id	integer		not null,
-    club_rival_id	integer,
-    club_rival_comment	varchar(200),
+    description		character varying(100),
+
+    primary key (id)
+);
+
+CREATE TABLE T_TEAM_MATCH
+(
+    id				serial,
+
+    is_home_match		boolean		not null,
+    match_type			smallint	not null,
+    start			timestamptz	not null,
+    comment			text,
+    club_rival_comment		character varying (200),
+    publish			boolean 	not null default 'false',
+    score_A			smallint,
+    score_B			smallint,
+    score_detail		character varying (200),
+
+    season_id			integer,
+    club_team_id		integer		not null,
+    club_rival_id		integer,
 
     primary key (id),
-    foreign key (club_rival_id) references T_CLUB_RIVAL (id)
-        ON DELETE SET NULL,
-    foreign key (club_team_id) references T_CLUB_TEAM (id)
-        ON DELETE CASCADE
+    foreign key (season_id) references T_SEASON (id) ON DELETE CASCADE,
+    foreign key (club_team_id) references T_CLUB_TEAM (id) ON DELETE CASCADE,
+    foreign key (club_rival_id) references T_CLUB_RIVAL (id) ON DELETE SET NULL
+);
 
+CREATE TABLE T_STAT_PENALTY (
+	id		serial,
+	time		timestamptz	not null,
+	penalty_type	smallint	not null,
+	penalty_value	smallint,
+	club_member_id	integer		not null,
+	team_match_id	integer		not null,
+
+	primary key (id),
+	foreign key (club_member_id) references t_club_member (id),
+	foreign key (team_match_id) references t_team_match (id)
+);
+
+CREATE TABLE T_STAT_SUBSTITUTION (
+    id			serial,
+    time		timestamptz	not null,
+    team_match_id	integer		not null,
+    player_out		integer		not null,
+    player_in		integer		not null,
+
+    primary key (id),
+    foreign key (team_match_id) references t_team_match (id),
+    foreign key (player_out) references t_club_member (id),
+    foreign key (player_in) references t_club_member (id),
+    unique (team_match_id, player_out, player_in)
+);
+
+CREATE TABLE T_STAT_SCORE_BASE (
+    id			serial,
+    count		smallint	not null,
+    club_member_id	integer		not null,
+    team_match_id	integer		not null,
+
+    primary key (id),
+    foreign key (club_member_id) references T_CLUB_MEMBER (id),
+    foreign key (team_match_id) references T_TEAM_MATCH (id),
+    unique (club_member_id, team_match_id)
+);
+
+CREATE TABLE T_STAT_SCORE_FULL (
+    id			serial,
+    time		timestamptz	not null,
+    count		smallint	not null,
+    club_member_id	integer		not null,
+    team_match_id	integer		not null,
+    assistance_1_id	integer,
+    assistance_2_id	integer,
+
+    primary key (id),
+    foreign key (assistance_1_id) references T_CLUB_MEMBER (id),
+    foreign key (assistance_2_id) references T_CLUB_MEMBER (id),
+    foreign key (club_member_id) references T_CLUB_MEMBER (id),
+    foreign key (team_match_id) references T_TEAM_MATCH (id),
+    unique (club_member_id, team_match_id)
 );
 
 CREATE TABLE T_TEAM_MATCH_DISCUSSION_POST
@@ -1019,38 +1092,54 @@ insert into T_CLUB_RIVAL (name, web, gps, street, city, code, icon) values
 	('FC Hradec Králové', 'http://www.fchk.cz/', null, 'Hradec Králové', 'Úprkova', '473', null),
 	('Slovan Liberec', null, null, null, 'Liberec', null, null);
 
+
+-- SEASON
+insert into T_SEASON (description) values
+	('Sezóna 2013'),
+	('Sezóna 2014'),
+	('Sezóna 2015'),
+	('Sezóna 2016');
+	
+
 -- TEAM MATCH
-insert into t_team_match (start, score_pos, score_neg, home_court, comment, publish, club_team_id, club_rival_id, club_rival_comment) values 
-	(to_timestamp('2015-5-5 14:00', 'YYYY-MM-DD HH24:MI'), 1, 0, true, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', true, 1, 5, 'A ja jaj'),
-	(to_timestamp('2017-2-25 11:00', 'YYYY-MM-DD HH24:MI'), 4, 1, false, 'Bomba zápas', false, 2, 4, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
-	(to_timestamp('2017-6-18 16:00', 'YYYY-MM-DD HH24:MI'), 1, 0, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', false, 3, 7, ''),
-	(to_timestamp('2014-9-14 16:00', 'YYYY-MM-DD HH24:MI'), 2, 1, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', false, 3, null, ''),
-	(to_timestamp('2014-1-17 16:00', 'YYYY-MM-DD HH24:MI'), 4, 0, false, 'Bomba zápas', false, 3, 3, 'A ja jaj'),
-	(to_timestamp('2015-1-19 15:00', 'YYYY-MM-DD HH24:MI'), 3, 3, false, 'Bomba zápas', false, 3, 3, ''),
-	(to_timestamp('2016-5-18 13:00', 'YYYY-MM-DD HH24:MI'), 0, 4, false, null, false, 3, null, ''),
-	(to_timestamp('2015-1-27 10:00', 'YYYY-MM-DD HH24:MI'), 0, 1, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', true, 3, null, ''),
-	(to_timestamp('2016-6-14 10:00', 'YYYY-MM-DD HH24:MI'), 2, 3, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', false, 1, 8, 'To bude pohodička'),
-	(to_timestamp('2014-5-10 14:00', 'YYYY-MM-DD HH24:MI'), 4, 3, true, 'Super', false, 2, 2, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
-	(to_timestamp('2016-7-25 16:00', 'YYYY-MM-DD HH24:MI'), 1, 1, true, 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', true, 1, 3, 'To bude pohodička'),
-	(to_timestamp('2016-6-5 15:00', 'YYYY-MM-DD HH24:MI'), 3, 0, true, 'Bomba zápas', true, 3, null, null),
-	(to_timestamp('2014-2-19 13:00', 'YYYY-MM-DD HH24:MI'), 0, 1, true, 'Super', false, 2, null, ''),
-	(to_timestamp('2014-1-1 13:00', 'YYYY-MM-DD HH24:MI'), 4, 4, false, 'Vemte si podvlíkačky', false, 2, 6, ''),
-	(to_timestamp('2017-2-17 15:00', 'YYYY-MM-DD HH24:MI'), 2, 2, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', false, 2, 4, ''),
-	(to_timestamp('2015-6-7 13:00', 'YYYY-MM-DD HH24:MI'), 3, 4, true, '', true, 1, 6, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
-	(to_timestamp('2016-7-25 12:00', 'YYYY-MM-DD HH24:MI'), 4, 1, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', true, 2, 9, ''),
-	(to_timestamp('2017-1-27 11:00', 'YYYY-MM-DD HH24:MI'), 3, 2, true, 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', true, 1, 10, ''),
-	(to_timestamp('2014-7-28 13:00', 'YYYY-MM-DD HH24:MI'), 1, 0, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', false, 1, 1, ''),
-	(to_timestamp('2017-9-5 17:00', 'YYYY-MM-DD HH24:MI'), 2, 4, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', false, 1, 4, 'To bude pohodička'),
-	(to_timestamp('2015-9-8 14:00', 'YYYY-MM-DD HH24:MI'), 3, 2, true, '', true, 2, 10, 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl'),
-	(to_timestamp('2014-9-27 15:00', 'YYYY-MM-DD HH24:MI'), 3, 2, false, 'Bomba zápas', false, 3, null, ''),
-	(to_timestamp('2014-12-15 11:00', 'YYYY-MM-DD HH24:MI'), 1, 3, true, 'Vemte si podvlíkačky', true, 2, 2, 'Moc se nepředvedli'),
-	(to_timestamp('2017-8-30 16:00', 'YYYY-MM-DD HH24:MI'), 3, 1, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', true, 2, null, ''),
-	(to_timestamp('2017-10-9 14:00', 'YYYY-MM-DD HH24:MI'), 4, 4, true, 'Bomba zápas', false, 2, null, ''),
-	(to_timestamp('2014-5-9 13:00', 'YYYY-MM-DD HH24:MI'), 0, 2, false, 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', true, 3, 10, ''),
-	(to_timestamp('2017-6-13 17:00', 'YYYY-MM-DD HH24:MI'), 3, 3, false, '', true, 1, 8, ''),
-	(to_timestamp('2016-4-16 16:00', 'YYYY-MM-DD HH24:MI'), 0, 4, false, 'Bomba zápas', false, 2, 10, 'To bude pohodička'),
-	(to_timestamp('2017-7-25 17:00', 'YYYY-MM-DD HH24:MI'), 3, 2, true, 'Vemte si podvlíkačky', false, 2, null, null),
-	(to_timestamp('2016-6-19 11:00', 'YYYY-MM-DD HH24:MI'), 4, 1, false, 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', true, 3, 4, 'To bude pohodička');
+insert into T_TEAM_MATCH (is_home_match, match_type, start, comment, club_rival_comment, publish, score_A, score_B, score_detail, season_id, club_team_id, club_rival_id) values
+	(false, 3, to_timestamp('2017-7-2 14:00', 'YYYY-MM-DD HH24:MI'), 'Bomba zápas', 'To bude pohodička', false, 2, 1, '0:0, 1:0', 2, 3, 4),
+	(true, 0, to_timestamp('2016-3-28 12:00', 'YYYY-MM-DD HH24:MI'), 'Super', 'To bude pohodička', true, 3, 1, '2:1, 1:3', 4, 3, 3),
+	(false, 0, to_timestamp('2017-4-18 13:00', 'YYYY-MM-DD HH24:MI'), '', '', false, 4, 0, '0:0, 1:0', 4, 1, null),
+	(false, 2, to_timestamp('2015-5-28 17:00', 'YYYY-MM-DD HH24:MI'), 'Bomba zápas', 'To bude pohodička', true, 0, 1, '', 3, 1, 1),
+	(true, 3, to_timestamp('2017-3-30 17:00', 'YYYY-MM-DD HH24:MI'), 'Vemte si podvlíkačky', '', false, 4, 1, '2:1, 1:3', 2, 3, 1),
+	(false, 0, to_timestamp('2017-12-24 11:00', 'YYYY-MM-DD HH24:MI'), 'Super', '', false, 4, 4, '', 4, 1, null),
+	(true, 3, to_timestamp('2015-10-18 17:00', 'YYYY-MM-DD HH24:MI'), 'Super', 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl', true, 4, 3, '0:0, 1:0', 2, 3, 4),
+	(false, 0, to_timestamp('2016-8-19 11:00', 'YYYY-MM-DD HH24:MI'), 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', '', false, 3, 2, '0:0, 1:0', 2, 3, null),
+	(true, 3, to_timestamp('2016-5-10 12:00', 'YYYY-MM-DD HH24:MI'), 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', '', true, 0, 4, '1:2, 1:0, 0:0, 0:1 ', 2, 3, 9),
+	(true, 0, to_timestamp('2016-5-12 17:00', 'YYYY-MM-DD HH24:MI'), 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', 'To bude pohodička', false, 3, 0, '', 3, 1, 3),
+	(false, 3, to_timestamp('2015-6-7 16:00', 'YYYY-MM-DD HH24:MI'), 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', 'A ja jaj', true, 3, 0, '0:0, 1:0', 2, 2, 1),
+	(true, 0, to_timestamp('2015-12-30 14:00', 'YYYY-MM-DD HH24:MI'), null, 'A ja jaj', true, 0, 3, '0:0, 1:0', 3, 2, 7),
+	(true, 3, to_timestamp('2015-11-25 16:00', 'YYYY-MM-DD HH24:MI'), 'Super', 'To bude pohodička', false, 1, 0, '0:0, 1:0', 2, 1, 1),
+	(true, 0, to_timestamp('2017-4-12 13:00', 'YYYY-MM-DD HH24:MI'), 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', 'To bude pohodička', true, 1, 2, '2:1, 1:3', 4, 1, 3),
+	(true, 0, to_timestamp('2017-12-19 12:00', 'YYYY-MM-DD HH24:MI'), 'Super', '', false, 0, 4, '', 1, 3, null),
+	(false, 0, to_timestamp('2016-2-17 15:00', 'YYYY-MM-DD HH24:MI'), 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', '', true, 0, 3, '', 1, 2, 1),
+	(false, 0, to_timestamp('2014-3-22 14:00', 'YYYY-MM-DD HH24:MI'), 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', 'To bude pohodička', false, 0, 4, '', 2, 3, 3),
+	(false, 0, to_timestamp('2014-8-23 17:00', 'YYYY-MM-DD HH24:MI'), 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', 'A ja jaj', true, 3, 3, '0:0, 1:0', 2, 3, 8),
+	(true, 1, to_timestamp('2014-6-19 14:00', 'YYYY-MM-DD HH24:MI'), 'Poslední domácí zápas, třetí v řadě s týmem silné čtyřky a další vítězství. Zdá se tedy vše ideální, nicméně předvedená hra měla k dokonalosti přeci jen nějaký ten krůček.. Přivítali jsme omlazený tým Kačerova a i jsme tomu přizpůsobili předzápasovou taktiku. Předpokládali jsme, že soupeř bude běhavější a nebylo naším cílem se s ním honit po hřišti. Do sestavy se po dvou zápasech vrátil Ondra Janda a do branky se opět postavil Petr Bureš. V počátku utkání nás soupeř lehce tlačil, ale vyložené šance si vypracovat nedokázal. Naopak v 10 minutě si na centr naběhl Johnny a hlavou k tyči nás poslal do vedení. Soupeře to očividně zaskočilo a tlak počal polevovat. Naopak jsme to byli my, kdo se díky brejkům dostával do šancí, ale ani Hoskovec, ani Zahradník, Leo a Johnny v dalších gólovkách neuspěli. Naopak s přibývajícím časem se soupeř opět dostával do tlaku a Fury v brance musel několikrát čarovat.. Poločas tedy skončil naším jednogólovým vedením. Do druhého poločasu naskočil místo zraněného Honzy Málka Tomáš Pivokonský, což přineslo do naší hry zklidnění a dokázali jsme podržet déle míč. Soupeř hrál stále stejně naivně a když už se dostal do šance, tak nevyzrál na připraveného Bureše. Bohužel v 59 minutě se v ofsaidové pasti zapomněl Michal Zouhar a nabídl tak hostujícímu útočníkovi nájezd na našeho gólmana – 1:1 Sypu si popel na hlavu…. Naštěstí se ukázal opět zlobivec Janda a po centru od Píva se prosadil jako při prvním našem gólu hlavou. Nutno dodat, že hostující obránci byly přibližně o hlavu větší… V závěru se soupeř snažil o jakýsi tlak a v jedné šanci se projevila naplno jeho herní nezkušenost, když naprosto jasnou gólovou šanci dokázal překombinovat a zahodit. Navíc se zbytečně (pro nás pochopitelně dobře) rozptyloval častým simulováním a tak jsme zápas dotáhli do vítězného konce. Za zmínku ještě stojí tyč Tomáše Pivokonského, který si po nahrávce Zouhara posadil na zadek soupeřovic beka a placírkou málem skóroval. V příštím týdnu nás čeká těžký zápas v Nebušicích, který věříme že zvládneme a přezimujeme tak na prvním místě tabulky. Sestava: Bureš Petr, Staněk Robert, Srp Roman, Tomáš Vodrážka (Hrabálek Jarda), Babica Jaroušek , Zouhar Michal, Málek  Honzík (Pivokonský Tom), Martin Hoskovců, Marku Leonard, Ondra Janda (Mates Holubů)', '', true, 4, 4, '', 3, 1, null),
+	(true, 0, to_timestamp('2016-8-25 10:00', 'YYYY-MM-DD HH24:MI'), 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', '', true, 2, 1, '1:2, 1:0, 0:0, 0:1 ', 2, 2, null),
+	(false, 0, to_timestamp('2015-8-20 16:00', 'YYYY-MM-DD HH24:MI'), 'Dnešní zápas se od začátku vyvíjel velmi slibně, až do poslední čtvrtiny jsme vedli nad holkami 4:2, ale bohužel jak už je to u nás zvykem opět vedení neudrželi a v posledních minutách zápasu si nechali nasázet 3góly . Škoda jinak to byl zápas pěkný. Díky Jirka', '', true, 3, 1, '0:0, 1:0', 4, 2, 1),
+	(true, 2, to_timestamp('2016-1-4 12:00', 'YYYY-MM-DD HH24:MI'), 'Vemte si podvlíkačky', '', false, 3, 3, '0:0, 1:0', 1, 3, 1),
+	(false, 0, to_timestamp('2017-5-16 10:00', 'YYYY-MM-DD HH24:MI'), 'Super', 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl', true, 1, 0, '0:0, 1:0', 3, 2, 5),
+	(false, 0, to_timestamp('2015-4-7 15:00', 'YYYY-MM-DD HH24:MI'), 'Super', 'Přijedou z daleka, je třeba zajisti ubytování, chléb a sůl', false, 2, 2, '', 4, 1, 7),
+	(true, 0, to_timestamp('2016-6-15 17:00', 'YYYY-MM-DD HH24:MI'), 'Bomba zápas', 'A ja jaj', true, 3, 4, '1:2, 1:0, 0:0, 0:1 ', 1, 1, 4),
+	(false, 2, to_timestamp('2016-8-7 16:00', 'YYYY-MM-DD HH24:MI'), 'Super', 'A ja jaj', false, 0, 1, '2:1, 1:3', 3, 3, 7),
+	(true, 0, to_timestamp('2017-6-17 17:00', 'YYYY-MM-DD HH24:MI'), 'Vemte si podvlíkačky', '', true, 4, 0, '2:1, 1:3', 2, 1, 5),
+	(true, 3, to_timestamp('2015-5-24 15:00', 'YYYY-MM-DD HH24:MI'), 'Super', null, true, 4, 1, '1:2, 1:0, 0:0, 0:1 ', 1, 3, null),
+	(false, 0, to_timestamp('2014-1-28 11:00', 'YYYY-MM-DD HH24:MI'), 'Opět jsme nastoupili v málo hráčích, a to je náš jarní kolorit. Tři hráči v práci a Pejičič v trestu na dvě utkání za kritiku vedení malé kopané, která pod vedením Nehery, který všem na komisi lhal jak když tiskne a všichni jak ovce odsouhlasili jeho lživou verzi a neschopnost řešit některé situace logicky,pragmaticky a to co si dnešní doba žádá ve sportě.', 'To bude pohodička', false, 1, 0, '1:2, 1:0, 0:0, 0:1 ', 2, 3, 6),
+	(true, 1, to_timestamp('2016-11-25 10:00', 'YYYY-MM-DD HH24:MI'), '', '', true, 1, 2, '', 3, 1, 6);
+
+
+
+
+
+
+
 
 -- PARTICIPANT OF MATCH
 insert into t_participant_of_match values 

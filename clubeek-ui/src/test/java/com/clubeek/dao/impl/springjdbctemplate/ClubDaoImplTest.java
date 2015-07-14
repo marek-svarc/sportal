@@ -93,4 +93,16 @@ public class ClubDaoImplTest {
             clubDao.deleteClub(cs.getId());
         }
     }
+    
+    public void deleteAll(ClubDao clubDao) {
+        for (Club cs : clubDao.getAllClubs()) {
+            clubDao.deleteClub(cs.getId());
+        }
+    }
+    
+    public int getValidClubId(ClubDao clubDao) {
+        deleteAll(clubDao);
+        insertClub(clubDao, LicenceType.FREE, null, null, null);
+        return clubDao.getAllClubs().get(0).getId();
+    }
 }

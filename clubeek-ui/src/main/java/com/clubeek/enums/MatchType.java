@@ -6,8 +6,11 @@ package com.clubeek.enums;
  * @author Marek Svarc
  */
 public enum MatchType {
-
-    MATCH("utkání"), FRIENDLY_MATCH("přátelské utkání"), CUP("pohár"), CHAMPIONSHIP("mistrovství");
+                                            // ordinal
+    MATCH("utkání"),                        // 0
+    FRIENDLY_MATCH("přátelské utkání"),     // 1
+    CUP("pohár"),                           // 2
+    CHAMPIONSHIP("mistrovství");            // 3
 
     private final String text;
 

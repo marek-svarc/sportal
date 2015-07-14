@@ -80,7 +80,7 @@ public class ViewTeamMatches extends VerticalLayout implements View, ActionTable
                 for (int i = 0; i < games.size(); ++i) {
                     TeamMatch game = games.get(i);
                     table.addRow(container, new Object[]{Tools.Strings.getStrGameTeams(game),
-                        game.getScoreAsStr(), game.getStart()}, i);
+                        game.getScoreAsString(), game.getStart()}, i);
                 }
                 table.setDataContainer(container);
             }

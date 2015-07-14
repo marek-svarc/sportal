@@ -383,7 +383,8 @@ public final class Tools {
             if ((game.getClubTeam() != null) && (game.getClubRival() != null)) {
                 String team = game.getClubTeam().getName();
                 String club = game.getClubRivalTitle();
-                return game.getHomeCourt() ? team + " - " + club : club + " - " + team; //$NON-NLS-1$ //$NON-NLS-2$
+                return "TODO - popis týmu hrajícího zápas";
+//                return game.getHomeCourt() ? team + " - " + club : club + " - " + team; //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 return ""; //$NON-NLS-1$
             }

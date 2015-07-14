@@ -41,7 +41,7 @@ public class TeamMatchCard extends VerticalLayout {
 
     private void Refresh() {
         if ((teamMatch != null) && (teamMatch.getClubTeam() != null) && (teamMatch.getClubRival() != null)) {
-            if (teamMatch.getHomeCourt()) {
+            if (teamMatch.isHomeMatch()) {
                 lblTeamHomeTitle.setValue(teamMatch.getClubTeam().getName());
                 lblTeamVisitingTitle.setValue(teamMatch.getClubRivalTitle());
             } else {

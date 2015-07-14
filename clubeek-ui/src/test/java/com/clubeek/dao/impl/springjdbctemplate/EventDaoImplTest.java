@@ -17,7 +17,7 @@ import com.clubeek.dao.EventDao;
 import com.clubeek.model.Event;
 
 /**
- * Class that tests EvenDaoImpl.
+ * Class that tests EventDaoImpl.
  * 
  * @author vitfo
  *

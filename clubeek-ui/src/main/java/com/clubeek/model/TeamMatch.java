@@ -2,6 +2,8 @@ package com.clubeek.model;
 
 import java.util.Date;
 
+import com.clubeek.enums.MatchType;
+
 /**
  * Trida zapouzdrujici informace o zapase
  * 
@@ -11,39 +13,42 @@ import java.util.Date;
 public class TeamMatch extends Model implements IEvent, Publishable {
 
     /* PRIVATE */
-
-    /** Zacatek zapasu */
+    
+    private boolean isHomeMatch;
+    
+    private MatchType matchType;
+    
+    /** Start of the match. */
     private Date start = null;
-
-    /** Identifikator tymu hrajici zapas */
+    
+    /** Match's comment. */
+    private String comment = ""; //$NON-NLS-1$
+    
+    /** Comment to the rival. */
+    private String clubRivalComment = ""; //$NON-NLS-1$
+    
+    /** Whether the result should be published. */
+    private boolean publish = false;
+    
+    private Integer scoreA;
+    private Integer scoreB;
+    private String scoreDetail;
+    
+    private Integer seasonId;
+    
+    /** Id of the team. */
     private int clubTeamId;
-
+    
+    /** Id of the rival. */
+    private Integer clubRivalId = null;
+    
+    
+    
     /** Vlastnosti tymu hrajici zapas */
     private ClubTeam clubTeam;
 
-    /** Identifikator soupere */
-    private Integer clubRivalId = null;
-
     /** Vlastnosti soupere */
     private ClubRival clubRival = null;
-
-    /** Doplnek k popisu soupere */
-    private String clubRivalComment = ""; //$NON-NLS-1$
-
-    /** Zapas na domacim hristi */
-    private boolean homeCourt = true;
-
-    /** Priznak zda se ma vysledek publikovat */
-    private boolean publish = false;
-
-    /** Komentar k zapasu */
-    private String comment = ""; //$NON-NLS-1$
-
-    /** Pocet bodu */
-    private int scorePos = -1;
-
-    /** Pocet bodu soupere */
-    private int scoreNeg = -1;
 
 	@Override
 	public Date getStart() {
@@ -126,71 +131,6 @@ public class TeamMatch extends Model implements IEvent, Publishable {
 		}
 	}
 
-	/** Nastavi priznak zda se jedna o domaci zapas */
-	public void setHomeCourt(boolean homeCourt) {
-		this.homeCourt = homeCourt;
-	}
-
-	/** Vraci priznak zda se jedna o domaci zapas */
-	public boolean getHomeCourt() {
-		return homeCourt;
-	}
-
-	/** Nastavi pocet bodu */
-	public void setScorePos(int scorePos) {
-		this.scorePos = scorePos;
-	}
-
-	/** Vraci pocet bodu */
-	public int getScorePos() {
-		return scorePos;
-	}
-
-	/** Nastavi pocet bodu soupere */
-	public void setScoreNeg(int scoreNeg) {
-		this.scoreNeg = scoreNeg;
-	}
-
-	/** Vraci pocet bodu soupere */
-	public int getScoreNeg() {
-		return scoreNeg;
-	}
-
-	/** Nastavi pocet bodu domaciho muzstva */
-	public void setScoreHomeTeam(int score) {
-		if (getHomeCourt())
-			this.setScorePos(score);
-		else
-			this.setScoreNeg(score);
-	}
-
-	/** Vraci pocet bodu domaciho muzstva */
-	public int getScoreHomeTeam() {
-		return getHomeCourt() ? getScorePos() : getScoreNeg();
-	}
-
-	/** Nastavi pocet bodu hostujiciho muzstva */
-	public void setScoreVisitingTeam(int score) {
-		if (getHomeCourt())
-			this.setScoreNeg(score);
-		else
-			this.setScorePos(score);
-	}
-
-	/** Vraci pocet bodu hostujicicho muzstva */
-	public int getScoreVisitingTeam() {
-		return getHomeCourt() ? getScoreNeg() : getScorePos();
-	}
-
-	/** Prevede skore zapasu na text */
-	public String getScoreAsStr() {
-		if ((getScoreNeg() >= 0) && (getScorePos() >= 0)) {
-			String pos = Integer.toString(getScorePos());
-			String neg = Integer.toString(getScoreNeg());
-			return getHomeCourt() ? String.format("%s : %s", pos, neg) : String.format("%s : %s", neg, pos); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return ""; //$NON-NLS-1$
-	}
 
 	/** Nastavi priznak zda se ma vysledek publikovat */
 	public void setPublish(boolean publish) {
@@ -211,16 +151,69 @@ public class TeamMatch extends Model implements IEvent, Publishable {
 	public String getComment() {
 		return comment;
 	}
+	
+	public boolean isHomeMatch() {
+        return isHomeMatch;
+    }
 
-	// interface Publishable
+    public void setHomeMatch(boolean isHomeMatch) {
+        this.isHomeMatch = isHomeMatch;
+    }
 
-	@Override
+    public MatchType getMatchType() {
+        return matchType;
+    }
+
+    public void setMatchType(MatchType matchType) {
+        this.matchType = matchType;
+    }
+
+    public Integer getSeasonId() {
+        return seasonId;
+    }
+
+    public void setSeasonId(Integer seasonId) {
+        this.seasonId = seasonId;
+    }
+    
+    public Integer getScoreA() {
+        return scoreA;
+    }
+
+    public void setScoreA(Integer scoreA) {
+        this.scoreA = scoreA;
+    }
+
+    public Integer getScoreB() {
+        return scoreB;
+    }
+
+    public void setScoreB(Integer scoreB) {
+        this.scoreB = scoreB;
+    }
+
+    public String getScoreDetail() {
+        return scoreDetail;
+    }
+
+    public void setScoreDetail(String scoreDetail) {
+        this.scoreDetail = scoreDetail;
+    }
+    
+    // TODO vitfo, created on 14. 7. 2015 
+    public String getScoreAsString() {
+        return scoreA + " : " + scoreB;
+    }
+
+    // interface Publishable
+    @Override
 	public String getCaption() {
 		if ((getClubTeam() != null) && (getClubRival() != null)) {
 			String teamName = getClubTeam().getName();
 			String rivalName = getClubRivalTitle();
-			return String.format("%s - %s   %s", getHomeCourt() ? teamName : rivalName, getHomeCourt() ? rivalName : teamName, //$NON-NLS-1$
-					getScoreAsStr());
+			return "TODO - caption of the team match";
+//			return String.format("%s - %s   %s", getHomeCourt() ? teamName : rivalName, getHomeCourt() ? rivalName : teamName, //$NON-NLS-1$
+//					getScoreAsStr());
 		} else
 			return null;
 	}

@@ -50,8 +50,9 @@ public class RepTeamMatch implements Repository<TeamMatch> {
      *
      */
     public static int insert(TeamMatch match) {
-        return insert(match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
-                match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
+        return 0;
+//        return insert(match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
+//                match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
     }
 
     /**
@@ -77,8 +78,8 @@ public class RepTeamMatch implements Repository<TeamMatch> {
      *
      */
     public static void update(TeamMatch match) {
-        update(match.getId(), match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
-                match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
+//        update(match.getId(), match.getStart(), match.getClubTeamId(), match.getClubRivalId(), match.getClubRivalComment(),
+//                match.getHomeCourt(), match.getScorePos(), match.getScoreNeg(), match.getPublish(), match.getComment());
     }
 
     /**
@@ -190,13 +191,13 @@ public class RepTeamMatch implements Repository<TeamMatch> {
                     data.setStart(new Date(result.getTimestamp(resultsColumnId).getTime()));
                     break;
                 case SCORE_POS:
-                    data.setScorePos(result.getInt(resultsColumnId));
+//                    data.setScorePos(result.getInt(resultsColumnId));
                     break;
                 case SCORE_NEG:
-                    data.setScoreNeg(result.getInt(resultsColumnId));
+//                    data.setScoreNeg(result.getInt(resultsColumnId));
                     break;
                 case HOME_COURT:
-                    data.setHomeCourt(result.getBoolean(resultsColumnId));
+//                    data.setHomeCourt(result.getBoolean(resultsColumnId));
                     break;
                 case PUBLISH:
                     data.setPublish(result.getBoolean(resultsColumnId));

@@ -38,4 +38,19 @@ public class TeamMatchDaoImpl implements TeamMatchDao {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
+    public List<TeamMatch> getAllTeamMatchesForClubTeam(int clubTeamId) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public List<TeamMatch> getAllPublishableTeamMatchesForClubTeam(int clubTeamId) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public List<TeamMatch> getAllPublishableHomeTeamMatchesForClubTeam(int clubTeamId, int monthLimit) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
 }

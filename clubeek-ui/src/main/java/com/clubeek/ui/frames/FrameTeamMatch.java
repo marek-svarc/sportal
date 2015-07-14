@@ -103,12 +103,12 @@ public class FrameTeamMatch extends VerticalLayout implements ModalInput<TeamMat
 
 		// misto zapasu
 
-		ogHomeGame.setValue(data.getHomeCourt() ? 0 : 1);
+		ogHomeGame.setValue(data.isHomeMatch() ? 0 : 1);
 
 		// vysledek
 
-		Tools.Components.textFieldSetInt(tfScoreHomeTeam, data.getScoreHomeTeam());
-		Tools.Components.textFieldSetInt(tfScoreVisitingTeam, data.getScoreVisitingTeam());
+		Tools.Components.textFieldSetInt(tfScoreHomeTeam, data.getScoreA());
+		Tools.Components.textFieldSetInt(tfScoreVisitingTeam, data.getScoreB());
 		cbPublish.setValue(data.getPublish());
 		taComment.setValue(data.getComment());
 	}
@@ -135,12 +135,12 @@ public class FrameTeamMatch extends VerticalLayout implements ModalInput<TeamMat
 
 		// misto zapasu
 
-		data.setHomeCourt(((int) ogHomeGame.getValue()) == 0);
+		data.setHomeMatch(((int) ogHomeGame.getValue()) == 0);
 
 		// vysledek
 
-		data.setScoreHomeTeam(Tools.Components.textFieldGetInt(tfScoreHomeTeam));
-		data.setScoreVisitingTeam(Tools.Components.textFieldGetInt(tfScoreVisitingTeam));
+		data.setScoreA(Tools.Components.textFieldGetInt(tfScoreHomeTeam));
+		data.setScoreB(Tools.Components.textFieldGetInt(tfScoreVisitingTeam));
 		data.setPublish(cbPublish.getValue());
 		data.setComment(taComment.getValue());
 	}

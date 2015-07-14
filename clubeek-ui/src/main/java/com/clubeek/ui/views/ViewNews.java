@@ -316,13 +316,19 @@ public class ViewNews extends VerticalLayout implements View {
         List<PublishableArticle> listArticles = new ArrayList<>();
         PublishableArticle.addArticlesToContainer(listArticles, getArticles(team, LocationType.NEWS), ViewId.ARTICLE);
         if (team != null) {
-            PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
+            // TODO vitfo, created on 14. 7. 2015 - what should be here?
+            PublishableArticle.addArticlesToContainer(listArticles, new ArrayList<TeamMatch>(),
                     ViewId.ARTICLE);
+//            PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(team.getId(), null),
+//                    ViewId.ARTICLE);
         } else {
             List<ClubTeam> teams = clubTeamDao.getActiveClubTeams();
             for (ClubTeam item : teams) {
-                PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(item.getId(), null),
+                // TODO vitfo, created on 14. 7. 2015 - what should be here?
+                PublishableArticle.addArticlesToContainer(listArticles, new ArrayList<TeamMatch>(),
                         ViewId.ARTICLE);
+//                PublishableArticle.addArticlesToContainer(listArticles, RepTeamMatch.selectPublishable(item.getId(), null),
+//                        ViewId.ARTICLE);
             }
         }
         createNewsLayoutList(listArticles, vlCenterPanel, true, false, "layout-list", "label-h2", "label-h5");
@@ -353,7 +359,9 @@ public class ViewNews extends VerticalLayout implements View {
             }
         } else {
             // nacteni nejblizscih domacich zapasu z databaze
-            List<TeamMatch> homeMatches = RepTeamMatch.selectHomeMatches(6, null);
+            // TODO vitfo, created on 14. 7. 2015 - what should be here?
+            List<TeamMatch> homeMatches = new ArrayList<TeamMatch>();
+//            List<TeamMatch> homeMatches = RepTeamMatch.selectHomeMatches(6, null);
             // vypis nejblizscih domacich zapasu z databaze
             String text = ""; //$NON-NLS-1$
             for (int i = 0; i < Math.min(8, homeMatches.size()); ++i) {

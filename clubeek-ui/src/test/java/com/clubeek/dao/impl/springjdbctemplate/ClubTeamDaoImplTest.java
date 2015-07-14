@@ -160,6 +160,12 @@ public class ClubTeamDaoImplTest {
         }
     }
     
+    public int getValidClubTeamId(ClubTeamDao clubTeamDao, ClubDao clubDao) {
+        deleteAll(clubTeamDao);
+        insertClubTeam(clubTeamDao, clubDao, "Name", SportType.BASEBALL);
+        return clubTeamDao.getAllClubTeams().get(0).getId();
+    }
+    
     public void deleteAll(ClubTeamDao clubTeamDao) {
         for (ClubTeam ct : clubTeamDao.getAllClubTeams()) {
             clubTeamDao.deleteRow(ct.getId());

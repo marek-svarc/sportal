@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.clubeek.enums.MatchType;
 import com.clubeek.model.TeamMatch;
 
 public class TeamMatchMapper implements RowMapper<TeamMatch> {
@@ -14,15 +15,20 @@ public class TeamMatchMapper implements RowMapper<TeamMatch> {
         TeamMatch t = new TeamMatch();
         
         t.setId(rs.getInt("id"));
+        
+        t.setHomeMatch(rs.getBoolean("is_home_match"));
+        t.setMatchType(MatchType.values()[rs.getInt("match_type")]);
         t.setStart(rs.getTimestamp("start"));
-        t.setScorePos(rs.getInt("score_pos"));
-        t.setScoreNeg(rs.getInt("score_neg"));
-        t.setHomeCourt(rs.getBoolean("home_court"));
         t.setComment(rs.getString("comment"));
-        t.setPublish(rs.getBoolean("publish"));
-        t.setClubTeamId(rs.getInt("club_team_id"));
-        t.setClubRivalId(rs.getInt("club_rival_id"));
         t.setClubRivalComment(rs.getString("club_rival_comment"));
+        t.setPublish(rs.getBoolean("publish"));
+        t.setScoreA((Integer)rs.getObject("score_A"));
+        t.setScoreB((Integer)rs.getObject("score_B"));
+        t.setScoreDetail(rs.getString("score_detail"));
+        
+        t.setSeasonId((Integer)rs.getObject("season_id"));
+        t.setClubTeamId(rs.getInt("club_team_id"));
+        t.setClubRivalId((Integer)rs.getObject("club_rival_id"));
         
         return t;
     }
